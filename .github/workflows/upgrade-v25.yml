@@ -1,0 +1,216 @@
+name: Upgrade Nexus to v2.5
+
+on:
+  push:
+    paths:
+      - '.github/workflows/upgrade-v25.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  upgrade:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch index.html to v2.5
+        shell: python
+        run: |
+          from pathlib import Path
+
+          p = Path('index.html')
+          text = p.read_text(encoding='utf-8')
+
+          text = text.replace('<title>Nexus Training v2.3</title>', '<title>Nexus Training v2.5</title>')
+          text = text.replace('Training · v2.3', 'Training · v2.5')
+
+          old_css = '''.calendar-cell{
+            min-height:92px;border:1px solid var(--line);border-radius:12px;padding:8px;background:#fff
+          }
+          '''
+          new_css = '''.calendar-cell{
+            position:relative;min-height:104px;border:1px solid var(--line);border-radius:12px;
+            padding:8px 8px 44px;background:#fff
+          }
+          '''
+          if old_css not in text:
+              raise RuntimeError('No se encontró calendar-cell base')
+          text = text.replace(old_css, new_css, 1)
+
+          css_anchor = '''.calendar-workouts{
+            display:flex;flex-wrap:wrap;gap:6px
+          }
+          '''
+          css_new = '''.calendar-workouts{
+            display:flex;flex-wrap:wrap;gap:6px
+          }
+          .calendar-cardio{
+            position:absolute;left:7px;bottom:7px;display:flex;align-items:center;gap:5px;z-index:2
+          }
+          .calendar-cardio .activity-chip{
+            width:31px;height:31px
+          }
+          .calendar-cardio .activity-chip .icon-svg{
+            width:17px;height:17px
+          }
+          .calendar-other-activities{
+            display:flex;flex-wrap:wrap;gap:6px;margin-top:6px
+          }
+          '''
+          if css_anchor not in text:
+              raise RuntimeError('No se encontró calendar-workouts')
+          text = text.replace(css_anchor, css_new, 1)
+
+          old_mobile = '''@media (max-width:560px){
+            .calendar-cell{min-height:80px;padding:6px}
+            .workout-chip{width:38px;height:38px;border-radius:10px}
+            .workout-chip-stack .icon-svg{width:16px;height:16px}
+            .workout-chip-code{font-size:8px}
+            .calendar-month-label{font-size:16px}
+          }
+          '''
+          new_mobile = '''@media (max-width:560px){
+            #historyView > .card{padding:12px}
+            #historyView > .card:first-child{padding:14px 16px}
+            .calendar-toolbar{
+              grid-template-columns:36px minmax(0,1fr) 36px;
+              gap:6px;margin-bottom:8px
+            }
+            .calendar-toolbar .iconbtn{
+              width:36px;height:36px;border-radius:10px
+            }
+            .calendar-month-label{
+              font-size:13px;letter-spacing:.07em;white-space:nowrap
+            }
+            .calendar-grid{
+              grid-template-columns:repeat(7,minmax(0,1fr));
+              gap:2px;width:100%
+            }
+            .calendar-weekday{
+              font-size:8px;padding:4px 0;letter-spacing:-.02em
+            }
+            .calendar-cell{
+              min-width:0;min-height:78px;border-radius:8px;
+              padding:4px 3px 28px;overflow:hidden
+            }
+            .calendar-day-number{
+              font-size:10px;margin-bottom:4px
+            }
+            .calendar-workouts,.calendar-other-activities{
+              gap:2px;margin-top:0
+            }
+            .workout-chip{
+              width:27px;height:27px;border-radius:7px;box-shadow:none
+            }
+            .workout-chip-stack{gap:0}
+            .workout-chip-stack .icon-svg{
+              width:12px;height:12px
+            }
+            .workout-chip-code{
+              font-size:6.5px;line-height:1
+            }
+            .activity-chip{
+              width:23px;height:23px;border-radius:6px;box-shadow:none
+            }
+            .activity-chip .icon-svg{
+              width:13px;height:13px
+            }
+            .calendar-cardio{
+              left:3px;bottom:3px;gap:2px
+            }
+            .calendar-cardio .activity-chip{
+              width:23px;height:23px
+            }
+            .calendar-cardio .activity-chip .icon-svg{
+              width:13px;height:13px
+            }
+            .calendar-actions{
+              margin-top:10px
+            }
+            .calendar-actions .btn{
+              width:100%;padding:12px 14px
+            }
+            .history-meta{gap:5px}
+            .history-badge{font-size:10px;padding:6px 8px}
+            .set-line{
+              grid-template-columns:24px minmax(64px,1.2fr) minmax(48px,1fr) minmax(38px,.8fr) minmax(44px,.9fr);
+              gap:4px;font-size:11px
+            }
+            #historyWorkoutModal .sheet,#historyActivityModal .sheet{
+              padding-left:12px;padding-right:12px
+            }
+          }
+          '''
+          if old_mobile not in text:
+              raise RuntimeError('No se encontró el bloque responsive v2.3')
+          text = text.replace(old_mobile, new_mobile, 1)
+
+          old_day = '''    const dayWorkouts = workoutsByDate[iso] || [];
+              const dayActivities = activitiesByDate[iso] || [];
+              cells += `
+                <div class="calendar-cell ${iso===todayIso ? 'today' : ''}">
+                  <div class="calendar-day-number">${day}</div>
+                  <div class="calendar-workouts">
+                    ${dayWorkouts.map(w=>{
+                      const visual = getRoutineVisual(w.routineId);
+                      return `<button class="workout-chip ${visual.cls}" title="${esc(w.routineName)}" onclick="openHistoryWorkout('${w.id}')"><span class="workout-chip-stack">${svgIcon(visual.icon)}<span class="workout-chip-code">${esc(visual.code)}</span></span></button>`;
+                    }).join('')}
+                    ${dayActivities.map(a=>{
+                      const visual=a.cardioNexus
+                        ? {cls:a.cardioNexus.visual, icon:a.cardioNexus.icon, label:`Cardio Nexus · ${a.cardioNexus.session}`}
+                        : getActivityVisual(a.type);
+                      return `<button class="activity-chip ${visual.cls}" title="${esc(visual.label)}" onclick="openHistoryActivity('${a.id}')">${svgIcon(visual.icon)}</button>`;
+                    }).join('')}
+                  </div>
+                </div>`;
+          '''
+          new_day = '''    const dayWorkouts = workoutsByDate[iso] || [];
+              const dayActivities = activitiesByDate[iso] || [];
+              const dayCardio = dayActivities.filter(a=>a.cardioNexus);
+              const dayOtherActivities = dayActivities.filter(a=>!a.cardioNexus);
+
+              cells += `
+                <div class="calendar-cell ${iso===todayIso ? 'today' : ''}">
+                  <div class="calendar-day-number">${day}</div>
+
+                  <div class="calendar-workouts">
+                    ${dayWorkouts.map(w=>{
+                      const visual = getRoutineVisual(w.routineId);
+                      return `<button class="workout-chip ${visual.cls}" title="${esc(w.routineName)}" onclick="openHistoryWorkout('${w.id}')"><span class="workout-chip-stack">${svgIcon(visual.icon)}<span class="workout-chip-code">${esc(visual.code)}</span></span></button>`;
+                    }).join('')}
+                  </div>
+
+                  ${dayOtherActivities.length ? `
+                    <div class="calendar-other-activities">
+                      ${dayOtherActivities.map(a=>{
+                        const visual=getActivityVisual(a.type);
+                        return `<button class="activity-chip ${visual.cls}" title="${esc(visual.label)}" onclick="openHistoryActivity('${a.id}')">${svgIcon(visual.icon)}</button>`;
+                      }).join('')}
+                    </div>` : ''}
+
+                  ${dayCardio.length ? `
+                    <div class="calendar-cardio">
+                      ${dayCardio.map(a=>{
+                        const visual={
+                          cls:a.cardioNexus.visual,
+                          icon:a.cardioNexus.icon,
+                          label:`Cardio Nexus · ${a.cardioNexus.session}`
+                        };
+                        return `<button class="activity-chip ${visual.cls}" title="${esc(visual.label)}" onclick="openHistoryActivity('${a.id}')">${svgIcon(visual.icon)}</button>`;
+                      }).join('')}
+                    </div>` : ''}
+                </div>`;
+          '''
+          if old_day not in text:
+              raise RuntimeError('No se encontró el render de calendario v2.3')
+          text = text.replace(old_day, new_day, 1)
+
+          p.write_text(text, encoding='utf-8')
+
+      - name: Commit v2.5
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Publicar Nexus Training v2.5"
+          git push
