@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f172a">
+<title>Nexus Training v2.3</title>
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--ink:#111827;--muted:#64748b;--line:#e5e7eb;--brand:#111827;--good:#15803d;--radius:20px;--shadow:0 10px 30px rgba(15,23,42,.07)}
+*{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);padding-bottom:92px}
+button,input,textarea{font:inherit} button{cursor:pointer} .app{max-width:760px;margin:auto;min-height:100vh}
+header{padding:22px 18px 12px;display:flex;align-items:center;justify-content:space-between;gap:12px} .brand{font-weight:900;letter-spacing:.12em;font-size:17px} .version{font-size:12px;color:var(--muted)}
+main{padding:0 14px 20px} .view{display:none} .view.active{display:block}
+.card{background:var(--card);border:1px solid rgba(226,232,240,.9);border-radius:var(--radius);padding:18px;box-shadow:var(--shadow);margin-bottom:12px}
+.hero{background:linear-gradient(145deg,#0f172a,#1f2937);color:white;border-radius:26px;padding:22px;box-shadow:var(--shadow);margin-bottom:14px}
+.hero p{color:#cbd5e1;margin:0} h1,h2,h3,p{margin-top:0} h1{font-size:30px;line-height:1.05;margin-bottom:8px} h2{font-size:22px} h3{font-size:17px}
+.eyebrow{font-size:12px;text-transform:uppercase;letter-spacing:.13em;opacity:.72;font-weight:800} .muted{color:var(--muted)} .small{font-size:13px}
+.row{display:flex;align-items:center;gap:12px} .between{justify-content:space-between}
+.pill,.week-badge{display:inline-flex;align-items:center;border-radius:999px;padding:7px 10px;background:#eef2f7;color:#334155;font-size:12px;font-weight:900}
+.week-badge{background:#e0e7ff;color:#3730a3}
+.btn{border:0;border-radius:15px;padding:14px 16px;font-weight:800;display:inline-flex;align-items:center;justify-content:center;gap:8px}
+.btn-primary{background:var(--brand);color:white} .btn-secondary{background:#eef2f7;color:#172033} .btn-danger{background:#fee2e2;color:#991b1b} .btn-block{width:100%}
+.routine-list{display:grid;gap:10px}
+.routine-card{border:1px solid var(--line);border-radius:17px;padding:15px;background:#fff}
+.routine-card.completed{background:#f8fafc}
+.routine-status{font-size:12px;font-weight:900;margin-top:5px;color:#166534}
+.btn:disabled{cursor:default;opacity:.65}
+.btn-completed{background:#dcfce7;color:#166534}
+.exercise-list{display:grid;gap:10px} .exercise-item{width:100%;border:1px solid var(--line);background:white;border-radius:17px;padding:15px;text-align:left;display:flex;align-items:center;justify-content:space-between;gap:12px}
+.exercise-item.done{background:#f8fafc} .exercise-item .name{font-weight:900;font-size:16px;margin-bottom:4px} .exercise-item .meta{font-size:13px;color:var(--muted)} .exercise-progress{min-width:62px;text-align:center;border-radius:999px;padding:8px 10px;background:#eef2f7;font-size:12px;font-weight:900} .exercise-item.done .exercise-progress{background:#dcfce7;color:#166534}
+.exercise-title{font-size:24px;font-weight:900;margin-bottom:6px} .target{color:var(--muted);margin-bottom:14px}
+.progress{height:8px;background:#e5e7eb;border-radius:99px;overflow:hidden;margin:12px 0 16px} .progress>div{height:100%;background:#111827}
+label{font-size:12px;font-weight:800;color:var(--muted);display:block;margin-bottom:5px} input,textarea{width:100%;border:1px solid #cbd5e1;border-radius:13px;padding:12px 10px;background:white;color:var(--ink)} input:focus,textarea:focus{outline:2px solid #94a3b8;border-color:#94a3b8} textarea{min-height:92px;resize:vertical}
+.set-block{margin-bottom:15px} .set-grid{display:grid;grid-template-columns:52px 1fr 1fr 1fr 1fr;gap:8px;align-items:end}
+.set-label{font-weight:900;padding-bottom:7px;text-align:center}
+.set-status{display:flex;flex-direction:column;align-items:center;gap:4px}
+.set-edit-btn{
+  width:28px;height:28px;border:0;border-radius:9px;background:#eef2f7;color:#475569;
+  display:inline-flex;align-items:center;justify-content:center;padding:0
+}
+.set-edit-btn.save{background:#dcfce7;color:#166534}
+.set-edit-btn svg{width:14px;height:14px}
+.set-completed{opacity:.68}
+.set-completed.editing{opacity:1}
+.unit-hint{font-size:10px;color:var(--muted);font-weight:700;margin-top:3px;text-align:center}
+.previous-inline{margin-left:60px;margin-top:6px}
+.previous-inline-label{font-size:10px;font-weight:900;text-transform:uppercase;letter-spacing:.08em;color:var(--muted);margin-bottom:5px}
+.previous-inline-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:7px}
+.previous-mini{border:1px solid var(--line);background:#f8fafc;border-radius:10px;padding:7px 8px;text-align:center;font-size:11px;color:#475569;font-weight:800}
+.copy-next-btn{margin-top:14px}
+.copy-prev-inline{margin-left:60px;margin-top:7px}
+.copy-prev-btn{
+  border:1px dashed #cbd5e1;background:#f8fafc;color:#334155;border-radius:10px;
+  padding:8px 10px;font-size:11px;font-weight:900;width:100%
+}
+.copy-prev-btn:active{transform:scale(.995)}
+.exercise-actions{
+  display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:14px
+}
+.exercise-actions .btn:disabled{
+  opacity:.42;cursor:not-allowed
+}
+.btn-complete-exercise{
+  background:#166534;color:white
+}
+.exercise-item.exercise-done{
+  background:#f0fdf4;border-color:#86efac
+}
+.exercise-item.exercise-done .exercise-progress{
+  background:#dcfce7;color:#166534
+}
+.summary-progress-green{
+  color:#166534;font-weight:900
+}
+.timer{text-align:center;padding:28px 14px} .timer .clock{font-size:58px;font-weight:950;letter-spacing:-.04em;margin:12px 0} .timer.good .clock{color:var(--good)} .timer .target-time{color:var(--muted);font-weight:700}
+.nav{position:fixed;bottom:0;left:0;right:0;background:rgba(255,255,255,.96);backdrop-filter:blur(16px);border-top:1px solid var(--line);display:grid;grid-template-columns:repeat(3,1fr);padding:8px 8px calc(8px + env(safe-area-inset-bottom));z-index:20}
+.nav button{background:none;border:0;padding:9px 4px;color:#64748b;font-weight:800;font-size:12px} .nav button.active{color:#111827}
+.history-session{border-top:1px solid var(--line);padding-top:12px;margin-top:12px}
+.set-line{display:grid;grid-template-columns:34px 1.2fr 1fr .8fr .9fr;gap:8px;font-size:14px;padding:5px 0}
+.history-compact{
+  margin-top:7px;padding:10px 12px;border-radius:12px;background:#f8fafc;border:1px solid var(--line);
+  font-size:14px;line-height:1.4
+}
+.history-compact strong{font-weight:900}
+.calendar-toolbar{
+  display:grid;grid-template-columns:42px 1fr 42px;gap:10px;align-items:center;margin-bottom:14px
+}
+.calendar-month-label{
+  text-align:center;font-size:18px;font-weight:900;letter-spacing:.12em;text-transform:uppercase
+}
+.calendar-grid{
+  display:grid;grid-template-columns:repeat(7,1fr);gap:6px
+}
+.calendar-weekday{
+  text-align:center;font-size:11px;font-weight:900;color:var(--muted);padding:6px 0
+}
+.calendar-cell{
+  min-height:92px;border:1px solid var(--line);border-radius:12px;padding:8px;background:#fff
+}
+.calendar-cell.today{
+  border-color:#94a3b8;
+  box-shadow:inset 0 0 0 1px #94a3b8;
+}
+.calendar-cell.empty{
+  background:transparent;border-style:dashed;border-color:#eef2f7
+}
+.calendar-day-number{
+  font-size:12px;font-weight:900;color:#334155;margin-bottom:8px
+}
+.calendar-workouts{
+  display:flex;flex-wrap:wrap;gap:6px
+}
+.workout-chip{
+  width:42px;height:42px;border-radius:12px;border:0;display:inline-flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 10px rgba(15,23,42,.10);padding:0
+}
+.workout-chip-stack{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:1px;line-height:1
+}
+.workout-chip-stack .icon-svg{
+  width:18px;height:18px
+}
+.workout-chip-code{
+  font-size:9px;font-weight:900;letter-spacing:.02em
+}
+.workout-chip.blue{background:#dbeafe;color:#1d4ed8}
+.workout-chip.orange{background:#ffedd5;color:#ea580c}
+.workout-chip.green{background:#dcfce7;color:#16a34a}
+.workout-chip.red{background:#fee2e2;color:#dc2626}
+.workout-chip.purple{background:#ede9fe;color:#7c3aed}
+.workout-chip:active{transform:scale(.98)}
+.history-meta{
+  display:flex;flex-wrap:wrap;gap:8px;margin-top:12px
+}
+.history-badge{
+  display:inline-flex;align-items:center;border-radius:999px;padding:7px 10px;background:#eef2f7;color:#334155;font-size:12px;font-weight:900
+}
+.history-detail-block{
+  border-top:1px solid var(--line);padding-top:12px;margin-top:12px
+}
+.calendar-actions{display:flex;justify-content:flex-end;margin-top:12px}
+.icon-svg{width:18px;height:18px;display:block}
+.workout-chip .icon-svg,.activity-chip .icon-svg{width:18px;height:18px}
+.activity-chip{
+  width:32px;height:32px;border-radius:10px;border:0;display:inline-flex;align-items:center;justify-content:center;
+  box-shadow:0 4px 10px rgba(15,23,42,.10)
+}
+.activity-chip.walk{background:#e0f2fe;color:#0369a1}
+.activity-chip.padel{background:#fef3c7;color:#b45309}
+.activity-chip.swim{background:#cffafe;color:#0e7490}
+.activity-chip.run{background:#f3e8ff;color:#7e22ce}
+.activity-chip.bike{background:#ecfccb;color:#3f6212}
+.activity-chip.hike{background:#dcfce7;color:#166534}
+.activity-chip.other{background:#e5e7eb;color:#374151}
+.activity-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+select{
+  width:100%;border:1px solid #cbd5e1;border-radius:13px;padding:12px 10px;background:white;color:var(--ink);font:inherit
+}
+.activity-type-preview{
+  display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:12px;background:#f8fafc;border:1px solid var(--line)
+}
+.cardio-nexus-box{
+  margin-top:14px;padding:14px;border-radius:16px;border:1px solid #bfdbfe;background:#eff6ff
+}
+.cardio-nexus-box.active{
+  border-color:#60a5fa;background:#dbeafe
+}
+.cardio-nexus-header{
+  display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:10px
+}
+.cardio-nexus-toggle{
+  display:flex;align-items:center;gap:8px;font-size:13px;font-weight:800;color:#1e3a8a
+}
+.cardio-nexus-fields{
+  display:none;margin-top:10px
+}
+.cardio-nexus-fields.show{
+  display:block
+}
+.cardio-preview{
+  margin-top:12px;padding:12px;border-radius:12px;background:#fff;border:1px solid #bfdbfe
+}
+.cardio-preview-title{
+  display:flex;align-items:center;gap:10px;font-weight:900;margin-bottom:6px;color:#0f172a
+}
+.activity-chip.cardio-c1{background:#dbeafe;color:#1d4ed8}
+.activity-chip.cardio-c2{background:#dcfce7;color:#166534}
+.activity-chip.cardio-c3{background:#ffedd5;color:#9a3412}
+@media (max-width:560px){
+  .calendar-cell{min-height:80px;padding:6px}
+  .workout-chip{width:38px;height:38px;border-radius:10px}
+  .workout-chip-stack .icon-svg{width:16px;height:16px}
+  .workout-chip-code{font-size:8px}
+  .calendar-month-label{font-size:16px}
+}
+.modal{position:fixed;inset:0;background:rgba(15,23,42,.55);z-index:50;display:none;align-items:flex-end;justify-content:center} .modal.open{display:flex} .sheet{width:min(760px,100%);max-height:90vh;overflow:auto;background:white;border-radius:26px 26px 0 0;padding:20px 16px calc(24px + env(safe-area-inset-bottom))}
+.iconbtn{border:0;background:#f1f5f9;border-radius:12px;height:44px;width:42px;font-weight:900} .empty{padding:30px 10px;text-align:center;color:var(--muted)}
+.incomplete-warning{
+  margin-top:10px;padding:11px 12px;border-radius:13px;background:#fff7ed;
+  border:1px solid #fed7aa;color:#9a3412;font-size:12px;line-height:1.4;font-weight:700
+}
+.confirm-modal{z-index:80;align-items:center;padding:18px}
+.confirm-box{
+  width:min(460px,100%);background:#fff;border-radius:22px;padding:20px;
+  box-shadow:0 18px 60px rgba(15,23,42,.24)
+}
+.confirm-box h3{font-size:20px;margin-bottom:8px}
+.confirm-actions{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:18px}
+.finish-form-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.summary-text{
+  min-height:330px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;
+  font-size:13px;line-height:1.45;white-space:pre-wrap
+}
+.copy-success{background:#dcfce7!important;color:#166534!important}
+.toast{position:fixed;left:50%;transform:translateX(-50%);bottom:86px;background:#111827;color:white;padding:11px 14px;border-radius:999px;z-index:60;font-size:13px;font-weight:800;display:none} .toast.show{display:block}
+@media(max-width:560px){
+  .set-grid{grid-template-columns:44px repeat(4,minmax(0,1fr));gap:6px}
+  .previous-inline{margin-left:50px}
+  .copy-prev-inline{margin-left:50px}
+}
+</style>
+</head>
+<body>
+<div class="app">
+<header><div><div class="brand">NEXUS</div><div class="version">Training · v2.3</div></div><span class="pill" id="todayPill"></span></header>
+<main>
+<section id="homeView" class="view active">
+  <div class="hero"><div class="eyebrow">Plan Nexus</div><h1 id="weekHero">Semana 3</h1><p id="cycleHero">Mesociclo actual</p></div>
+  <div class="card"><div class="row between"><div><h3 style="margin-bottom:4px">Mesociclo</h3><div id="mesocycleSummary" class="muted small"></div></div><button class="btn btn-secondary" id="editPlanBtn">Configurar</button></div></div>
+  <div class="card"><div class="row between"><div><h3 style="margin-bottom:4px">Rutinas</h3><div class="muted small">Elige el día que vas a entrenar.</div></div><span class="pill">5 días</span></div><div id="routineList" class="routine-list" style="margin-top:14px"></div></div>
+  <div class="card"><h3>Última sesión</h3><div id="lastWorkoutHome" class="muted"></div></div>
+</section>
+
+<section id="workoutView" class="view"><div id="workoutContent"></div></section>
+
+<section id="historyView" class="view">
+  <div class="card">
+    <div class="row between">
+      <div>
+        <div class="eyebrow" style="color:#64748b">Seguimiento</div>
+        <h2 style="margin:4px 0 0">Historial</h2>
+      </div>
+      <span class="pill" id="sessionCountPill"></span>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="calendar-toolbar">
+      <button class="iconbtn" onclick="changeHistoryMonth(-1)">‹</button>
+      <div id="historyMonthLabel" class="calendar-month-label">AGOSTO DE 2026</div>
+      <button class="iconbtn" onclick="changeHistoryMonth(1)">›</button>
+    </div>
+    <div id="historyCalendar"></div>
+    <div class="calendar-actions">
+      <button class="btn btn-secondary" id="addActivityBtn">+ Añadir actividad</button>
+    </div>
+  </div>
+</section>
+</main>
+</div>
+
+<nav class="nav"><button data-view="homeView" class="active">⌂<br>Inicio</button><button data-view="workoutView">●<br>Entrenar</button><button data-view="historyView">↗<br>Historial</button></nav>
+
+<div id="planModal" class="modal"><div class="sheet">
+  <div class="row between"><div><div class="eyebrow" style="color:#64748b">Plan Nexus</div><h2 style="margin:4px 0">Mesociclo y RIR</h2></div><button class="iconbtn" id="closePlanBtn">✕</button></div>
+  <div style="margin:16px 0"><label>Nombre del mesociclo</label><input id="planNameInput"></div>
+  <div style="margin:16px 0"><label>Fecha de inicio del mesociclo</label><input id="planStartInput" type="date"></div>
+  <div style="margin:16px 0"><label>Fecha de fin del mesociclo</label><input id="planEndInput" type="date"></div>
+  <div class="card" style="box-shadow:none">
+    <h3 style="margin-bottom:6px">Semanas del mesociclo</h3>
+    <p class="muted small">La fecha de cada semana determina el día exacto en que Nexus cambia a esa semana.</p>
+    <div id="weeklyRirEditor"></div>
+  </div>
+  <button class="btn btn-secondary btn-block" id="regenerateWeeksBtn" style="margin-bottom:10px">Regenerar semanas cada 7 días</button>
+  <button class="btn btn-primary btn-block" id="savePlanBtn">Guardar Plan Nexus</button>
+</div></div>
+
+<div id="discardPlanModal" class="modal confirm-modal">
+  <div class="confirm-box">
+    <div class="eyebrow" style="color:#b45309">Cambios sin guardar</div>
+    <h3>¿Cerrar la configuración?</h3>
+    <p class="muted">Has realizado cambios en el mesociclo. Si cierras ahora, esos cambios no se guardarán.</p>
+    <div class="confirm-actions">
+      <button class="btn btn-danger" id="discardPlanBtn">Cerrar sin guardar</button>
+      <button class="btn btn-primary" id="returnPlanBtn">Volver a configuración</button>
+    </div>
+  </div>
+</div>
+
+<div id="finishFeedbackModal" class="modal">
+  <div class="sheet">
+    <div class="row between">
+      <div>
+        <div class="eyebrow" style="color:#64748b">Finalizar entrenamiento</div>
+        <h2 style="margin:4px 0">Resumen de la sesión</h2>
+      </div>
+      <button class="iconbtn" id="closeFinishFeedbackBtn">✕</button>
+    </div>
+
+    <p class="muted small" id="finishCompletionInfo" style="margin-top:12px"></p>
+
+    <div class="finish-form-grid" style="margin-top:16px">
+      <div>
+        <label>Duración</label>
+        <input id="finishDurationInput" placeholder="Ej. 55 min">
+      </div>
+      <div>
+        <label>Molestias</label>
+        <input id="finishDiscomfortInput" placeholder="Ej. Ninguna">
+      </div>
+      <div>
+        <label>Fatiga /10</label>
+        <input id="finishFatigueInput" inputmode="numeric" placeholder="Ej. 6">
+      </div>
+      <div>
+        <label>Sensaciones /10</label>
+        <input id="finishSensationsInput" inputmode="numeric" placeholder="Ej. 8">
+      </div>
+    </div>
+
+    <div style="margin-top:12px">
+      <label>¿Qué ejercicio te ha costado más y por qué?</label>
+      <textarea id="finishHardestInput" placeholder="Ej. Hip thrust, las últimas repeticiones han sido muy exigentes"></textarea>
+    </div>
+
+    <div style="margin-top:12px">
+      <label>Notas adicionales</label>
+      <textarea id="finishNotesInput" placeholder="Cualquier detalle que quieras añadir al análisis..."></textarea>
+    </div>
+
+    <button class="btn btn-primary btn-block" id="confirmFinishBtn" style="margin-top:14px">Guardar y generar texto</button>
+  </div>
+</div>
+
+<div id="sessionSummaryModal" class="modal">
+  <div class="sheet">
+    <div class="row between">
+      <div>
+        <div class="eyebrow" style="color:#64748b">Listo para ChatGPT</div>
+        <h2 style="margin:4px 0">Texto del entrenamiento</h2>
+      </div>
+      <button class="iconbtn" id="closeSessionSummaryBtn">✕</button>
+    </div>
+
+    <p class="muted small" style="margin-top:12px">Copia este texto y pégalo en nuestra conversación para revisar progreso y posibles ajustes.</p>
+    <textarea id="sessionSummaryText" class="summary-text" readonly></textarea>
+
+    <button class="btn btn-primary btn-block" id="copySessionSummaryBtn" style="margin-top:10px">Copiar texto</button>
+    <button class="btn btn-secondary btn-block" id="doneSessionSummaryBtn" style="margin-top:10px">Cerrar</button>
+  </div>
+</div>
+
+<div id="historyWorkoutModal" class="modal">
+  <div class="sheet">
+    <div class="row between">
+      <div>
+        <div class="eyebrow" id="historyWorkoutEyebrow" style="color:#64748b">Entrenamiento</div>
+        <h2 id="historyWorkoutTitle" style="margin:4px 0">Resumen del entrenamiento</h2>
+      </div>
+      <button class="iconbtn" id="closeHistoryWorkoutBtn">✕</button>
+    </div>
+    <div id="historyWorkoutContent" style="margin-top:12px"></div>
+  </div>
+</div>
+
+<div id="activityModal" class="modal">
+  <div class="sheet">
+    <div class="row between">
+      <div>
+        <div class="eyebrow" style="color:#64748b">Actividad adicional</div>
+        <h2 style="margin:4px 0">Añadir actividad</h2>
+      </div>
+      <button class="iconbtn" id="closeActivityBtn">✕</button>
+    </div>
+
+    <div class="activity-form-grid" style="margin-top:16px">
+      <div>
+        <label>Fecha</label>
+        <input id="activityDateInput" type="date">
+      </div>
+      <div>
+        <label>Tipo</label>
+        <select id="activityTypeInput">
+          <option value="padel">Pádel</option>
+          <option value="walk">Caminar</option>
+          <option value="swim">Nadar</option>
+          <option value="run">Correr</option>
+          <option value="bike">Bicicleta</option>
+          <option value="hike">Montaña</option>
+          <option value="other">Otra</option>
+        </select>
+      </div>
+      <div>
+        <label>Duración</label>
+        <input id="activityDurationInput" placeholder="Ej. 1 h 20 min">
+      </div>
+      <div>
+        <label>Distancia</label>
+        <input id="activityDistanceInput" placeholder="Ej. 7,5 km">
+      </div>
+    </div>
+
+    <div style="margin-top:12px">
+      <label>Notas</label>
+      <textarea id="activityNotesInput" placeholder="Sensaciones, intensidad, rival, recorrido, etc."></textarea>
+    </div>
+
+    <div id="cardioNexusBox" class="cardio-nexus-box">
+      <div class="cardio-nexus-header">
+        <div>
+          <div class="eyebrow" style="color:#1d4ed8">Cardio Nexus</div>
+          <div class="small">Añade una sesión del programa de cardio.</div>
+        </div>
+        <label class="cardio-nexus-toggle">
+          <input id="cardioNexusToggle" type="checkbox">
+          Usar Cardio Nexus
+        </label>
+      </div>
+
+      <div id="cardioNexusFields" class="cardio-nexus-fields">
+        <div class="activity-form-grid">
+          <div>
+            <label>Semana</label>
+            <select id="cardioWeekInput">
+              <option value="1">Semana 1</option>
+              <option value="2">Semana 2</option>
+              <option value="3">Semana 3</option>
+              <option value="4">Semana 4</option>
+            </select>
+          </div>
+          <div>
+            <label>Sesión</label>
+            <select id="cardioSessionInput">
+              <option value="C1">C1</option>
+              <option value="C2">C2</option>
+              <option value="C3">C3</option>
+            </select>
+          </div>
+        </div>
+        <div id="cardioNexusPreview" class="cardio-preview"></div>
+      </div>
+    </div>
+
+    <button class="btn btn-primary btn-block" id="saveActivityBtn" style="margin-top:14px">Guardar actividad</button>
+  </div>
+</div>
+
+<div id="historyActivityModal" class="modal">
+  <div class="sheet">
+    <div class="row between">
+      <div>
+        <div class="eyebrow" style="color:#64748b">Actividad</div>
+        <h2 id="historyActivityTitle" style="margin:4px 0">Resumen</h2>
+      </div>
+      <button class="iconbtn" id="closeHistoryActivityBtn">✕</button>
+    </div>
+    <div id="historyActivityContent" style="margin-top:12px"></div>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+
+<script>
+const DEFAULT_ROUTINES = [{"id": "dia-1", "name": "Día 1", "exercises": [{"key": "press-banca", "name": "Press banca", "sets": 4, "reps": "8", "rest": 120, "unit": "kg/lado"}, {"key": "press-inclinado", "name": "Press inclinado", "sets": 3, "reps": "8", "rest": 120, "unit": "kg manc."}, {"key": "remo-maquina", "name": "Remo en máquina", "sets": 4, "reps": "10", "rest": 120, "unit": "kg/lado"}, {"key": "elevaciones-laterales-polea", "name": "Elevaciones laterales en polea", "sets": 3, "reps": "16", "rest": 120, "unit": "kg"}, {"key": "jalon-neutro", "name": "Jalón al pecho agarre neutro", "sets": 3, "reps": "12", "rest": 120, "unit": "kg"}, {"key": "curl-biceps", "name": "Curl de bíceps", "sets": 2, "reps": "12", "rest": 120, "unit": "kg"}]}, {"id": "dia-2", "name": "Día 2", "exercises": [{"key": "sentadilla-trasera", "name": "Sentadilla trasera", "sets": 4, "reps": "8", "rest": 120, "unit": "kg/lado"}, {"key": "prensa-inclinada", "name": "Prensa inclinada", "sets": 3, "reps": "12", "rest": 120, "unit": "kg/lado"}, {"key": "curl-femoral-tumbado", "name": "Curl femoral tumbado", "sets": 3, "reps": "12", "rest": 120, "unit": "kg"}, {"key": "peso-muerto-rumano-dia2", "name": "Peso muerto rumano", "sets": 3, "reps": "10", "rest": 120, "unit": "kg/lado"}, {"key": "gemelo", "name": "Gemelo", "sets": 3, "reps": "15", "rest": 120, "unit": "kg/lado"}, {"key": "plancha", "name": "Plancha", "sets": 3, "reps": "45 s", "rest": 30, "unit": ""}]}, {"id": "dia-3", "name": "Día 3", "exercises": [{"key": "press-militar", "name": "Press militar", "sets": 3, "reps": "6", "rest": 120, "unit": "kg/lado + barra"}, {"key": "facepull", "name": "Facepull", "sets": 2, "reps": "17", "rest": 120, "unit": "kg"}, {"key": "fondos-paralela", "name": "Fondos en paralela", "sets": 3, "reps": "10", "rest": 120, "unit": "peso corporal"}, {"key": "aperturas-maquina", "name": "Aperturas en máquina", "sets": 3, "reps": "10", "rest": 120, "unit": "kg"}, {"key": "dominadas-asistidas", "name": "Dominadas asistidas en máquina", "sets": 4, "reps": "8", "rest": 120, "unit": "kg ayuda"}, {"key": "remo-polea-baja", "name": "Remo en polea baja", "sets": 3, "reps": "10", "rest": 120, "unit": "kg"}]}, {"id": "dia-4", "name": "Día 4", "exercises": [{"key": "sentadilla-bulgara", "name": "Sentadilla búlgara", "sets": 3, "reps": "10", "rest": 120, "unit": "kg/lado"}, {"key": "extension-cuadriceps", "name": "Extensión de cuádriceps", "sets": 3, "reps": "15", "rest": 120, "unit": "kg"}, {"key": "hip-thrust", "name": "Hip thrust", "sets": 3, "reps": "10", "rest": 120, "unit": "kg"}, {"key": "peso-muerto-rumano-dia4", "name": "Peso muerto rumano", "sets": 4, "reps": "8", "rest": 120, "unit": "kg/lado"}, {"key": "gemelos-prensa", "name": "Gemelos en prensa", "sets": 3, "reps": "15", "rest": 120, "unit": "kg/lado"}, {"key": "elevaciones-piernas", "name": "Elevaciones de piernas colgando", "sets": 3, "reps": "15", "rest": 45, "unit": "peso corporal"}]}, {"id": "dia-5", "name": "Día 5", "exercises": [{"key": "dominadas", "name": "Dominadas", "sets": 5, "reps": "3", "rest": 120, "unit": "peso corporal"}, {"key": "jalon-unilateral", "name": "Jalón unilateral en polea", "sets": 3, "reps": "12", "rest": 120, "unit": "kg"}, {"key": "pajaros-peck-deck", "name": "Pájaros en peck deck", "sets": 3, "reps": "16", "rest": 120, "unit": "kg"}, {"key": "elevaciones-laterales-polea-dia5", "name": "Elevaciones laterales en polea", "sets": 4, "reps": "16", "rest": 120, "unit": "kg"}, {"key": "abd-wheel", "name": "Abd wheel", "sets": 3, "reps": "12", "rest": 60, "unit": "kg"}, {"key": "pallof-press", "name": "Pallof Press", "sets": 3, "reps": "15", "rest": 60, "unit": "kg"}]}];
+const DEFAULT_HISTORY = [{"id": "w3-4-2026-08-18", "routineId": "dia-4", "routineName": "Lower B", "startedAt": "2026-08-18T10:00:00", "finishedAt": "2026-08-18T10:55:00", "mesocycleWeek": 3, "planId": "mesociclo-agosto-2026", "duration": "55 min", "fatigue": 6, "sensations": 8, "discomfort": "Ninguna", "hardest": "Hip thrust", "notes": "", "exercises": [{"key": "sentadilla-bulgara", "name": "Sentadilla búlgara", "targetSets": 3, "targetReps": "10", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "7,5", "reps": "10", "rir": "1", "completed": true, "restActual": 120}, {"number": 2, "weight": "7,5", "reps": "10", "rir": "1", "completed": true, "restActual": 120}, {"number": 3, "weight": "7,5", "reps": "10", "rir": "1", "completed": true, "restActual": 120}]}, {"key": "peso-muerto-rumano-dia4", "name": "Peso muerto rumano", "targetSets": 4, "targetReps": "9", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "15", "reps": "9", "rir": "1", "completed": true, "restActual": 120}, {"number": 2, "weight": "15", "reps": "9", "rir": "1", "completed": true, "restActual": 120}, {"number": 3, "weight": "15", "reps": "9", "rir": "1", "completed": true, "restActual": 120}, {"number": 4, "weight": "15", "reps": "9", "rir": "1", "completed": true, "restActual": 120}]}, {"key": "extension-cuadriceps", "name": "Extensión de cuádriceps", "targetSets": 3, "targetReps": "15", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "23,65", "reps": "15", "rir": "1", "completed": true, "restActual": 120}, {"number": 2, "weight": "23,65", "reps": "15", "rir": "1", "completed": true, "restActual": 120}, {"number": 3, "weight": "23,65", "reps": "15", "rir": "1", "completed": true, "restActual": 120}]}, {"key": "gemelos-prensa", "name": "Gemelos en prensa", "targetSets": 3, "targetReps": "15", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "38,75", "reps": "15", "rir": "1", "completed": true, "restActual": 120}, {"number": 2, "weight": "38,75", "reps": "15", "rir": "1", "completed": true, "restActual": 120}, {"number": 3, "weight": "38,75", "reps": "15", "rir": "1", "completed": true, "restActual": 120}]}, {"key": "hip-thrust", "name": "Hip thrust", "targetSets": 3, "targetReps": "10", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "23,65", "reps": "10", "rir": "1", "completed": true, "restActual": 120}, {"number": 2, "weight": "23,65", "reps": "10", "rir": "1", "completed": true, "restActual": 120}, {"number": 3, "weight": "23,65", "reps": "10", "rir": "1", "completed": true, "restActual": 120}]}, {"key": "elevaciones-piernas", "name": "Elevaciones de piernas colgando", "targetSets": 3, "targetReps": "15", "rest": 45, "unit": "peso corporal", "sets": [{"number": 1, "weight": "", "reps": "15", "rir": "2", "completed": true, "restActual": 45}, {"number": 2, "weight": "", "reps": "15", "rir": "2", "completed": true, "restActual": 45}, {"number": 3, "weight": "", "reps": "15", "rir": "2", "completed": true, "restActual": 45}]}]}, {"id": "w3-1", "routineId": "dia-1", "routineName": "Día 1", "startedAt": "2026-08-17T10:00:00", "finishedAt": "2026-08-17T11:00:00", "mesocycleWeek": 3, "planId": "mesociclo-agosto-2026", "duration": "1 h", "fatigue": 5, "sensations": 8, "discomfort": "Ninguna", "hardest": "Elevaciones laterales; lo noto mucho", "notes": "", "exercises": [{"key": "press-banca", "name": "Press banca", "targetSets": 4, "targetReps": "8", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "13,75", "reps": "8", "rir": "1", "completed": true, "restActual": 120}, {"number": 2, "weight": "13,75", "reps": "8", "rir": "1", "completed": true, "restActual": 120}, {"number": 3, "weight": "13,75", "reps": "8", "rir": "1", "completed": true, "restActual": 120}, {"number": 4, "weight": "13,75", "reps": "8", "rir": "1", "completed": true, "restActual": 120}]}, {"key": "press-inclinado", "name": "Press inclinado", "targetSets": 3, "targetReps": "8", "rest": 120, "unit": "kg manc.", "sets": [{"number": 1, "weight": "20", "reps": "8", "rir": "1", "completed": true, "restActual": 120}, {"number": 2, "weight": "20", "reps": "8", "rir": "1", "completed": true, "restActual": 120}, {"number": 3, "weight": "20", "reps": "8", "rir": "1", "completed": true, "restActual": 120}]}, {"key": "remo-maquina", "name": "Remo en máquina", "targetSets": 4, "targetReps": "10", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "27,5", "reps": "10", "rir": "2", "completed": true, "restActual": 120}, {"number": 2, "weight": "27,5", "reps": "10", "rir": "2", "completed": true, "restActual": 120}, {"number": 3, "weight": "27,5", "reps": "10", "rir": "2", "completed": true, "restActual": 120}, {"number": 4, "weight": "27,5", "reps": "10", "rir": "2", "completed": true, "restActual": 120}]}, {"key": "elevaciones-laterales-polea", "name": "Elevaciones laterales en polea", "targetSets": 3, "targetReps": "16", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "2,5", "reps": "16", "rir": "2", "completed": true, "restActual": 120}, {"number": 2, "weight": "2,5", "reps": "16", "rir": "2", "completed": true, "restActual": 120}, {"number": 3, "weight": "2,5", "reps": "16", "rir": "2", "completed": true, "restActual": 120}]}, {"key": "jalon-neutro", "name": "Jalón al pecho agarre neutro", "targetSets": 3, "targetReps": "12", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "35", "reps": "12", "rir": "1", "completed": true, "restActual": 120}, {"number": 2, "weight": "35", "reps": "12", "rir": "1", "completed": true, "restActual": 120}, {"number": 3, "weight": "35", "reps": "12", "rir": "1", "completed": true, "restActual": 120}]}, {"key": "curl-biceps", "name": "Curl de bíceps", "targetSets": 2, "targetReps": "12", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "17,5", "reps": "12", "rir": "1", "completed": true, "restActual": 120}, {"number": 2, "weight": "17,5", "reps": "12", "rir": "1", "completed": true, "restActual": 120}]}]}, {"id": "w2-5", "routineId": "dia-5", "routineName": "Día 5", "startedAt": "2026-08-14T10:00:00", "finishedAt": "2026-08-14T11:00:00", "mesocycleWeek": 2, "planId": "mesociclo-agosto-2026", "duration": "1 h", "fatigue": 8, "sensations": 8, "discomfort": "Ninguna", "hardest": "Dominadas; sin ayuda me cuestan mucho", "notes": "En dominadas el RIR fue mucho mejor, pero no se registró un valor exacto.", "exercises": [{"key": "dominadas", "name": "Dominadas", "targetSets": 5, "targetReps": "3", "rest": 120, "unit": "peso corporal", "sets": [{"number": 1, "weight": "", "reps": "3", "rir": "", "completed": true, "restActual": 120}, {"number": 2, "weight": "", "reps": "3", "rir": "", "completed": true, "restActual": 120}, {"number": 3, "weight": "", "reps": "3", "rir": "", "completed": true, "restActual": 120}, {"number": 4, "weight": "", "reps": "3", "rir": "", "completed": true, "restActual": 120}, {"number": 5, "weight": "", "reps": "3", "rir": "", "completed": true, "restActual": 120}]}, {"key": "jalon-unilateral", "name": "Jalón unilateral en polea", "targetSets": 3, "targetReps": "12", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "20", "reps": "12", "rir": "2", "completed": true, "restActual": 120}, {"number": 2, "weight": "20", "reps": "12", "rir": "2", "completed": true, "restActual": 120}, {"number": 3, "weight": "20", "reps": "12", "rir": "2", "completed": true, "restActual": 120}]}, {"key": "pajaros-peck-deck", "name": "Pájaros en peck deck", "targetSets": 3, "targetReps": "16", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "7,5", "reps": "16", "rir": "2", "completed": true, "restActual": 120}, {"number": 2, "weight": "7,5", "reps": "16", "rir": "2", "completed": true, "restActual": 120}, {"number": 3, "weight": "7,5", "reps": "16", "rir": "2", "completed": true, "restActual": 120}]}, {"key": "elevaciones-laterales-polea-dia5", "name": "Elevaciones laterales en polea", "targetSets": 4, "targetReps": "16", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "2,5", "reps": "16", "rir": "2", "completed": true, "restActual": 120}, {"number": 2, "weight": "2,5", "reps": "16", "rir": "2", "completed": true, "restActual": 120}, {"number": 3, "weight": "2,5", "reps": "16", "rir": "2", "completed": true, "restActual": 120}, {"number": 4, "weight": "2,5", "reps": "16", "rir": "2", "completed": true, "restActual": 120}]}, {"key": "abd-wheel", "name": "Abd wheel", "targetSets": 3, "targetReps": "12", "rest": 60, "unit": "kg", "sets": [{"number": 1, "weight": "20", "reps": "12", "rir": "3", "completed": true, "restActual": 60}, {"number": 2, "weight": "20", "reps": "12", "rir": "3", "completed": true, "restActual": 60}, {"number": 3, "weight": "20", "reps": "12", "rir": "3", "completed": true, "restActual": 60}]}, {"key": "pallof-press", "name": "Pallof Press", "targetSets": 3, "targetReps": "15", "rest": 60, "unit": "kg", "sets": [{"number": 1, "weight": "10", "reps": "15", "rir": "2", "completed": true, "restActual": 60}, {"number": 2, "weight": "10", "reps": "15", "rir": "2", "completed": true, "restActual": 60}, {"number": 3, "weight": "10", "reps": "15", "rir": "2", "completed": true, "restActual": 60}]}]}, {"id": "w2-4", "routineId": "dia-4", "routineName": "Día 4", "startedAt": "2026-08-13T10:00:00", "finishedAt": "2026-08-13T11:00:00", "mesocycleWeek": 2, "planId": "mesociclo-agosto-2026", "duration": "50 min", "fatigue": 6, "sensations": 8, "discomfort": "Ninguna", "hardest": "Sentadilla búlgara", "notes": "", "exercises": [{"key": "sentadilla-bulgara", "name": "Sentadilla búlgara", "targetSets": 3, "targetReps": "10", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "6,25", "reps": "10", "rir": "2", "completed": true, "restActual": 120}, {"number": 2, "weight": "6,25", "reps": "10", "rir": "2", "completed": true, "restActual": 120}, {"number": 3, "weight": "6,25", "reps": "10", "rir": "2", "completed": true, "restActual": 120}]}, {"key": "extension-cuadriceps", "name": "Extensión de cuádriceps", "targetSets": 3, "targetReps": "15", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "22,5", "reps": "15", "rir": "2", "completed": true, "restActual": 120}, {"number": 2, "weight": "22,5", "reps": "15", "rir": "2", "completed": true, "restActual": 120}, {"number": 3, "weight": "22,5", "reps": "15", "rir": "2", "completed": true, "restActual": 120}]}, {"key": "hip-thrust", "name": "Hip thrust", "targetSets": 3, "targetReps": "10", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "22,5", "reps": "10", "rir": "2", "completed": true, "restActual": 120}, {"number": 2, "weight": "22,5", "reps": "10", "rir": "2", "completed": true, "restActual": 120}, {"number": 3, "weight": "22,5", "reps": "10", "rir": "2", "completed": true, "restActual": 120}]}, {"key": "peso-muerto-rumano-dia4", "name": "Peso muerto rumano", "targetSets": 4, "targetReps": "8", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "15", "reps": "8", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "15", "reps": "8", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "15", "reps": "8", "rir": "3", "completed": true, "restActual": 120}, {"number": 4, "weight": "15", "reps": "8", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "gemelos-prensa", "name": "Gemelos en prensa", "targetSets": 3, "targetReps": "15", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "37,5", "reps": "15", "rir": "2", "completed": true, "restActual": 120}, {"number": 2, "weight": "37,5", "reps": "15", "rir": "2", "completed": true, "restActual": 120}, {"number": 3, "weight": "37,5", "reps": "15", "rir": "2", "completed": true, "restActual": 120}]}, {"key": "elevaciones-piernas", "name": "Elevaciones de piernas colgando", "targetSets": 3, "targetReps": "15", "rest": 45, "unit": "peso corporal", "sets": [{"number": 1, "weight": "", "reps": "15", "rir": "2", "completed": true, "restActual": 45}, {"number": 2, "weight": "", "reps": "15", "rir": "2", "completed": true, "restActual": 45}, {"number": 3, "weight": "", "reps": "15", "rir": "2", "completed": true, "restActual": 45}]}]}, {"id": "w2-3", "routineId": "dia-3", "routineName": "Día 3", "startedAt": "2026-08-12T10:00:00", "finishedAt": "2026-08-12T11:00:00", "mesocycleWeek": 2, "planId": "mesociclo-agosto-2026", "duration": "50 min", "fatigue": 5, "sensations": 8, "discomfort": "Ninguna", "hardest": "La subida de peso en aperturas y press militar se ha notado", "notes": "", "exercises": [{"key": "press-militar", "name": "Press militar", "targetSets": 3, "targetReps": "6", "rest": 120, "unit": "kg/lado + barra", "sets": [{"number": 1, "weight": "6,25", "reps": "6", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "6,25", "reps": "6", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "6,25", "reps": "6", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "facepull", "name": "Facepull", "targetSets": 2, "targetReps": "17", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "17,5", "reps": "17", "rir": "2", "completed": true, "restActual": 120}, {"number": 2, "weight": "17,5", "reps": "17", "rir": "2", "completed": true, "restActual": 120}]}, {"key": "fondos-paralela", "name": "Fondos en paralela", "targetSets": 3, "targetReps": "10", "rest": 120, "unit": "peso corporal", "sets": [{"number": 1, "weight": "", "reps": "10", "rir": "2", "completed": true, "restActual": 120}, {"number": 2, "weight": "", "reps": "10", "rir": "2", "completed": true, "restActual": 120}, {"number": 3, "weight": "", "reps": "10", "rir": "2", "completed": true, "restActual": 120}]}, {"key": "aperturas-maquina", "name": "Aperturas en máquina", "targetSets": 3, "targetReps": "10", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "17,5", "reps": "10", "rir": "2", "completed": true, "restActual": 120}, {"number": 2, "weight": "17,5", "reps": "10", "rir": "2", "completed": true, "restActual": 120}, {"number": 3, "weight": "17,5", "reps": "10", "rir": "2", "completed": true, "restActual": 120}]}, {"key": "dominadas-asistidas", "name": "Dominadas asistidas en máquina", "targetSets": 4, "targetReps": "8", "rest": 120, "unit": "kg ayuda", "sets": [{"number": 1, "weight": "21", "reps": "8", "rir": "2", "completed": true, "restActual": 120}, {"number": 2, "weight": "21", "reps": "8", "rir": "2", "completed": true, "restActual": 120}, {"number": 3, "weight": "21", "reps": "8", "rir": "2", "completed": true, "restActual": 120}, {"number": 4, "weight": "21", "reps": "8", "rir": "2", "completed": true, "restActual": 120}]}, {"key": "remo-polea-baja", "name": "Remo en polea baja", "targetSets": 3, "targetReps": "10", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "35", "reps": "10", "rir": "2", "completed": true, "restActual": 120}, {"number": 2, "weight": "35", "reps": "10", "rir": "2", "completed": true, "restActual": 120}, {"number": 3, "weight": "35", "reps": "10", "rir": "2", "completed": true, "restActual": 120}]}]}, {"id": "w2-2", "routineId": "dia-2", "routineName": "Día 2", "startedAt": "2026-08-11T10:00:00", "finishedAt": "2026-08-11T11:00:00", "mesocycleWeek": 2, "planId": "mesociclo-agosto-2026", "duration": "1 h", "fatigue": 6, "sensations": 8, "discomfort": "Ninguna", "hardest": "Sentadilla; noto más cargados los cuádriceps que los isquios", "notes": "", "exercises": [{"key": "sentadilla-trasera", "name": "Sentadilla trasera", "targetSets": 4, "targetReps": "8", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "20", "reps": "8", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "20", "reps": "8", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "20", "reps": "8", "rir": "3", "completed": true, "restActual": 120}, {"number": 4, "weight": "20", "reps": "8", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "prensa-inclinada", "name": "Prensa inclinada", "targetSets": 3, "targetReps": "12", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "25", "reps": "12", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "25", "reps": "12", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "25", "reps": "12", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "curl-femoral-tumbado", "name": "Curl femoral tumbado", "targetSets": 3, "targetReps": "12", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "17,5", "reps": "12", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "17,5", "reps": "12", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "17,5", "reps": "12", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "peso-muerto-rumano-dia2", "name": "Peso muerto rumano", "targetSets": 3, "targetReps": "10", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "10", "reps": "10", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "10", "reps": "10", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "10", "reps": "10", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "gemelo", "name": "Gemelo", "targetSets": 3, "targetReps": "15", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "35", "reps": "15", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "35", "reps": "15", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "35", "reps": "15", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "plancha", "name": "Plancha", "targetSets": 3, "targetReps": "45 s", "rest": 30, "unit": "", "sets": [{"number": 1, "weight": "", "reps": "45 s", "rir": "", "completed": true, "restActual": 30}, {"number": 2, "weight": "", "reps": "45 s", "rir": "", "completed": true, "restActual": 30}, {"number": 3, "weight": "", "reps": "45 s", "rir": "", "completed": true, "restActual": 30}]}]}, {"id": "w2-1", "routineId": "dia-1", "routineName": "Día 1", "startedAt": "2026-08-10T10:00:00", "finishedAt": "2026-08-10T11:00:00", "mesocycleWeek": 2, "planId": "mesociclo-agosto-2026", "duration": "1 h", "fatigue": 5, "sensations": 8, "discomfort": "Ninguna", "hardest": "Elevaciones laterales; lo noto mucho", "notes": "", "exercises": [{"key": "press-banca", "name": "Press banca", "targetSets": 4, "targetReps": "7", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "13,75", "reps": "7", "rir": "2", "completed": true, "restActual": 120}, {"number": 2, "weight": "13,75", "reps": "7", "rir": "2", "completed": true, "restActual": 120}, {"number": 3, "weight": "13,75", "reps": "7", "rir": "2", "completed": true, "restActual": 120}, {"number": 4, "weight": "13,75", "reps": "7", "rir": "2", "completed": true, "restActual": 120}]}, {"key": "press-inclinado", "name": "Press inclinado", "targetSets": 3, "targetReps": "10", "rest": 120, "unit": "kg manc.", "sets": [{"number": 1, "weight": "18", "reps": "10", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "18", "reps": "10", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "18", "reps": "10", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "jalon-neutro", "name": "Jalón al pecho agarre neutro", "targetSets": 3, "targetReps": "11", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "35", "reps": "11", "rir": "2", "completed": true, "restActual": 120}, {"number": 2, "weight": "35", "reps": "11", "rir": "2", "completed": true, "restActual": 120}, {"number": 3, "weight": "35", "reps": "11", "rir": "2", "completed": true, "restActual": 120}]}, {"key": "remo-maquina", "name": "Remo en máquina", "targetSets": 4, "targetReps": "10", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "26,25", "reps": "10", "rir": "2", "completed": true, "restActual": 120}, {"number": 2, "weight": "26,25", "reps": "10", "rir": "2", "completed": true, "restActual": 120}, {"number": 3, "weight": "26,25", "reps": "10", "rir": "2", "completed": true, "restActual": 120}, {"number": 4, "weight": "26,25", "reps": "10", "rir": "2", "completed": true, "restActual": 120}]}, {"key": "curl-biceps", "name": "Curl de bíceps", "targetSets": 2, "targetReps": "12", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "17,5", "reps": "12", "rir": "2", "completed": true, "restActual": 120}, {"number": 2, "weight": "17,5", "reps": "12", "rir": "2", "completed": true, "restActual": 120}]}, {"key": "elevaciones-laterales-polea", "name": "Elevaciones laterales en polea", "targetSets": 3, "targetReps": "16", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "2,5", "reps": "16", "rir": "2", "completed": true, "restActual": 120}, {"number": 2, "weight": "2,5", "reps": "16", "rir": "2", "completed": true, "restActual": 120}, {"number": 3, "weight": "2,5", "reps": "16", "rir": "2", "completed": true, "restActual": 120}]}]}, {"id": "w1-5", "routineId": "dia-5", "routineName": "Día 5", "startedAt": "2026-08-07T10:00:00", "finishedAt": "2026-08-07T11:00:00", "mesocycleWeek": 1, "planId": "mesociclo-agosto-2026", "duration": "1 h", "fatigue": 8, "sensations": 8, "discomfort": "Ninguna", "hardest": "Dominadas; sin ayuda me cuestan mucho", "notes": "En dominadas sin ayuda no se cumplió el RIR 3 previsto.", "exercises": [{"key": "dominadas", "name": "Dominadas", "targetSets": 4, "targetReps": "4", "rest": 120, "unit": "peso corporal", "sets": [{"number": 1, "weight": "", "reps": "4", "rir": "", "completed": true, "restActual": 120}, {"number": 2, "weight": "", "reps": "4", "rir": "", "completed": true, "restActual": 120}, {"number": 3, "weight": "", "reps": "4", "rir": "", "completed": true, "restActual": 120}, {"number": 4, "weight": "", "reps": "4", "rir": "", "completed": true, "restActual": 120}]}, {"key": "jalon-unilateral", "name": "Jalón unilateral en polea", "targetSets": 3, "targetReps": "12", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "20", "reps": "12", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "20", "reps": "12", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "20", "reps": "12", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "pajaros-peck-deck", "name": "Pájaros en peck deck", "targetSets": 3, "targetReps": "20", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "5", "reps": "20", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "5", "reps": "20", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "5", "reps": "20", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "abd-wheel", "name": "Abd wheel", "targetSets": 3, "targetReps": "12", "rest": 60, "unit": "kg", "sets": [{"number": 1, "weight": "20", "reps": "12", "rir": "3", "completed": true, "restActual": 60}, {"number": 2, "weight": "20", "reps": "12", "rir": "3", "completed": true, "restActual": 60}, {"number": 3, "weight": "20", "reps": "12", "rir": "3", "completed": true, "restActual": 60}]}, {"key": "pallof-press", "name": "Pallof Press", "targetSets": 3, "targetReps": "15", "rest": 60, "unit": "kg", "sets": [{"number": 1, "weight": "10", "reps": "15", "rir": "3", "completed": true, "restActual": 60}, {"number": 2, "weight": "10", "reps": "15", "rir": "3", "completed": true, "restActual": 60}, {"number": 3, "weight": "10", "reps": "15", "rir": "3", "completed": true, "restActual": 60}]}, {"key": "elevaciones-laterales-polea-dia5", "name": "Elevaciones laterales en polea", "targetSets": 4, "targetReps": "16", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "2,5", "reps": "16", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "2,5", "reps": "16", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "2,5", "reps": "16", "rir": "3", "completed": true, "restActual": 120}, {"number": 4, "weight": "2,5", "reps": "16", "rir": "3", "completed": true, "restActual": 120}]}]}, {"id": "w1-4", "routineId": "dia-4", "routineName": "Día 4", "startedAt": "2026-08-06T10:00:00", "finishedAt": "2026-08-06T11:00:00", "mesocycleWeek": 1, "planId": "mesociclo-agosto-2026", "duration": "50 min", "fatigue": 9, "sensations": 7, "discomfort": "Ninguna", "hardest": "Extensión de cuádriceps; tenía muchas agujetas", "notes": "", "exercises": [{"key": "hip-thrust", "name": "Hip thrust", "targetSets": 3, "targetReps": "10", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "20", "reps": "10", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "20", "reps": "10", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "20", "reps": "10", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "sentadilla-bulgara", "name": "Sentadilla búlgara", "targetSets": 3, "targetReps": "10", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "5", "reps": "10", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "5", "reps": "10", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "5", "reps": "10", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "extension-cuadriceps", "name": "Extensión de cuádriceps", "targetSets": 3, "targetReps": "15", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "20", "reps": "15", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "20", "reps": "15", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "20", "reps": "15", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "peso-muerto-rumano-dia4", "name": "Peso muerto rumano", "targetSets": 4, "targetReps": "8", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "15", "reps": "8", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "15", "reps": "8", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "15", "reps": "8", "rir": "3", "completed": true, "restActual": 120}, {"number": 4, "weight": "15", "reps": "8", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "gemelos-prensa", "name": "Gemelos en prensa", "targetSets": 3, "targetReps": "15", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "35", "reps": "15", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "35", "reps": "15", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "35", "reps": "15", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "elevaciones-piernas", "name": "Elevaciones de piernas colgando", "targetSets": 3, "targetReps": "15", "rest": 45, "unit": "peso corporal", "sets": [{"number": 1, "weight": "", "reps": "15", "rir": "3", "completed": true, "restActual": 45}, {"number": 2, "weight": "", "reps": "15", "rir": "3", "completed": true, "restActual": 45}, {"number": 3, "weight": "", "reps": "15", "rir": "3", "completed": true, "restActual": 45}]}]}, {"id": "w1-3", "routineId": "dia-3", "routineName": "Día 3", "startedAt": "2026-08-05T10:00:00", "finishedAt": "2026-08-05T11:00:00", "mesocycleWeek": 1, "planId": "mesociclo-agosto-2026", "duration": "50 min", "fatigue": 6, "sensations": 7, "discomfort": "Ninguna", "hardest": "Aperturas; he notado mucho el estímulo", "notes": "", "exercises": [{"key": "press-militar", "name": "Press militar", "targetSets": 3, "targetReps": "8", "rest": 120, "unit": "kg/lado + barra", "sets": [{"number": 1, "weight": "5", "reps": "8", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "5", "reps": "8", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "5", "reps": "8", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "remo-polea-baja", "name": "Remo en polea baja", "targetSets": 3, "targetReps": "10", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "35", "reps": "10", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "35", "reps": "10", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "35", "reps": "10", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "aperturas-maquina", "name": "Aperturas en máquina", "targetSets": 3, "targetReps": "12", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "15", "reps": "12", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "15", "reps": "12", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "15", "reps": "12", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "fondos-paralela", "name": "Fondos en paralela", "targetSets": 3, "targetReps": "10", "rest": 120, "unit": "peso corporal", "sets": [{"number": 1, "weight": "", "reps": "10", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "", "reps": "10", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "", "reps": "10", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "facepull", "name": "Facepull", "targetSets": 2, "targetReps": "20", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "15", "reps": "20", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "15", "reps": "20", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "dominadas-asistidas", "name": "Dominadas asistidas en máquina", "targetSets": 4, "targetReps": "8", "rest": 120, "unit": "kg ayuda", "sets": [{"number": 1, "weight": "28", "reps": "8", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "28", "reps": "8", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "28", "reps": "8", "rir": "3", "completed": true, "restActual": 120}, {"number": 4, "weight": "28", "reps": "8", "rir": "3", "completed": true, "restActual": 120}]}]}, {"id": "w1-2", "routineId": "dia-2", "routineName": "Día 2", "startedAt": "2026-08-04T10:00:00", "finishedAt": "2026-08-04T11:00:00", "mesocycleWeek": 1, "planId": "mesociclo-agosto-2026", "duration": "1 h", "fatigue": 8, "sensations": 7, "discomfort": "Ninguna", "hardest": "Sentadilla, creo que por la exigencia", "notes": "", "exercises": [{"key": "sentadilla-trasera", "name": "Sentadilla trasera", "targetSets": 4, "targetReps": "8", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "20", "reps": "8", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "20", "reps": "8", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "20", "reps": "8", "rir": "3", "completed": true, "restActual": 120}, {"number": 4, "weight": "20", "reps": "8", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "prensa-inclinada", "name": "Prensa inclinada", "targetSets": 3, "targetReps": "12", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "25", "reps": "12", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "25", "reps": "12", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "25", "reps": "12", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "peso-muerto-rumano-dia2", "name": "Peso muerto rumano", "targetSets": 3, "targetReps": "10", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "10", "reps": "10", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "10", "reps": "10", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "10", "reps": "10", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "curl-femoral-tumbado", "name": "Curl femoral tumbado", "targetSets": 3, "targetReps": "12", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "17,5", "reps": "12", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "17,5", "reps": "12", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "17,5", "reps": "12", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "gemelo", "name": "Gemelo", "targetSets": 3, "targetReps": "15", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "35", "reps": "15", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "35", "reps": "15", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "35", "reps": "15", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "plancha", "name": "Plancha", "targetSets": 3, "targetReps": "45 s", "rest": 30, "unit": "", "sets": [{"number": 1, "weight": "", "reps": "45 s", "rir": "", "completed": true, "restActual": 30}, {"number": 2, "weight": "", "reps": "45 s", "rir": "", "completed": true, "restActual": 30}, {"number": 3, "weight": "", "reps": "45 s", "rir": "", "completed": true, "restActual": 30}]}]}, {"id": "w1-1", "routineId": "dia-1", "routineName": "Día 1", "startedAt": "2026-08-03T10:00:00", "finishedAt": "2026-08-03T11:00:00", "mesocycleWeek": 1, "planId": "mesociclo-agosto-2026", "duration": "1 h", "fatigue": 7, "sensations": 7, "discomfort": "Ninguna", "hardest": "", "notes": "", "exercises": [{"key": "press-banca", "name": "Press banca", "targetSets": 4, "targetReps": "8", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "12,5", "reps": "8", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "12,5", "reps": "8", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "12,5", "reps": "8", "rir": "3", "completed": true, "restActual": 120}, {"number": 4, "weight": "12,5", "reps": "8", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "remo-maquina", "name": "Remo en máquina", "targetSets": 4, "targetReps": "10", "rest": 120, "unit": "kg/lado", "sets": [{"number": 1, "weight": "25", "reps": "10", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "25", "reps": "10", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "25", "reps": "10", "rir": "3", "completed": true, "restActual": 120}, {"number": 4, "weight": "25", "reps": "10", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "jalon-neutro", "name": "Jalón al pecho agarre neutro", "targetSets": 3, "targetReps": "12", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "30", "reps": "12", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "30", "reps": "12", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "30", "reps": "12", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "press-inclinado", "name": "Press inclinado", "targetSets": 3, "targetReps": "10", "rest": 120, "unit": "kg manc.", "sets": [{"number": 1, "weight": "18", "reps": "10", "rir": "3", "completed": true, "restActual": 120}, {"number": 2, "weight": "18", "reps": "10", "rir": "3", "completed": true, "restActual": 120}, {"number": 3, "weight": "18", "reps": "10", "rir": "3", "completed": true, "restActual": 120}]}, {"key": "curl-biceps", "name": "Curl de bíceps", "targetSets": 2, "targetReps": "12", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "16,25", "reps": "12", "rir": "2", "completed": true, "restActual": 120}, {"number": 2, "weight": "16,25", "reps": "12", "rir": "2", "completed": true, "restActual": 120}]}, {"key": "elevaciones-laterales-polea", "name": "Elevaciones laterales en polea", "targetSets": 3, "targetReps": "10", "rest": 120, "unit": "kg", "sets": [{"number": 1, "weight": "5", "reps": "10", "rir": "1-2", "completed": true, "restActual": 120}, {"number": 2, "weight": "5", "reps": "10", "rir": "1-2", "completed": true, "restActual": 120}, {"number": 3, "weight": "5", "reps": "10", "rir": "1-2", "completed": true, "restActual": 120}]}]}];
+const DEFAULT_PLAN = {"id":"mesociclo-agosto-2026","name":"Mesociclo actual","startDate":"2026-08-03","endDate":"2026-08-31","weekDates":{"1":"2026-08-03","2":"2026-08-10","3":"2026-08-17","4":"2026-08-24"},"weeklyRir":{"1":"3","2":"2","3":"1-2","4":""},"exerciseRir":{}};
+const DEFAULT_NOTES = {"mesociclo-agosto-2026": {"elevaciones-laterales-polea": "Los discos van de 2,5 en 2,5 kg; es difícil ajustar el RIR con precisión."}};
+
+const STORAGE = {
+  routines:'nexus_routines_v06',
+  workouts:'nexus_workouts_v06',
+  active:'nexus_active_v06',
+  plan:'nexus_plan_v06',
+  notes:'nexus_notes_v06',
+  cleanupActiveV12:'nexus_cleanup_active_v12',
+  activities:'nexus_activities_v16'
+};
+
+let routines=load(STORAGE.routines,DEFAULT_ROUTINES);
+let workouts=load(STORAGE.workouts,DEFAULT_HISTORY);
+let activeWorkout=load(STORAGE.active,null);
+let plan=load(STORAGE.plan,DEFAULT_PLAN);
+let notesStore=load(STORAGE.notes,DEFAULT_NOTES);
+let timerInterval=null,restStartedAt=null,restTarget=0,timerExerciseIndex=null,timerSetIndex=null;
+let planDraft=null;
+let planEditorDirty=false;
+let pendingFinishMeta=null;
+let lastGeneratedSummary='';
+let historyMonthCursor=null;
+let activities=load(STORAGE.activities,[]);
+let editingSetIndex=null;
+
+function clearTestActiveWorkoutOnce(){
+  const alreadyCleaned=localStorage.getItem(STORAGE.cleanupActiveV12);
+  if(alreadyCleaned==='1') return;
+
+  // Limpieza única solicitada: elimina solo el entrenamiento activo de prueba.
+  localStorage.removeItem(STORAGE.active);
+  activeWorkout=null;
+  localStorage.setItem(STORAGE.cleanupActiveV12,'1');
+}
+
+const ROUTINE_NAMES = {
+  'dia-1':'Upper A',
+  'dia-2':'Lower A',
+  'dia-3':'Upper B',
+  'dia-4':'Lower B',
+  'dia-5':'Especialización'
+};
+
+function migrateRoutineNames(){
+  let changed=false;
+
+  routines.forEach(r=>{
+    const expected=ROUTINE_NAMES[r.id];
+    if(expected && r.name!==expected){
+      r.name=expected;
+      changed=true;
+    }
+  });
+
+  workouts.forEach(w=>{
+    const expected=ROUTINE_NAMES[w.routineId];
+    if(expected && w.routineName!==expected){
+      w.routineName=expected;
+      changed=true;
+    }
+  });
+
+  if(activeWorkout){
+    const expected=ROUTINE_NAMES[activeWorkout.routineId];
+    if(expected && activeWorkout.routineName!==expected){
+      activeWorkout.routineName=expected;
+      changed=true;
+    }
+  }
+
+  if(changed){
+    save(STORAGE.routines,routines);
+    save(STORAGE.workouts,workouts);
+    if(activeWorkout) save(STORAGE.active,activeWorkout);
+  }
+}
+
+function clone(v){return JSON.parse(JSON.stringify(v))}
+function load(k,f){try{const r=localStorage.getItem(k);return r?JSON.parse(r):clone(f)}catch(e){return clone(f)}}
+function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
+function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36)}
+function formatDate(v){return new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(v))}
+function formatTime(s){s=Math.max(0,Math.round(Number(s)||0));return `${String(Math.floor(s/60)).padStart(2,'0')}:${String(s%60).padStart(2,'0')}`}
+function parseRestValue(v){
+  const raw=String(v??'').trim();
+  if(!raw)return null;
+  if(raw.includes(':')){
+    const parts=raw.split(':').map(Number);
+    if(parts.length===2 && parts.every(Number.isFinite)) return Math.max(0,parts[0]*60+parts[1]);
+  }
+  const n=Number(raw.replace(',','.'));
+  return Number.isFinite(n)?Math.max(0,Math.round(n)):null;
+}
+function isSetRecorded(set, exercise){
+  const repsOk=String(set?.reps??'').trim()!=='';
+  const rirOk=String(set?.rir??'').trim()!=='';
+  const weightOk=exercise?.unit==='peso corporal' || String(set?.weight??'').trim()!=='';
+  return repsOk && rirOk && weightOk;
+}
+function recordedSetCount(exercise){
+  return exercise.sets.filter(s=>isSetRecorded(s,exercise)).length;
+}
+function syncRecordedSets(exercise){
+  exercise.sets.forEach(s=>{
+    const recorded=isSetRecorded(s,exercise);
+    s.completed=recorded;
+    if(recorded && !s.completedAt) s.completedAt=new Date().toISOString();
+    if(!recorded) s.completedAt=null;
+    if(s.restActual==null) s.restActual=Number(exercise.rest)||0;
+  });
+}
+function pencilIcon(){
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"/><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L8 18l-4 1 1-4Z"/></svg>`;
+}
+function saveIcon(){
+  return `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 12 4 4L19 6"/></svg>`;
+}
+function weightDisplay(s,unit){if(!s)return unit==='peso corporal'?'Peso corporal':'—'; if(!unit)return s; if(unit==='peso corporal')return 'Peso corporal'; return `${s} ${unit}`}
+function dateSerial(v){const d=v instanceof Date?v:new Date(v);return Date.UTC(d.getFullYear(),d.getMonth(),d.getDate())/86400000}
+function isoDateFromSerial(serial){
+  const d=new Date(serial*86400000);
+  return `${d.getUTCFullYear()}-${String(d.getUTCMonth()+1).padStart(2,'0')}-${String(d.getUTCDate()).padStart(2,'0')}`;
+}
+function addDaysISO(iso,days){return isoDateFromSerial(dateSerial(iso+'T00:00:00')+days)}
+function formatISODate(iso){
+  if(!iso)return '—';
+  const [y,m,d]=iso.split('-');
+  return `${d}/${m}/${y}`;
+}
+function buildDefaultWeekDates(startDate,endDate){
+  const result={};
+  let week=1;
+  let current=startDate;
+  while(current && dateSerial(current+'T00:00:00') < dateSerial(endDate+'T00:00:00') && week<=12){
+    result[String(week)]=current;
+    current=addDaysISO(current,7);
+    week++;
+  }
+  if(!Object.keys(result).length && startDate) result['1']=startDate;
+  return result;
+}
+function ensurePlanDates(){
+  let changed=false;
+  if(!plan.endDate){
+    plan.endDate=addDaysISO(plan.startDate,28);
+    changed=true;
+  }
+  if(!plan.weekDates || !Object.keys(plan.weekDates).length){
+    plan.weekDates=buildDefaultWeekDates(plan.startDate,plan.endDate);
+    changed=true;
+  }
+  if(!plan.weeklyRir) {
+    plan.weeklyRir={};
+    changed=true;
+  }
+  Object.keys(plan.weekDates).forEach(w=>{
+    if(plan.weeklyRir[w]===undefined) plan.weeklyRir[w]='';
+  });
+  if(changed) save(STORAGE.plan,plan);
+}
+function getWeek(v=new Date()){
+  ensurePlanDates();
+  const day=dateSerial(v);
+  const weeks=Object.entries(plan.weekDates)
+    .filter(([w,d])=>d)
+    .map(([w,d])=>({week:Number(w),serial:dateSerial(d+'T00:00:00')}))
+    .sort((a,b)=>a.serial-b.serial);
+  if(!weeks.length)return 1;
+  let current=weeks[0].week;
+  for(const item of weeks){
+    if(day>=item.serial) current=item.week;
+    else break;
+  }
+  return current;
+}
+function getTargetRir(key,week=getWeek()){const o=plan.exerciseRir?.[key]?.[String(week)];return (o!==undefined&&o!=='')?o:(plan.weeklyRir?.[String(week)]||'—')}
+function getNote(key){return notesStore[plan.id]?.[key]||''}
+function setNote(key,val){if(!notesStore[plan.id])notesStore[plan.id]={};notesStore[plan.id][key]=val;save(STORAGE.notes,notesStore)}
+function toast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');clearTimeout(t._to);t._to=setTimeout(()=>t.classList.remove('show'),1800)}
+
+function getCurrentWeekWorkout(routineId){
+  const week=getWeek();
+  return workouts.find(w=>w.routineId===routineId && Number(w.mesocycleWeek)===week) || null;
+}
+
+function previousWeekExercise(routineId,key,currentWeek){
+  const target=currentWeek-1;if(target<1)return null;
+  for(const w of workouts){
+    if(w.routineId!==routineId||Number(w.mesocycleWeek)!==target)continue;
+    const e=w.exercises.find(x=>x.key===key);
+    if(e)return e;
+  }
+  return null;
+}
+
+function init(){
+  clearTestActiveWorkoutOnce();
+  ensurePlanDates();
+  migrateRoutineNames();
+  document.getElementById('todayPill').textContent=new Intl.DateTimeFormat('es-ES',{weekday:'short',day:'numeric',month:'short'}).format(new Date());
+  document.querySelectorAll('.nav button').forEach(b=>b.addEventListener('click',()=>setView(b.dataset.view)));
+  document.getElementById('editPlanBtn').onclick=openPlan;
+  document.getElementById('closePlanBtn').onclick=requestClosePlan;
+  document.getElementById('savePlanBtn').onclick=savePlan;
+  document.getElementById('discardPlanBtn').onclick=discardPlanChanges;
+  document.getElementById('returnPlanBtn').onclick=()=>document.getElementById('discardPlanModal').classList.remove('open');
+  document.getElementById('regenerateWeeksBtn').onclick=regeneratePlanWeeks;
+
+  document.getElementById('closeFinishFeedbackBtn').onclick=()=>document.getElementById('finishFeedbackModal').classList.remove('open');
+  document.getElementById('confirmFinishBtn').onclick=completeWorkoutAndGenerateSummary;
+  document.getElementById('closeSessionSummaryBtn').onclick=closeSessionSummary;
+  document.getElementById('doneSessionSummaryBtn').onclick=closeSessionSummary;
+  document.getElementById('copySessionSummaryBtn').onclick=copySessionSummary;
+  document.getElementById('closeHistoryWorkoutBtn').onclick=()=>document.getElementById('historyWorkoutModal').classList.remove('open');
+  document.getElementById('addActivityBtn').onclick=openActivityModal;
+  document.getElementById('closeActivityBtn').onclick=()=>document.getElementById('activityModal').classList.remove('open');
+  document.getElementById('saveActivityBtn').onclick=saveActivity;
+  document.getElementById('closeHistoryActivityBtn').onclick=()=>document.getElementById('historyActivityModal').classList.remove('open');
+  document.getElementById('cardioNexusToggle').onchange=renderCardioNexusPreview;
+  document.getElementById('cardioWeekInput').onchange=renderCardioNexusPreview;
+  document.getElementById('cardioSessionInput').onchange=renderCardioNexusPreview;
+
+  renderAll();
+}
+function setView(id){document.querySelectorAll('.view').forEach(v=>v.classList.toggle('active',v.id===id));document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===id));if(id==='workoutView')renderWorkout();if(id==='historyView')renderHistory()}
+function renderAll(){renderHome();renderWorkout();renderHistory()}
+
+function renderHome(){
+  const week=getWeek();
+  document.getElementById('weekHero').textContent=`Semana ${week}`;
+  document.getElementById('cycleHero').textContent=plan.name;
+  const currentWeekDate=plan.weekDates?.[String(week)]||plan.startDate;
+  document.getElementById('mesocycleSummary').innerHTML=`<strong>${esc(plan.name)}</strong> · Semana ${week}<br>Inicio semana: ${esc(formatISODate(currentWeekDate))} · RIR base: ${esc(getTargetRir('__base__',week))}<br>Mesociclo: ${esc(formatISODate(plan.startDate))} → ${esc(formatISODate(plan.endDate))}`;
+  document.getElementById('routineList').innerHTML=routines.map(r=>{
+    const sets=r.exercises.reduce((a,e)=>a+Number(e.sets),0);
+    const thisWeek=getCurrentWeekWorkout(r.id);
+    const completed=!!thisWeek && thisWeek.isComplete!==false;
+    const incomplete=!!thisWeek && thisWeek.isComplete===false;
+    const statusText=completed
+      ? `Completado · ${formatDate(thisWeek.finishedAt||thisWeek.startedAt)}`
+      : (incomplete ? `Incompleto · ${formatDate(thisWeek.finishedAt||thisWeek.startedAt)}` : '');
+    const button=completed
+      ? `<button class="btn btn-completed" disabled>✓ Completado</button>`
+      : `<button class="btn btn-primary" onclick="startWorkout('${r.id}')">${incomplete?'Repetir':'Iniciar'}</button>`;
+    return `<div class="routine-card ${completed?'completed':''}">
+      <div class="row between">
+        <div>
+          <strong>${esc(r.name)}</strong>
+          <div class="small muted" style="margin-top:4px">${r.exercises.length} ejercicios · ${sets} series</div>
+          ${statusText?`<div class="routine-status">${esc(statusText)}</div>`:''}
+        </div>
+        ${button}
+      </div>
+    </div>`;
+  }).join('');
+  const last=workouts[0];
+  document.getElementById('lastWorkoutHome').innerHTML=last?`<strong>${esc(last.routineName)}</strong><br><span class="small">${formatDate(last.finishedAt)} · Semana ${last.mesocycleWeek} · Fatiga ${last.fatigue??'—'}/10 · Sensaciones ${last.sensations??'—'}/10</span>`:'Sin sesiones.';
+}
+
+function startWorkout(routineId){
+  const completedThisWeek=getCurrentWeekWorkout(routineId);
+  if(completedThisWeek && completedThisWeek.isComplete!==false){
+    toast('Este entrenamiento ya está completado esta semana');
+    return;
+  }
+  if(activeWorkout){
+    if(activeWorkout.routineId!==routineId){toast(`Ya tienes ${activeWorkout.routineName} en curso`)}
+    setView('workoutView');return;
+  }
+  const r=routines.find(x=>x.id===routineId);if(!r)return;
+  const week=getWeek();
+  activeWorkout={id:uid(),routineId:r.id,routineName:r.name,startedAt:new Date().toISOString(),mesocycleWeek:week,planId:plan.id,currentExercise:null,
+    exercises:r.exercises.map(e=>({...clone(e),targetSets:e.sets,targetReps:e.reps,sets:Array.from({length:Number(e.sets)},(_,i)=>({number:i+1,weight:'',reps:'',rir:'',completed:false,restActual:Number(e.rest)||0}))}))
+  };
+  save(STORAGE.active,activeWorkout);setView('workoutView');
+}
+
+function renderWorkout(){
+  const c=document.getElementById('workoutContent');
+  if(!activeWorkout){c.innerHTML=`<div class="card empty"><h2>No hay entrenamiento activo</h2><p>Elige una rutina desde Inicio.</p></div>`;return}
+  if(activeWorkout.currentExercise===null||activeWorkout.currentExercise===undefined){
+    const total=activeWorkout.exercises.reduce((a,e)=>a+e.sets.length,0);
+    activeWorkout.exercises.forEach(syncRecordedSets);
+    const done=activeWorkout.exercises.reduce((a,e)=>a+recordedSetCount(e),0);
+    c.innerHTML=`<div class="card"><div class="row between"><div><div class="eyebrow" style="color:#64748b">Entrenamiento en curso</div><h2 style="margin:4px 0">${esc(activeWorkout.routineName)}</h2></div><span class="week-badge">Semana ${activeWorkout.mesocycleWeek}</span></div>
+      <div class="progress"><div style="width:${total?Math.round(done/total*100):0}%"></div></div>
+      <p class="muted small">Elige el ejercicio según la máquina que esté libre. No necesitas seguir el orden.</p>
+      <div class="exercise-list">${activeWorkout.exercises.map((e,i)=>{
+        syncRecordedSets(e);
+        const n=recordedSetCount(e);
+        const marked=!!e.exerciseMarkedComplete;
+        return `<button class="exercise-item ${marked?'exercise-done':''}" onclick="openExercise(${i})">
+          <div>
+            <div class="name">${marked?'✓ ':''}${esc(e.name)}</div>
+            <div class="meta">${e.sets.length} × ${esc(e.targetReps)} · RIR ${esc(getTargetRir(e.key,activeWorkout.mesocycleWeek))} · descanso ${formatTime(e.rest)}</div>
+          </div>
+          <div class="exercise-progress">${n}/${e.sets.length}</div>
+        </button>`;
+      }).join('')}</div></div>
+      <button class="btn btn-danger btn-block" onclick="finishWorkout()">Finalizar entrenamiento</button>
+      ${done<total ? `<div class="incomplete-warning">Puedes finalizar y guardar el entrenamiento aunque queden ejercicios o series pendientes. Lo no realizado quedará registrado como incompleto.</div>` : ''}`;
+    return;
+  }
+
+  const idx=Number(activeWorkout.currentExercise),e=activeWorkout.exercises[idx],week=activeWorkout.mesocycleWeek,targetRir=getTargetRir(e.key,week),prev=previousWeekExercise(activeWorkout.routineId,e.key,week);
+  const prevMap=prev?Object.fromEntries(prev.sets.map(s=>[Number(s.number),s])):{};
+  syncRecordedSets(e);
+  const done=recordedSetCount(e);
+  const firstRecorded=isSetRecorded(e.sets[0],e);
+  c.innerHTML=`<button class="btn btn-secondary" style="margin-bottom:10px" onclick="backToList()">← Lista de ejercicios</button>
+  <div class="card">
+    <div class="row between"><div><div class="eyebrow" style="color:#64748b">${esc(activeWorkout.routineName)}</div><div class="exercise-title">${esc(e.name)}</div></div><span class="pill">${done}/${e.sets.length} series</span></div>
+    <div class="target">Objetivo: ${e.sets.length} x ${esc(e.targetReps)} - RIR ${esc(targetRir)} - Descanso ${formatTime(e.rest)}</div>
+    <div class="progress"><div style="width:${Math.round(done/e.sets.length*100)}%"></div></div>
+    <div style="margin-bottom:16px"><label>Notas del mesociclo</label><textarea id="exerciseNote" placeholder="Técnica, colocación, ajustes de máquina, molestias, recordatorios...">${esc(getNote(e.key))}</textarea></div>
+    <div>${e.sets.map((s,i)=>{
+      const p=prevMap[i+1];
+      const recorded=isSetRecorded(s,e);
+      const restDisplay=s.restActual!=null?formatTime(s.restActual):formatTime(e.rest);
+      return `<div class="set-block ${recorded?'set-completed':''}">
+        <div class="set-grid">
+          <div class="set-status">
+            <div class="set-label">S${i+1}${recorded?' ✓':''}</div>
+          </div>
+          <div><label>Peso</label><input data-field="weight" data-set="${i}" inputmode="decimal" value="${esc(s.weight)}"><div class="unit-hint">${esc(e.unit||'')}</div></div>
+          <div><label>Reps</label><input data-field="reps" data-set="${i}" value="${esc(s.reps)}"></div>
+          <div><label>RIR</label><input data-field="rir" data-set="${i}" value="${esc(s.rir)}"></div>
+          <div><label>Descanso</label><input data-field="restActual" data-set="${i}" inputmode="numeric" value="${esc(restDisplay)}" placeholder="mm:ss"></div>
+        </div>
+        <div class="previous-inline">
+          <div class="previous-inline-label">Semana pasada</div>
+          <div class="previous-inline-grid">
+            <div class="previous-mini">${p?esc(weightDisplay(p.weight,e.unit)):'—'}</div>
+            <div class="previous-mini">${p?esc(p.reps)+' reps':'—'}</div>
+            <div class="previous-mini">RIR ${p&&p.rir?esc(p.rir):'—'}</div>
+            <div class="previous-mini">${p&&p.restActual!=null?formatTime(p.restActual):'—'}</div>
+          </div>
+        </div>
+        
+      </div>`;
+    }).join('')}</div>
+    <div class="exercise-actions">
+      <button class="btn btn-secondary" ${firstRecorded?'':'disabled'} onclick="replicateFirstSet()">Replicar series</button>
+      <button class="btn btn-complete-exercise" ${done>0?'':'disabled'} onclick="markExerciseComplete()">Ejercicio completado</button>
+    </div>
+  </div>`;
+
+  c.querySelectorAll('input[data-field]').forEach(inp=>{
+    const saveValue=()=>{
+      const s=e.sets[Number(inp.dataset.set)];
+      if(inp.dataset.field==='restActual'){
+        const parsed=parseRestValue(inp.value);
+        s.restActual=parsed==null ? Number(e.rest)||0 : parsed;
+      }else{
+        s[inp.dataset.field]=inp.value;
+      }
+      syncRecordedSets(e);
+      save(STORAGE.active,activeWorkout);
+      renderWorkout();
+    };
+    inp.onchange=saveValue;
+  });
+  document.getElementById('exerciseNote').oninput=(ev)=>setNote(e.key,ev.target.value);
+}
+
+function openExercise(i){
+  editingSetIndex=null;
+  activeWorkout.currentExercise=i;
+  save(STORAGE.active,activeWorkout);
+  renderWorkout();
+}
+function backToList(){
+  editingSetIndex=null;
+  activeWorkout.currentExercise=null;
+  save(STORAGE.active,activeWorkout);
+  renderWorkout();
+}
+
+function replicateFirstSet(){
+  const e=activeWorkout.exercises[activeWorkout.currentExercise];
+  const source=e?.sets?.[0];
+  if(!source || !isSetRecorded(source,e)){
+    toast('Completa primero los datos de S1');
+    return;
+  }
+
+  e.sets.forEach((s,i)=>{
+    if(i===0)return;
+    s.weight=source.weight;
+    s.reps=source.reps;
+    s.rir=source.rir;
+    s.restActual=source.restActual!=null ? source.restActual : Number(e.rest)||0;
+  });
+
+  syncRecordedSets(e);
+  save(STORAGE.active,activeWorkout);
+  renderWorkout();
+  toast('Series replicadas');
+}
+
+function markExerciseComplete(){
+  const e=activeWorkout.exercises[activeWorkout.currentExercise];
+  syncRecordedSets(e);
+  const done=recordedSetCount(e);
+  if(done===0){
+    toast('Registra al menos una serie');
+    return;
+  }
+
+  if(done<e.sets.length){
+    const ok=confirm(`Has registrado ${done} de ${e.sets.length} series. ¿Quieres marcar igualmente el ejercicio como completado?`);
+    if(!ok)return;
+  }
+
+  e.exerciseMarkedComplete=true;
+  e.exerciseMarkedAt=new Date().toISOString();
+  save(STORAGE.active,activeWorkout);
+  backToList();
+  toast(`Ejercicio guardado · ${done}/${e.sets.length} series`);
+}
+
+function calculateWorkoutDuration(){
+  if(!activeWorkout?.startedAt)return '';
+  const started=new Date(activeWorkout.startedAt).getTime();
+  const mins=Math.max(1,Math.round((Date.now()-started)/60000));
+  if(mins<60)return `${mins} min`;
+  const h=Math.floor(mins/60),m=mins%60;
+  return m?`${h} h ${m} min`:`${h} h`;
+}
+
+function finishWorkout(){
+  if(!activeWorkout)return;
+
+  activeWorkout.exercises.forEach(syncRecordedSets);
+  const total=activeWorkout.exercises.reduce((a,e)=>a+e.sets.length,0);
+  const done=activeWorkout.exercises.reduce((a,e)=>a+recordedSetCount(e),0);
+  const incomplete=done<total;
+
+  pendingFinishMeta={total,done,incomplete};
+
+  document.getElementById('finishCompletionInfo').textContent=incomplete
+    ? `Has completado ${done} de ${total} series. El entrenamiento se guardará como incompleto.`
+    : `Has completado las ${total} series del entrenamiento.`;
+
+  document.getElementById('finishDurationInput').value=calculateWorkoutDuration();
+  document.getElementById('finishDiscomfortInput').value='Ninguna';
+  document.getElementById('finishFatigueInput').value='';
+  document.getElementById('finishSensationsInput').value='';
+  document.getElementById('finishHardestInput').value='';
+  document.getElementById('finishNotesInput').value='';
+
+  document.getElementById('finishFeedbackModal').classList.add('open');
+}
+
+function formatSummaryWeight(weight,unit){
+  if(unit==='peso corporal'){
+    return weight ? `${weight} kg + peso corporal` : 'peso corporal';
+  }
+  if(!weight)return 'sin carga registrada';
+  if(unit==='kg/lado')return `${weight} kg a cada lado`;
+  if(unit==='kg manc.')return `mancuerna ${weight} kg`;
+  if(unit==='kg/lado + barra')return `barra olímpica + ${weight} kg a cada lado`;
+  if(unit==='kg ayuda')return `ayuda de ${weight} kg`;
+  if(unit)return `${weight} ${unit}`;
+  return String(weight);
+}
+
+function generateWorkoutSummaryText(workout){
+  const lines=[];
+  lines.push(`SEMANA ${workout.mesocycleWeek}:`);
+  lines.push(`${workout.routineName.toUpperCase()}`);
+  lines.push('');
+
+  workout.exercises.forEach(e=>{
+    const completed=e.sets.filter(s=>s.completed);
+    if(!completed.length)return;
+
+    const same=completed.every(s=>
+      String(s.weight)===String(completed[0].weight) &&
+      String(s.reps)===String(completed[0].reps) &&
+      String(s.rir)===String(completed[0].rir) &&
+      String(s.restActual??'')===String(completed[0].restActual??'')
+    );
+
+    if(same){
+      const s=completed[0];
+      const rir=s.rir ? ` RIR ${s.rir}` : '';
+      const restText=s.restActual!=null?formatTime(s.restActual):formatTime(e.rest);
+      lines.push(`${e.name}: ${completed.length}x${s.reps} ${formatSummaryWeight(s.weight,e.unit)}${rir} ${restText} de descanso`);
+    }else{
+      lines.push(`${e.name}:`);
+      completed.forEach(s=>{
+        const rir=s.rir ? ` RIR ${s.rir}` : '';
+        const rest=s.restActual!=null ? ` · descanso real ${formatTime(s.restActual)}` : '';
+        lines.push(`S${s.number}: ${formatSummaryWeight(s.weight,e.unit)} x ${s.reps}${rir}${rest}`);
+      });
+    }
+  });
+
+  if(workout.isComplete===false){
+    lines.push('');
+    lines.push(`Entrenamiento incompleto: ${workout.completedSets}/${workout.totalSets} series realizadas`);
+  }
+
+  lines.push('');
+  lines.push(`Duración: ${workout.duration||'No indicada'}`);
+  lines.push(`Molestia: ${workout.discomfort||'No indicada'}`);
+  lines.push(`Fatiga: ${workout.fatigue!=='' && workout.fatigue!=null ? workout.fatigue+'/10' : 'No indicada'}`);
+  lines.push(`Sensaciones: ${workout.sensations!=='' && workout.sensations!=null ? workout.sensations+'/10' : 'No indicada'}`);
+  lines.push(`¿Qué ejercicio te ha costado más y por qué?:`);
+  lines.push(workout.hardest||'No indicado');
+
+  if(workout.notes){
+    lines.push('');
+    lines.push(`Notas adicionales: ${workout.notes}`);
+  }
+
+  lines.push('');
+  lines.push('Analiza este entrenamiento respecto a las semanas anteriores y dime si mantendrías o ajustarías cargas, repeticiones, RIR o descansos para la siguiente sesión.');
+
+  return lines.join('\n');
+}
+
+function completeWorkoutAndGenerateSummary(){
+  if(!activeWorkout || !pendingFinishMeta)return;
+
+  if(restStartedAt!==null){
+    const elapsed=Math.floor((Date.now()-restStartedAt)/1000);
+    const e=activeWorkout.exercises[timerExerciseIndex];
+    if(e?.sets?.[timerSetIndex]) e.sets[timerSetIndex].restActual=elapsed;
+    clearInterval(timerInterval);
+    restStartedAt=null;
+  }
+
+  activeWorkout.finishedAt=new Date().toISOString();
+  activeWorkout.duration=document.getElementById('finishDurationInput').value.trim();
+  activeWorkout.discomfort=document.getElementById('finishDiscomfortInput').value.trim();
+  activeWorkout.fatigue=document.getElementById('finishFatigueInput').value.trim();
+  activeWorkout.sensations=document.getElementById('finishSensationsInput').value.trim();
+  activeWorkout.hardest=document.getElementById('finishHardestInput').value.trim();
+  activeWorkout.notes=document.getElementById('finishNotesInput').value.trim();
+  activeWorkout.completedSets=pendingFinishMeta.done;
+  activeWorkout.totalSets=pendingFinishMeta.total;
+  activeWorkout.isComplete=!pendingFinishMeta.incomplete;
+
+  const completedWorkout=clone(activeWorkout);
+  workouts.unshift(completedWorkout);
+  save(STORAGE.workouts,workouts);
+
+  lastGeneratedSummary=generateWorkoutSummaryText(completedWorkout);
+
+  localStorage.removeItem(STORAGE.active);
+  activeWorkout=null;
+  pendingFinishMeta=null;
+
+  document.getElementById('finishFeedbackModal').classList.remove('open');
+  document.getElementById('sessionSummaryText').value=lastGeneratedSummary;
+  document.getElementById('sessionSummaryModal').classList.add('open');
+
+  renderAll();
+  setView('historyView');
+}
+
+async function copySessionSummary(){
+  const btn=document.getElementById('copySessionSummaryBtn');
+  const textValue=document.getElementById('sessionSummaryText').value;
+  try{
+    await navigator.clipboard.writeText(textValue);
+    const old=btn.textContent;
+    btn.textContent='✓ Texto copiado';
+    btn.classList.add('copy-success');
+    setTimeout(()=>{
+      btn.textContent=old;
+      btn.classList.remove('copy-success');
+    },1800);
+  }catch(e){
+    const area=document.getElementById('sessionSummaryText');
+    area.removeAttribute('readonly');
+    area.select();
+    document.execCommand('copy');
+    area.setAttribute('readonly','');
+    toast('Texto copiado');
+  }
+}
+
+function closeSessionSummary(){
+  document.getElementById('sessionSummaryModal').classList.remove('open');
+  lastGeneratedSummary='';
+}
+
+function getWorkoutDateISO(workout){
+  return String(workout.finishedAt || workout.startedAt || '').slice(0,10);
+}
+
+function monthKeyFromISO(iso){
+  return String(iso).slice(0,7);
+}
+
+function shiftMonthKey(monthKey, delta){
+  const [year, month] = monthKey.split('-').map(Number);
+  const d = new Date(year, month - 1 + delta, 1);
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+}
+
+function formatMonthLabel(monthKey){
+  const [year, month] = monthKey.split('-').map(Number);
+  return new Intl.DateTimeFormat('es-ES', {month:'long', year:'numeric'}).format(new Date(year, month-1, 1)).toUpperCase();
+}
+
+const CARDIO_NEXUS_PROGRAM = {
+  1: {
+    C1: {session:'C1', type:'Velocidad', visual:'cardio-c1', icon:'speed', training:`10' calentamiento + 6 × 400 m (rec. 1'30") + 10' enfriamiento`, duration:'40–45 min', objective:'Reintroducir la intensidad y mejorar la economía de carrera.'},
+    C2: {session:'C2', type:'Resistencia', visual:'cardio-c2', icon:'endurance', training:`45' Resistencia + 4 progresivos (80–100 m)`, duration:'45–50 min', objective:'Recuperar la base aeróbica y comenzar el trabajo técnico.'},
+    C3: {session:'C3', type:'Senderismo', visual:'cardio-c3', icon:'mountain', training:'Ruta de 15–18 km (sin objetivo de ritmo)', duration:'Variable', objective:'Adaptar pies y musculatura al tiempo prolongado en movimiento.'}
+  },
+  2: {
+    C1: {session:'C1', type:'Velocidad', visual:'cardio-c1', icon:'speed', training:`10' calentamiento + Fartlek 8 × (2' rápido + 2' suave) + 10' enfriamiento`, duration:'40–45 min', objective:'Mejorar la capacidad de cambiar de ritmo sin excesiva fatiga.'},
+    C2: {session:'C2', type:'Resistencia', visual:'cardio-c2', icon:'endurance', training:`50' Resistencia + 5 progresivos + 5' técnica (skipping y talones al glúteo)`, duration:'50–55 min', objective:'Aumentar ligeramente el volumen y reforzar la técnica.'},
+    C3: {session:'C3', type:'Senderismo', visual:'cardio-c3', icon:'mountain', training:'Ruta de 18–22 km (sin objetivo de ritmo)', duration:'Variable', objective:'Incrementar el tiempo en carga y practicar hidratación.'}
+  },
+  3: {
+    C1: {session:'C1', type:'Velocidad', visual:'cardio-c1', icon:'speed', training:`10' calentamiento + 5 × 800 m (rec. 2') + 10' enfriamiento`, duration:'40–45 min', objective:'Mejorar el ritmo sostenible y la resistencia específica.'},
+    C2: {session:'C2', type:'Resistencia', visual:'cardio-c2', icon:'endurance', training:`55' Resistencia + 6 progresivos (80–100 m)`, duration:'55–60 min', objective:'Consolidar la base aeróbica.'},
+    C3: {session:'C3', type:'Senderismo', visual:'cardio-c3', icon:'mountain', training:'Ruta de 22–25 km (sin objetivo de ritmo)', duration:'Variable', objective:'Acostumbrar el cuerpo a salidas más largas.'}
+  },
+  4: {
+    C1: {session:'C1', type:'Velocidad', visual:'cardio-c1', icon:'speed', training:`10' calentamiento + Fartlek 6 × (3' rápido + 2' suave) + 10' enfriamiento`, duration:'40–45 min', objective:'Estímulo más continuo de intensidad.'},
+    C2: {session:'C2', type:'Resistencia', visual:'cardio-c2', icon:'endurance', training:`60' Resistencia + 6 progresivos + 10' técnica de carrera`, duration:'60–70 min', objective:'Maximizar la eficiencia antes del siguiente mesociclo.'},
+    C3: {session:'C3', type:'Senderismo', visual:'cardio-c3', icon:'mountain', training:'Ruta de 22–25 km (sin objetivo de ritmo)', duration:'Variable', objective:'Consolidar el volumen antes de aumentar la carga en el siguiente bloque.'}
+  }
+};
+
+function getCardioNexusSession(week, session){
+  return CARDIO_NEXUS_PROGRAM?.[Number(week)]?.[session] || null;
+}
+
+function svgIcon(name){
+  const icons = {
+    upper: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9v6M6 7v10M9 10h6M15 7v10M18 9v6"/><path d="M4.5 7h1.5M4.5 17h1.5M17 7h1.5M17 17h1.5"/></svg>`,
+    lower: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9v6M6 7v10M9 10h6M15 7v10M18 9v6"/><path d="M4.5 7h1.5M4.5 17h1.5M17 7h1.5M17 17h1.5"/></svg>`,
+    target: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="8"/><circle cx="12" cy="12" r="4"/><path d="M12 2v3M22 12h-3M12 22v-3M2 12h3"/></svg>`,
+    speed: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 14a8 8 0 1 1 16 0"/><path d="M12 12l5-4"/><path d="M7 14h.01M12 8h.01M17 14h.01"/></svg>`,
+    endurance: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 20s-7-4.4-7-10a4 4 0 0 1 7-2.5A4 4 0 0 1 19 10c0 5.6-7 10-7 10Z"/><path d="M8 12h2l1-2 2 4 1-2h2"/></svg>`,
+    mountain: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 19l6-9 4 6 2-4 6 7H3z"/><path d="M14 8l1.5-2L17 8"/></svg>`,
+    padel: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><ellipse cx="10" cy="9" rx="5" ry="7"/><path d="M13 14l5 7"/><circle cx="18" cy="5" r="2"/></svg>`,
+    walk: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="4" r="2"/><path d="M10 8l3 2 2 4M11 10l-3 4M13 14l-1 7M8 14l-3 5M15 14l4 5"/></svg>`,
+    swim: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="15" cy="6" r="2"/><path d="M4 12l4-3 4 2 3 3M2 18c2 0 2-1 4-1s2 1 4 1 2-1 4-1 2 1 4 1 2-1 4-1"/></svg>`,
+    run: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14" cy="4" r="2"/><path d="M10 9l4-2 3 3M12 9l-2 5-4 2M10 14l4 2 2 5M8 12l-5 3"/></svg>`,
+    bike: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="17" r="4"/><circle cx="18" cy="17" r="4"/><path d="M6 17l5-8h4l3 8M10 9l4 8M9 6h4"/></svg>`,
+    hike: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20l6-9 4 5 2-3 6 7H3z"/><path d="M15 5l2-2 2 2"/></svg>`,
+    other: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>`
+  };
+  return icons[name] || icons.other;
+}
+
+function getActivityVisual(type){
+  const map = {
+    padel:{icon:'padel', cls:'padel', label:'Pádel'},
+    walk:{icon:'walk', cls:'walk', label:'Caminar'},
+    swim:{icon:'swim', cls:'swim', label:'Nadar'},
+    run:{icon:'run', cls:'run', label:'Correr'},
+    bike:{icon:'bike', cls:'bike', label:'Bicicleta'},
+    hike:{icon:'hike', cls:'hike', label:'Montaña'},
+    other:{icon:'other', cls:'other', label:'Otra'}
+  };
+  return map[type] || map.other;
+}
+
+function getRoutineVisual(routineId){
+  const map = {
+    'dia-1': {icon:'upper', cls:'blue', label:'Upper A', code:'UA'},
+    'dia-2': {icon:'lower', cls:'orange', label:'Lower A', code:'LA'},
+    'dia-3': {icon:'upper', cls:'green', label:'Upper B', code:'UB'},
+    'dia-4': {icon:'lower', cls:'red', label:'Lower B', code:'LB'},
+    'dia-5': {icon:'target', cls:'purple', label:'Especialización', code:'E'}
+  };
+  return map[routineId] || {icon:'other', cls:'blue', label:'Entrenamiento', code:'GYM'};
+}
+
+function renderWorkoutDetailExercises(workout){
+  return workout.exercises
+    .filter(e=>e.sets.some(s=>s.completed))
+    .map(e=>{
+      const completed=e.sets.filter(s=>s.completed);
+      const allSame=completed.length>0 && completed.every(s=>
+        String(s.weight||'')===String(completed[0].weight||'') &&
+        String(s.reps||'')===String(completed[0].reps||'') &&
+        String(s.rir||'')===String(completed[0].rir||'')
+      );
+
+      if(allSame){
+        const s=completed[0];
+        const weight=weightDisplay(s.weight,e.unit);
+        const rir=s.rir ? ` · RIR ${esc(s.rir)}` : '';
+        return `
+          <div class="history-detail-block">
+            <strong>${esc(e.name)}</strong>
+            <div class="history-compact">
+              <strong>${completed.length}×${esc(s.reps)}</strong> · ${esc(weight)}${rir}${completed.every(x=>x.restActual===s.restActual) && s.restActual!=null ? ` · descanso ${formatTime(s.restActual)}` : ''}
+            </div>
+          </div>`;
+      }
+
+      return `
+        <div class="history-detail-block">
+          <strong>${esc(e.name)}</strong>
+          ${completed.map(s=>`
+            <div class="set-line">
+              <span>S${s.number}</span>
+              <span><strong>${esc(weightDisplay(s.weight,e.unit))}</strong></span>
+              <span><strong>${esc(s.reps)}</strong> reps</span>
+              <span class="muted">RIR ${s.rir?esc(s.rir):'—'}</span>
+              <span class="muted">${s.restActual!=null?formatTime(s.restActual):'—'}</span>
+            </div>
+          `).join('')}
+        </div>`;
+    }).join('');
+}
+
+function openHistoryWorkout(workoutId){
+  const workout = workouts.find(w=>w.id===workoutId);
+  if(!workout) return;
+
+  const visual = getRoutineVisual(workout.routineId);
+  document.getElementById('historyWorkoutEyebrow').textContent = `Semana ${workout.mesocycleWeek} · ${visual.label}`;
+  document.getElementById('historyWorkoutTitle').textContent = `${workout.routineName} · ${formatDate(workout.finishedAt||workout.startedAt)}`;
+
+  document.getElementById('historyWorkoutContent').innerHTML = `
+    <div class="history-meta">
+      <span class="history-badge">${svgIcon(visual.icon)} ${visual.label}</span>
+      <span class="history-badge">${workout.isComplete===false ? 'Incompleto' : 'Completado'}</span>
+      <span class="history-badge">${workout.completedSets ?? workout.exercises.reduce((a,e)=>a+e.sets.filter(s=>s.completed).length,0)} series</span>
+      ${workout.duration ? `<span class="history-badge">Duración: ${esc(workout.duration)}</span>` : ''}
+      ${workout.fatigue!=='' && workout.fatigue!=null ? `<span class="history-badge">Fatiga: ${esc(workout.fatigue)}/10</span>` : ''}
+      ${workout.sensations!=='' && workout.sensations!=null ? `<span class="history-badge">Sensaciones: ${esc(workout.sensations)}/10</span>` : ''}
+    </div>
+
+    ${workout.discomfort ? `<div class="small" style="margin-top:12px"><strong>Molestia:</strong> ${esc(workout.discomfort)}</div>` : ''}
+    ${workout.hardest ? `<div class="small" style="margin-top:8px"><strong>Más exigente:</strong> ${esc(workout.hardest)}</div>` : ''}
+    ${workout.notes ? `<div class="small muted" style="margin-top:8px">${esc(workout.notes)}</div>` : ''}
+
+    ${renderWorkoutDetailExercises(workout)}
+  `;
+
+  document.getElementById('historyWorkoutModal').classList.add('open');
+}
+
+function renderCardioNexusPreview(){
+  const box=document.getElementById('cardioNexusBox');
+  const fields=document.getElementById('cardioNexusFields');
+  const enabled=document.getElementById('cardioNexusToggle').checked;
+  const week=document.getElementById('cardioWeekInput').value;
+  const sessionCode=document.getElementById('cardioSessionInput').value;
+  const preview=document.getElementById('cardioNexusPreview');
+
+  box.classList.toggle('active', enabled);
+  fields.classList.toggle('show', enabled);
+
+  if(!enabled){
+    preview.innerHTML='';
+    return;
+  }
+
+  const session=getCardioNexusSession(week, sessionCode);
+  if(!session){
+    preview.innerHTML='<div class="small muted">No se encontró la sesión seleccionada.</div>';
+    return;
+  }
+
+  preview.innerHTML=`
+    <div class="cardio-preview-title">${svgIcon(session.icon)} Semana ${week} · ${session.session} · ${session.type}</div>
+    <div class="small"><strong>Entrenamiento:</strong> ${esc(session.training)}</div>
+    <div class="small" style="margin-top:6px"><strong>Duración orientativa:</strong> ${esc(session.duration)}</div>
+    <div class="small" style="margin-top:6px"><strong>Objetivo:</strong> ${esc(session.objective)}</div>
+  `;
+}
+
+function openActivityModal(){
+  document.getElementById('activityDateInput').value=new Date().toISOString().slice(0,10);
+  document.getElementById('activityTypeInput').value='padel';
+  document.getElementById('activityDurationInput').value='';
+  document.getElementById('activityDistanceInput').value='';
+  document.getElementById('activityNotesInput').value='';
+  document.getElementById('cardioNexusToggle').checked=false;
+  document.getElementById('cardioWeekInput').value=String(getWeek());
+  document.getElementById('cardioSessionInput').value='C1';
+  renderCardioNexusPreview();
+  document.getElementById('activityModal').classList.add('open');
+}
+
+function saveActivity(){
+  const date=document.getElementById('activityDateInput').value;
+  const type=document.getElementById('activityTypeInput').value;
+  const useCardioNexus=document.getElementById('cardioNexusToggle').checked;
+  if(!date){toast('Selecciona una fecha');return;}
+
+  const activity={
+    id:uid(),
+    date,
+    type,
+    duration:document.getElementById('activityDurationInput').value.trim(),
+    distance:document.getElementById('activityDistanceInput').value.trim(),
+    notes:document.getElementById('activityNotesInput').value.trim(),
+    createdAt:new Date().toISOString()
+  };
+
+  if(useCardioNexus){
+    const cardioWeek=document.getElementById('cardioWeekInput').value;
+    const cardioSession=document.getElementById('cardioSessionInput').value;
+    const session=getCardioNexusSession(cardioWeek, cardioSession);
+    if(!session){
+      toast('Selecciona una sesión de Cardio Nexus válida');
+      return;
+    }
+    activity.cardioNexus={
+      week:Number(cardioWeek),
+      session:cardioSession,
+      type:session.type,
+      icon:session.icon,
+      visual:session.visual,
+      training:session.training,
+      plannedDuration:session.duration,
+      objective:session.objective
+    };
+    if(!activity.duration) activity.duration=session.duration;
+  }
+
+  activities.push(activity);
+  activities.sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+  save(STORAGE.activities,activities);
+
+  document.getElementById('activityModal').classList.remove('open');
+  historyMonthCursor=monthKeyFromISO(date);
+  renderHistory();
+  toast('Actividad guardada');
+}
+
+function openHistoryActivity(activityId){
+  const activity=activities.find(a=>a.id===activityId);
+  if(!activity)return;
+
+  if(activity.cardioNexus){
+    const cn=activity.cardioNexus;
+    document.getElementById('historyActivityTitle').textContent=`Cardio Nexus · Semana ${cn.week} · ${cn.session}`;
+    document.getElementById('historyActivityContent').innerHTML=`
+      <div class="history-meta">
+        <span class="history-badge">${svgIcon(cn.icon)} ${cn.session} · ${cn.type}</span>
+        ${activity.duration?`<span class="history-badge">Duración: ${esc(activity.duration)}</span>`:''}
+        ${activity.distance?`<span class="history-badge">Distancia: ${esc(activity.distance)}</span>`:''}
+      </div>
+      <div class="history-detail-block">
+        <strong>Entrenamiento</strong>
+        <div class="small" style="margin-top:8px">${esc(cn.training)}</div>
+      </div>
+      <div class="history-detail-block">
+        <strong>Objetivo</strong>
+        <div class="small" style="margin-top:8px">${esc(cn.objective)}</div>
+      </div>
+      ${activity.notes?`<div class="history-detail-block"><strong>Notas</strong><div class="small" style="margin-top:8px">${esc(activity.notes)}</div></div>`:''}
+    `;
+    document.getElementById('historyActivityModal').classList.add('open');
+    return;
+  }
+
+  const visual=getActivityVisual(activity.type);
+  document.getElementById('historyActivityTitle').textContent=`${visual.label} · ${formatISODate(activity.date)}`;
+  document.getElementById('historyActivityContent').innerHTML=`
+    <div class="history-meta">
+      <span class="history-badge">${svgIcon(visual.icon)} ${visual.label}</span>
+      ${activity.duration?`<span class="history-badge">Duración: ${esc(activity.duration)}</span>`:''}
+      ${activity.distance?`<span class="history-badge">Distancia: ${esc(activity.distance)}</span>`:''}
+    </div>
+    ${activity.notes?`<div class="small" style="margin-top:14px"><strong>Notas:</strong> ${esc(activity.notes)}</div>`:''}
+  `;
+  document.getElementById('historyActivityModal').classList.add('open');
+}
+
+function changeHistoryMonth(delta){
+  if(!historyMonthCursor){
+    const ref = workouts[0] ? getWorkoutDateISO(workouts[0]) : new Date().toISOString().slice(0,10);
+    historyMonthCursor = monthKeyFromISO(ref);
+  }
+  historyMonthCursor = shiftMonthKey(historyMonthCursor, delta);
+  renderHistory();
+}
+
+function renderHistory(){
+  document.getElementById('sessionCountPill').textContent=`${workouts.length} sesiones`;
+
+  if(!historyMonthCursor){
+    const ref = workouts[0] ? getWorkoutDateISO(workouts[0]) : new Date().toISOString().slice(0,10);
+    historyMonthCursor = monthKeyFromISO(ref);
+  }
+
+  document.getElementById('historyMonthLabel').textContent = formatMonthLabel(historyMonthCursor);
+
+  const workoutsByDate = {};
+  workouts.forEach(w=>{
+    const iso = getWorkoutDateISO(w);
+    if(!workoutsByDate[iso]) workoutsByDate[iso] = [];
+    workoutsByDate[iso].push(w);
+  });
+
+  const activitiesByDate = {};
+  activities.forEach(a=>{
+    if(!activitiesByDate[a.date]) activitiesByDate[a.date]=[];
+    activitiesByDate[a.date].push(a);
+  });
+
+  const [year, month] = historyMonthCursor.split('-').map(Number);
+  const daysInMonth = new Date(year, month, 0).getDate();
+  const firstWeekday = (new Date(year, month-1, 1).getDay() + 6) % 7;
+  const todayIso = new Date().toISOString().slice(0,10);
+
+  const headers = ['LUN','MAR','MIÉ','JUE','VIE','SÁB','DOM']
+    .map(d=>`<div class="calendar-weekday">${d}</div>`).join('');
+
+  let cells = '';
+  for(let i=0;i<firstWeekday;i++){
+    cells += `<div class="calendar-cell empty"></div>`;
+  }
+
+  for(let day=1; day<=daysInMonth; day++){
+    const iso = `${year}-${String(month).padStart(2,'0')}-${String(day).padStart(2,'0')}`;
+    const dayWorkouts = workoutsByDate[iso] || [];
+    const dayActivities = activitiesByDate[iso] || [];
+    cells += `
+      <div class="calendar-cell ${iso===todayIso ? 'today' : ''}">
+        <div class="calendar-day-number">${day}</div>
+        <div class="calendar-workouts">
+          ${dayWorkouts.map(w=>{
+            const visual = getRoutineVisual(w.routineId);
+            return `<button class="workout-chip ${visual.cls}" title="${esc(w.routineName)}" onclick="openHistoryWorkout('${w.id}')"><span class="workout-chip-stack">${svgIcon(visual.icon)}<span class="workout-chip-code">${esc(visual.code)}</span></span></button>`;
+          }).join('')}
+          ${dayActivities.map(a=>{
+            const visual=a.cardioNexus
+              ? {cls:a.cardioNexus.visual, icon:a.cardioNexus.icon, label:`Cardio Nexus · ${a.cardioNexus.session}`}
+              : getActivityVisual(a.type);
+            return `<button class="activity-chip ${visual.cls}" title="${esc(visual.label)}" onclick="openHistoryActivity('${a.id}')">${svgIcon(visual.icon)}</button>`;
+          }).join('')}
+        </div>
+      </div>`;
+  }
+
+  document.getElementById('historyCalendar').innerHTML = `<div class="calendar-grid">${headers}${cells}</div>`;
+}
+
+function openPlan(){
+  ensurePlanDates();
+  planDraft=clone(plan);
+  if(!planDraft.endDate) planDraft.endDate=addDaysISO(planDraft.startDate,28);
+  if(!planDraft.weekDates||!Object.keys(planDraft.weekDates).length){
+    planDraft.weekDates=buildDefaultWeekDates(planDraft.startDate,planDraft.endDate);
+  }
+  if(!planDraft.weeklyRir)planDraft.weeklyRir={};
+  planEditorDirty=false;
+  renderPlanEditor();
+  document.getElementById('planModal').classList.add('open');
+}
+
+function requestClosePlan(){
+  if(planEditorDirty){
+    document.getElementById('discardPlanModal').classList.add('open');
+    return;
+  }
+  document.getElementById('planModal').classList.remove('open');
+  planDraft=null;
+}
+
+function discardPlanChanges(){
+  document.getElementById('discardPlanModal').classList.remove('open');
+  document.getElementById('planModal').classList.remove('open');
+  planDraft=null;
+  planEditorDirty=false;
+}
+
+function regeneratePlanWeeks(){
+  if(!planDraft)return;
+  const start=document.getElementById('planStartInput').value||planDraft.startDate;
+  const end=document.getElementById('planEndInput').value||addDaysISO(start,28);
+
+  planDraft.startDate=start;
+  planDraft.endDate=end;
+  planDraft.weekDates=buildDefaultWeekDates(start,end);
+  if(!planDraft.weeklyRir)planDraft.weeklyRir={};
+  Object.keys(planDraft.weekDates).forEach(w=>{
+    if(planDraft.weeklyRir[w]===undefined)planDraft.weeklyRir[w]='';
+  });
+
+  planEditorDirty=true;
+  renderPlanEditor();
+  toast('Semanas regeneradas');
+}
+
+function savePlan(){
+  if(!planDraft)return;
+  planDraft.name=(document.getElementById('planNameInput').value||'').trim()||'Mesociclo actual';
+  planDraft.startDate=document.getElementById('planStartInput').value||planDraft.startDate;
+  planDraft.endDate=document.getElementById('planEndInput').value||addDaysISO(planDraft.startDate,28);
+
+  document.querySelectorAll('[data-week-date]').forEach(i=>{
+    planDraft.weekDates[String(i.dataset.weekDate)]=i.value;
+  });
+  document.querySelectorAll('[data-week-rir]').forEach(i=>{
+    planDraft.weeklyRir[String(i.dataset.weekRir)]=i.value.trim();
+  });
+
+  plan=clone(planDraft);
+  save(STORAGE.plan,plan);
+  planEditorDirty=false;
+  planDraft=null;
+  document.getElementById('discardPlanModal').classList.remove('open');
+  document.getElementById('planModal').classList.remove('open');
+  renderAll();
+  toast('Plan guardado');
+}
+
+init();
+</script>
+</body>
+</html>
