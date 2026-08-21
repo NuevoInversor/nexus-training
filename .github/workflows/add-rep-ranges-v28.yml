@@ -13,7 +13,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Patch planned rep ranges
+      - name: Patch planned rep ranges and version stamp
         shell: python
         run: |
           from pathlib import Path
@@ -72,7 +72,9 @@ function getTargetRepRange(key,week=getWeek(),fallback=''){
           text=text.replace(old2,new2)
 
           text=text.replace('<title>Nexus Training v2.7</title>','<title>Nexus Training v2.8</title>')
-          text=text.replace('Training · v2.7','Training · v2.8')
+          text=text.replace('<title>Nexus Training v2.8</title>','<title>Nexus Training v2.8</title>')
+          import re
+          text=re.sub(r'Training\s*[·-]\s*v2\.[0-9]+(?:\s*\([^<]*\))?', 'Training - v2.8 (21/08/2026 10:40:27)', text, count=1)
           path.write_text(text,encoding='utf-8')
       - name: Commit changes
         run: |
@@ -83,5 +85,5 @@ function getTargetRepRange(key,week=getWeek(),fallback=''){
           git config user.name 'github-actions[bot]'
           git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
           git add index.html
-          git commit -m 'Mostrar rangos de repeticiones planificados'
+          git commit -m 'Publicar Nexus v2.8 con fecha de actualización'
           git push
