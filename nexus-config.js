@@ -1,4 +1,5 @@
 window.NEXUS_CLOUD = {
   url: 'https://ecfxzsddqgnbkgjrwpri.supabase.co',
-  publishableKey: 'PEGA_AQUI_LA_PUBLISHABLE_KEY_DE_SUPABASE'
+  SUPABASE_PUBLISHABLE_KEY: 'sb_publishable_AhFqvPDGXWmhLwkbI-dXdg_CbXvEui7',
+  publishableKey: 'sb_publishable_AhFqvPDGXWmhLwkbI-dXdg_CbXvEui7'
 };
