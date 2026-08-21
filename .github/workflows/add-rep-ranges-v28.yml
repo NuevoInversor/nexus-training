@@ -17,65 +17,67 @@ jobs:
         shell: python
         run: |
           from pathlib import Path
-          path=Path('index.html')
-          text=path.read_text(encoding='utf-8')
-          marker='/* nexus-rep-ranges-v28 */'
-          if marker not in text:
-              block=r'''
-/* nexus-rep-ranges-v28 */
-const REP_RANGES = {
-  'press-banca': {base:'6-8', deload:'4-6'},
-  'remo-maquina': {base:'8-10', deload:'6-8'},
-  'press-inclinado': {base:'8-10', deload:'6-8'},
-  'jalon-neutro': {base:'10-12', deload:'8-10'},
-  'elevaciones-laterales-polea': {base:'12-15', deload:'10-12'},
-  'curl-biceps': {base:'10-12', deload:'8-10'},
-  'sentadilla-trasera': {base:'6-8', deload:'4-6'},
-  'prensa-inclinada': {base:'10-12', deload:'8-10'},
-  'peso-muerto-rumano-dia2': {base:'8-10', deload:'6-8'},
-  'curl-femoral-tumbado': {base:'10-12', deload:'8-10'},
-  'gemelo': {base:'12-15', deload:'10-12'},
-  'plancha': {base:'45-60 s', deload:'30-45 s'},
-  'dominadas-asistidas': {base:'6-8', deload:'4-6'},
-  'press-militar': {base:'6-8', deload:'4-6'},
-  'remo-polea-baja': {base:'8-10', deload:'6-8'},
-  'aperturas-maquina': {base:'10-12', deload:'8-10'},
-  'fondos-paralela': {base:'8-10', deload:'6-8'},
-  'facepull': {base:'15-20', deload:'12-15'},
-  'peso-muerto-rumano-dia4': {base:'6-8', deload:'4-6'},
-  'sentadilla-bulgara': {base:'8-10', deload:'6-8'},
-  'hip-thrust': {base:'8-10', deload:'6-8'},
-  'extension-cuadriceps': {base:'12-15', deload:'10-12'},
-  'gemelos-prensa': {base:'12-15', deload:'10-12'},
-  'elevaciones-piernas': {base:'10-15', deload:'8-10'},
-  'dominadas': {base:'4-6', deload:'3-5'},
-  'jalon-unilateral': {base:'10-12', deload:'8-10'},
-  'elevaciones-laterales-polea-dia5': {base:'15-20', deload:'12-15'},
-  'pajaros-peck-deck': {base:'15-20', deload:'12-15'},
-  'pallof-press': {base:'12-15', deload:'10-12'},
-  'abd-wheel': {base:'8-12', deload:'6-8'}
-};
-function getTargetRepRange(key,week=getWeek(),fallback=''){
-  const r=REP_RANGES[key];
-  if(!r) return fallback||'—';
-  return Number(week)===4 ? r.deload : r.base;
-}
-'''
-              text=text.replace('function getTargetRir(key,week=getWeek()){', block+'\nfunction getTargetRir(key,week=getWeek()){',1)
-
-          old1="${e.sets.length} × ${esc(e.targetReps)} · RIR ${esc(getTargetRir(e.key,activeWorkout.mesocycleWeek))} · descanso ${formatTime(e.rest)}"
-          new1="${e.sets.length} × ${esc(getTargetRepRange(e.key,activeWorkout.mesocycleWeek,e.targetReps))} · RIR ${esc(getTargetRir(e.key,activeWorkout.mesocycleWeek))} · descanso ${formatTime(e.rest)}"
-          text=text.replace(old1,new1)
-
-          old2="Objetivo: ${e.sets.length} x ${esc(e.targetReps)} - RIR ${esc(targetRir)} - Descanso ${formatTime(e.rest)}"
-          new2="Objetivo: ${e.sets.length} x ${esc(getTargetRepRange(e.key,week,e.targetReps))} - RIR ${esc(targetRir)} - Descanso ${formatTime(e.rest)}"
-          text=text.replace(old2,new2)
-
-          text=text.replace('<title>Nexus Training v2.7</title>','<title>Nexus Training v2.8</title>')
-          text=text.replace('<title>Nexus Training v2.8</title>','<title>Nexus Training v2.8</title>')
           import re
-          text=re.sub(r'Training\s*[·-]\s*v2\.[0-9]+(?:\s*\([^<]*\))?', 'Training - v2.8 (21/08/2026 10:40:27)', text, count=1)
-          path.write_text(text,encoding='utf-8')
+
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+          marker = '/* nexus-rep-ranges-v28 */'
+
+          if marker not in text:
+              block = """
+          /* nexus-rep-ranges-v28 */
+          const REP_RANGES = {
+            'press-banca': {base:'6-8', deload:'4-6'},
+            'remo-maquina': {base:'8-10', deload:'6-8'},
+            'press-inclinado': {base:'8-10', deload:'6-8'},
+            'jalon-neutro': {base:'10-12', deload:'8-10'},
+            'elevaciones-laterales-polea': {base:'12-15', deload:'10-12'},
+            'curl-biceps': {base:'10-12', deload:'8-10'},
+            'sentadilla-trasera': {base:'6-8', deload:'4-6'},
+            'prensa-inclinada': {base:'10-12', deload:'8-10'},
+            'peso-muerto-rumano-dia2': {base:'8-10', deload:'6-8'},
+            'curl-femoral-tumbado': {base:'10-12', deload:'8-10'},
+            'gemelo': {base:'12-15', deload:'10-12'},
+            'plancha': {base:'45-60 s', deload:'30-45 s'},
+            'dominadas-asistidas': {base:'6-8', deload:'4-6'},
+            'press-militar': {base:'6-8', deload:'4-6'},
+            'remo-polea-baja': {base:'8-10', deload:'6-8'},
+            'aperturas-maquina': {base:'10-12', deload:'8-10'},
+            'fondos-paralela': {base:'8-10', deload:'6-8'},
+            'facepull': {base:'15-20', deload:'12-15'},
+            'peso-muerto-rumano-dia4': {base:'6-8', deload:'4-6'},
+            'sentadilla-bulgara': {base:'8-10', deload:'6-8'},
+            'hip-thrust': {base:'8-10', deload:'6-8'},
+            'extension-cuadriceps': {base:'12-15', deload:'10-12'},
+            'gemelos-prensa': {base:'12-15', deload:'10-12'},
+            'elevaciones-piernas': {base:'10-15', deload:'8-10'},
+            'dominadas': {base:'4-6', deload:'3-5'},
+            'jalon-unilateral': {base:'10-12', deload:'8-10'},
+            'elevaciones-laterales-polea-dia5': {base:'15-20', deload:'12-15'},
+            'pajaros-peck-deck': {base:'15-20', deload:'12-15'},
+            'pallof-press': {base:'12-15', deload:'10-12'},
+            'abd-wheel': {base:'8-12', deload:'6-8'}
+          };
+          function getTargetRepRange(key,week=getWeek(),fallback=''){
+            const r=REP_RANGES[key];
+            if(!r) return fallback||'—';
+            return Number(week)===4 ? r.deload : r.base;
+          }
+          """
+              text = text.replace('function getTargetRir(key,week=getWeek()){', block + '\nfunction getTargetRir(key,week=getWeek()){', 1)
+
+          old1 = "${e.sets.length} × ${esc(e.targetReps)} · RIR ${esc(getTargetRir(e.key,activeWorkout.mesocycleWeek))} · descanso ${formatTime(e.rest)}"
+          new1 = "${e.sets.length} × ${esc(getTargetRepRange(e.key,activeWorkout.mesocycleWeek,e.targetReps))} · RIR ${esc(getTargetRir(e.key,activeWorkout.mesocycleWeek))} · descanso ${formatTime(e.rest)}"
+          text = text.replace(old1, new1)
+
+          old2 = "Objetivo: ${e.sets.length} x ${esc(e.targetReps)} - RIR ${esc(targetRir)} - Descanso ${formatTime(e.rest)}"
+          new2 = "Objetivo: ${e.sets.length} x ${esc(getTargetRepRange(e.key,week,e.targetReps))} - RIR ${esc(targetRir)} - Descanso ${formatTime(e.rest)}"
+          text = text.replace(old2, new2)
+
+          text = text.replace('<title>Nexus Training v2.7</title>', '<title>Nexus Training v2.8</title>')
+          text = re.sub(r'Training\s*[·-]\s*v2\.[0-9]+(?:\s*\([^<]*\))?', 'Training - v2.8 (21/08/2026 11:42:00)', text, count=1)
+          path.write_text(text, encoding='utf-8')
+
       - name: Commit changes
         run: |
           if git diff --quiet; then
