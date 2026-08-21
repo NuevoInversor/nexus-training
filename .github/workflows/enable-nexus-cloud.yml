@@ -1,0 +1,41 @@
+name: Enable Nexus Cloud
+
+on:
+  push:
+    paths:
+      - '.github/workflows/enable-nexus-cloud.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - name: Patch index.html
+        shell: python
+        run: |
+          from pathlib import Path
+          path = Path('index.html')
+          text = path.read_text(encoding='utf-8')
+          marker = '<script src="cloud-v27.js"></script>'
+          if marker not in text:
+              block = '''<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>\n<script src="nexus-config.js"></script>\n<script src="cloud-v27.js"></script>\n'''
+              text = text.replace('</body>', block + '</body>', 1)
+          text = text.replace('<title>Nexus Training v2.5</title>', '<title>Nexus Training v2.7</title>')
+          text = text.replace('<title>Nexus Training v2.6</title>', '<title>Nexus Training v2.7</title>')
+          text = text.replace('Training · v2.5', 'Training · v2.7')
+          text = text.replace('Training · v2.6', 'Training · v2.7')
+          path.write_text(text, encoding='utf-8')
+      - name: Commit changes
+        run: |
+          if git diff --quiet; then
+            echo "No changes needed"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add index.html
+          git commit -m "Activar Nexus Cloud v2.7"
+          git push
