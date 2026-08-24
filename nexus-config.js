@@ -8,8 +8,8 @@ window.NEXUS_CLOUD = {
   const loadProfileUI = () => {
     if (document.querySelector('script[data-nexus-profile-ui]')) return;
     const script = document.createElement('script');
-    script.src = 'profile-ui-v210.js';
-    script.dataset.nexusProfileUi = 'v2.10';
+    script.src = 'profile-ui-v211.js';
+    script.dataset.nexusProfileUi = 'v2.11';
     script.defer = true;
     document.head.appendChild(script);
   };
