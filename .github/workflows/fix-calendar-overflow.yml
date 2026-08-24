@@ -1,86 +1,11 @@
-name: Fix mobile calendar overflow
+name: Fix mobile calendar overflow (legacy)
 
 on:
-  push:
-    paths:
-      - '.github/workflows/fix-calendar-overflow.yml'
-
-permissions:
-  contents: write
+  workflow_dispatch:
 
 jobs:
-  patch:
+  noop:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - name: Patch index.html
-        shell: python
-        run: |
-          from pathlib import Path
-
-          path = Path('index.html')
-          text = path.read_text(encoding='utf-8')
-
-          marker = '/* nexus-mobile-calendar-overflow-fix-v26 */'
-          if marker not in text:
-              fix = r'''
-/* nexus-mobile-calendar-overflow-fix-v26 */
-html,body{
-  width:100%;max-width:100%;overflow-x:hidden
-}
-.app,main,.view,#historyView,#historyCalendar,.calendar-grid{
-  min-width:0;max-width:100%
-}
-@media(max-width:560px){
-  main{
-    padding-left:10px;padding-right:10px
-  }
-  #historyView > .card:nth-child(2){
-    width:100%;max-width:100%;min-width:0;
-    padding-left:8px;padding-right:8px;
-    overflow:hidden
-  }
-  #historyCalendar{
-    display:block;width:100%;max-width:100%;min-width:0;overflow:hidden
-  }
-  .calendar-grid{
-    width:100%;max-width:100%;min-width:0;
-    grid-template-columns:repeat(7,minmax(0,1fr));
-    gap:1px
-  }
-  .calendar-weekday{
-    min-width:0;max-width:100%;overflow:hidden;
-    font-size:7.5px;letter-spacing:-.04em
-  }
-  .calendar-cell,
-  .calendar-cell.empty{
-    min-width:0;width:auto;max-width:100%;
-    padding:4px 2px 28px;
-    overflow:hidden
-  }
-  .calendar-day-number{
-    min-width:0
-  }
-  .calendar-workouts,
-  .calendar-other-activities,
-  .calendar-cardio{
-    max-width:100%
-  }
-}
-'''
-              text = text.replace('</style>', fix + '\n</style>', 1)
-
-          text = text.replace('<title>Nexus Training v2.5</title>', '<title>Nexus Training v2.6</title>')
-          text = text.replace('Training · v2.5', 'Training · v2.6')
-          path.write_text(text, encoding='utf-8')
-      - name: Commit patch
-        run: |
-          if git diff --quiet; then
-            echo "No changes needed"
-            exit 0
-          fi
-          git config user.name "github-actions[bot]"
-          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add index.html
-          git commit -m "Fix mobile history calendar overflow"
-          git push
+      - name: Calendar fix already integrated
+        run: echo "El ajuste de calendario ya está integrado directamente en index.html."
