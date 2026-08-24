@@ -5,8 +5,20 @@ window.NEXUS_CLOUD = {
 };
 
 (() => {
+  const loadWorkoutControls = () => {
+    if (document.querySelector('script[data-nexus-workout-controls]')) return;
+    const controls = document.createElement('script');
+    controls.src = 'workout-controls-v212.js?v=2.12';
+    controls.dataset.nexusWorkoutControls = 'v2.12';
+    controls.async = false;
+    document.head.appendChild(controls);
+  };
+
   const loadProfileUI = () => {
-    if (document.querySelector('script[data-nexus-profile-ui]')) return;
+    if (document.querySelector('script[data-nexus-profile-ui]')) {
+      loadWorkoutControls();
+      return;
+    }
 
     // profile-ui-v211 only needs one initial render. Its MutationObserver was
     // repeatedly re-applying textContent and could starve pointer/click events
@@ -22,16 +34,17 @@ window.NEXUS_CLOUD = {
       };
     }
 
-    const restoreObserver = () => {
+    const finishProfileLoad = () => {
       if (NativeMutationObserver) window.MutationObserver = NativeMutationObserver;
+      loadWorkoutControls();
     };
 
     const script = document.createElement('script');
     script.src = 'profile-ui-v211.js?v=2.11.1';
     script.dataset.nexusProfileUi = 'v2.11.1';
-    script.defer = true;
-    script.onload = restoreObserver;
-    script.onerror = restoreObserver;
+    script.async = false;
+    script.onload = finishProfileLoad;
+    script.onerror = finishProfileLoad;
     document.head.appendChild(script);
   };
 
