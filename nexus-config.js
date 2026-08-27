@@ -5,12 +5,26 @@ window.NEXUS_CLOUD = {
 };
 
 (() => {
+  const loadDavidMesocycle = () => {
+    if (document.querySelector('script[data-nexus-david-mesocycle]')) return;
+    const script = document.createElement('script');
+    script.src = 'mesocycle-david-v213.js?v=2.13';
+    script.dataset.nexusDavidMesocycle = 'v2.13';
+    script.async = false;
+    document.head.appendChild(script);
+  };
+
   const loadWorkoutControls = () => {
-    if (document.querySelector('script[data-nexus-workout-controls]')) return;
+    if (document.querySelector('script[data-nexus-workout-controls]')) {
+      loadDavidMesocycle();
+      return;
+    }
     const controls = document.createElement('script');
     controls.src = 'workout-controls-v212.js?v=2.12';
     controls.dataset.nexusWorkoutControls = 'v2.12';
     controls.async = false;
+    controls.onload = loadDavidMesocycle;
+    controls.onerror = loadDavidMesocycle;
     document.head.appendChild(controls);
   };
 
@@ -20,10 +34,6 @@ window.NEXUS_CLOUD = {
       return;
     }
 
-    // profile-ui-v211 only needs one initial render. Its MutationObserver was
-    // repeatedly re-applying textContent and could starve pointer/click events
-    // on some mobile browsers. Disable observers only while this branding
-    // script boots, then immediately restore the native implementation.
     const NativeMutationObserver = window.MutationObserver;
     if (NativeMutationObserver) {
       window.MutationObserver = class NexusOneShotObserver {
