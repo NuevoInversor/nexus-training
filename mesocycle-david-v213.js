@@ -91,21 +91,28 @@
   }
 
   function applyWeekTargets(){
-    if(typeof plan==='undefined' || plan?.id!==PLAN_ID || !Array.isArray(routines)) return;
+    if(typeof plan==='undefined' || plan?.id!==PLAN_ID || !Array.isArray(routines)) return false;
     const week=String(typeof getWeek==='function'?getWeek():1);
+    let changed=false;
     routines.forEach(r=>r.exercises?.forEach(e=>{
-      if(e.weeklySets?.[week]!=null) e.sets=Number(e.weeklySets[week]);
-      if(e.weeklyReps?.[week]) e.reps=e.weeklyReps[week];
+      if(e.weeklySets?.[week]!=null){
+        const nextSets=Number(e.weeklySets[week]);
+        if(Number(e.sets)!==nextSets){e.sets=nextSets;changed=true;}
+      }
+      if(e.weeklyReps?.[week] && e.reps!==e.weeklyReps[week]){e.reps=e.weeklyReps[week];changed=true;}
     }));
+    return changed;
   }
 
   function activatePlan(){
     if(!isDavidSelected() || currentISO()<START_DATE) return false;
     if(typeof plan==='undefined' || typeof routines==='undefined') return false;
 
+    let changed=false;
     if(plan?.id!==PLAN_ID){
       plan=JSON.parse(JSON.stringify(PLAN));
       routines=JSON.parse(JSON.stringify(ROUTINES));
+      changed=true;
       if(typeof activeWorkout!=='undefined' && activeWorkout && activeWorkout.planId!==PLAN_ID){
         const hasSeries=activeWorkout.exercises?.some(e=>e.sets?.some(s=>s.completed));
         if(!hasSeries){
@@ -113,18 +120,16 @@
           try{localStorage.removeItem(STORAGE.active);}catch(e){}
         }
       }
+    }
+
+    if(applyWeekTargets()) changed=true;
+    if(changed){
       try{
         localStorage.setItem(STORAGE.plan,JSON.stringify(plan));
         localStorage.setItem(STORAGE.routines,JSON.stringify(routines));
       }catch(e){}
+      try{renderAll();}catch(e){}
     }
-
-    applyWeekTargets();
-    try{
-      localStorage.setItem(STORAGE.plan,JSON.stringify(plan));
-      localStorage.setItem(STORAGE.routines,JSON.stringify(routines));
-    }catch(e){}
-    try{renderAll();}catch(e){}
     removeUpcomingCard();
     return true;
   }
@@ -210,7 +215,6 @@
     patchTargets();
     updateVersion();
     if(!activatePlan()) ensureUpcomingCard();
-    if(plan?.id===PLAN_ID) applyWeekTargets();
   }
 
   function boot(){
