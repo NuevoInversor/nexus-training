@@ -5,12 +5,26 @@ window.NEXUS_CLOUD = {
 };
 
 (() => {
+  const loadDavidCardio = () => {
+    if (document.querySelector('script[data-nexus-david-cardio]')) return;
+    const script = document.createElement('script');
+    script.src = 'cardio-david-v214.js?v=2.14';
+    script.dataset.nexusDavidCardio = 'v2.14';
+    script.async = false;
+    document.head.appendChild(script);
+  };
+
   const loadDavidMesocycle = () => {
-    if (document.querySelector('script[data-nexus-david-mesocycle]')) return;
+    if (document.querySelector('script[data-nexus-david-mesocycle]')) {
+      loadDavidCardio();
+      return;
+    }
     const script = document.createElement('script');
     script.src = 'mesocycle-david-v213.js?v=2.13';
     script.dataset.nexusDavidMesocycle = 'v2.13';
     script.async = false;
+    script.onload = loadDavidCardio;
+    script.onerror = loadDavidCardio;
     document.head.appendChild(script);
   };
 
