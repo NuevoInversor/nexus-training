@@ -1,6 +1,6 @@
 (() => {
   const VERSION='v2.14';
-  const STAMP='28/08/2026 08:00:00';
+  const STAMP='30/08/2026 19:14:00';
   const START_DATE='2026-08-31';
   const END_DATE='2026-09-27';
 
