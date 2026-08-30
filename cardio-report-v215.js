@@ -1,6 +1,6 @@
 (() => {
   const VERSION='v2.15';
-  const STAMP='30/08/2026 18:39:00';
+  const STAMP='30/08/2026 19:14:00';
   const CARDIO_TYPES=new Set(['padel','walk','swim','run','bike','hike']);
 
   function isCardioForm(){
