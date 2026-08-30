@@ -5,6 +5,15 @@ window.NEXUS_CLOUD = {
 };
 
 (() => {
+  const loadAnaPlan = () => {
+    if (document.querySelector('script[data-nexus-ana-plan]')) return;
+    const script = document.createElement('script');
+    script.src = 'ana-plan-v216.js?v=2.16';
+    script.dataset.nexusAnaPlan = 'v2.16';
+    script.async = false;
+    document.head.appendChild(script);
+  };
+
   const loadCardioReport = () => {
     if (document.querySelector('script[data-nexus-cardio-report]')) return;
     const script = document.createElement('script');
@@ -17,14 +26,15 @@ window.NEXUS_CLOUD = {
   const loadDavidCardio = () => {
     if (document.querySelector('script[data-nexus-david-cardio]')) {
       loadCardioReport();
+      loadAnaPlan();
       return;
     }
     const script = document.createElement('script');
     script.src = 'cardio-david-v214.js?v=2.14';
     script.dataset.nexusDavidCardio = 'v2.14';
     script.async = false;
-    script.onload = loadCardioReport;
-    script.onerror = loadCardioReport;
+    script.onload = () => { loadCardioReport(); loadAnaPlan(); };
+    script.onerror = () => { loadCardioReport(); loadAnaPlan(); };
     document.head.appendChild(script);
   };
 
