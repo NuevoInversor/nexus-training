@@ -1,6 +1,6 @@
 (() => {
   const VERSION='v2.13';
-  const STAMP='27/08/2026 16:29:00';
+  const STAMP='30/08/2026 19:14:00';
   const PLAN_ID='hipertrofia-general-2026-08-31';
   const START_DATE='2026-08-31';
 
