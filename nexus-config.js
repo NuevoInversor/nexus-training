@@ -8,8 +8,8 @@ window.NEXUS_CLOUD = {
   const loadPolar = () => {
     if (document.querySelector('script[data-nexus-polar]')) return;
     const script = document.createElement('script');
-    script.src = 'polar-v218.js?v=2.18';
-    script.dataset.nexusPolar = 'v2.18';
+    script.src = 'polar-v218.js?v=2.19';
+    script.dataset.nexusPolar = 'v2.19';
     script.async = false;
     document.head.appendChild(script);
   };
