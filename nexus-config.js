@@ -5,12 +5,26 @@ window.NEXUS_CLOUD = {
 };
 
 (() => {
+  const loadPlanEditor = () => {
+    if (document.querySelector('script[data-nexus-plan-editor]')) return;
+    const script = document.createElement('script');
+    script.src = 'plan-editor-v220.js?v=2.20';
+    script.dataset.nexusPlanEditor = 'v2.20';
+    script.async = false;
+    document.head.appendChild(script);
+  };
+
   const loadPolar = () => {
-    if (document.querySelector('script[data-nexus-polar]')) return;
+    if (document.querySelector('script[data-nexus-polar]')) {
+      loadPlanEditor();
+      return;
+    }
     const script = document.createElement('script');
     script.src = 'polar-v218.js?v=2.19';
     script.dataset.nexusPolar = 'v2.19';
     script.async = false;
+    script.onload = loadPlanEditor;
+    script.onerror = loadPlanEditor;
     document.head.appendChild(script);
   };
 
