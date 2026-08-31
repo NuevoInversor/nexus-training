@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.18';
-  const STAMP='31/08/2026 13:31:00';
+  const VERSION='v2.19';
+  const STAMP='31/08/2026 13:40:00';
   const CFG=window.NEXUS_CLOUD||{};
   const BASE=(CFG.url||'').replace(/\/$/,'')+'/functions/v1';
   let session=null;
@@ -127,6 +127,9 @@
       dot.className='polar-dot warn';
       status.textContent='Polar pendiente de configurar';
       meta.textContent=e.message;
+      if(e.message==='Conecta primero Nexus Cloud con GitHub.'){
+        connect.textContent='Conectar Cloud primero';
+      }
       sync.disabled=true; disc.disabled=true;
     }
   }
@@ -136,7 +139,22 @@
       showMsg('Preparando conexión segura con Polar…');
       const p=profileId();
       if(!p) throw new Error('Selecciona primero un perfil.');
+
+      session=await getSession();
+      if(!session){
+        showMsg('Primero debes conectar Nexus Cloud con GitHub. Te abro la conexión.');
+        const cloudOpen=document.getElementById('cloudOpenBtn');
+        const cloudGithub=document.getElementById('cloudGithubBtn');
+        if(cloudOpen) cloudOpen.click();
+        setTimeout(()=>{
+          const signedOut=document.getElementById('cloudSignedOut');
+          if(signedOut && signedOut.style.display!=='none' && cloudGithub) cloudGithub.focus();
+        },250);
+        return;
+      }
+
       const x=await api('polar-start',{profile_id:p});
+      if(!x?.url) throw new Error('Polar no devolvió una URL de autorización.');
       location.href=x.url;
     }catch(e){ showMsg(e.message); }
   }
