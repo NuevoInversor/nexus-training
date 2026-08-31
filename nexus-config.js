@@ -5,12 +5,26 @@ window.NEXUS_CLOUD = {
 };
 
 (() => {
+  const loadPolar = () => {
+    if (document.querySelector('script[data-nexus-polar]')) return;
+    const script = document.createElement('script');
+    script.src = 'polar-v218.js?v=2.18';
+    script.dataset.nexusPolar = 'v2.18';
+    script.async = false;
+    document.head.appendChild(script);
+  };
+
   const loadProfileCardioAccess = () => {
-    if (document.querySelector('script[data-nexus-profile-cardio-access]')) return;
+    if (document.querySelector('script[data-nexus-profile-cardio-access]')) {
+      loadPolar();
+      return;
+    }
     const script = document.createElement('script');
     script.src = 'profile-cardio-access-v217.js?v=2.17';
     script.dataset.nexusProfileCardioAccess = 'v2.17';
     script.async = false;
+    script.onload = loadPolar;
+    script.onerror = loadPolar;
     document.head.appendChild(script);
   };
 
