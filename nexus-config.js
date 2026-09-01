@@ -5,12 +5,26 @@ window.NEXUS_CLOUD = {
 };
 
 (() => {
-  const loadPolarIntelligence = () => {
-    if (document.querySelector('script[data-nexus-polar-intelligence]')) return;
+  const loadHomeDashboard = () => {
+    if (document.querySelector('script[data-nexus-home-dashboard]')) return;
     const script = document.createElement('script');
-    script.src = 'polar-intelligence-v222.js?v=2.26';
-    script.dataset.nexusPolarIntelligence = 'v2.26';
+    script.src = 'home-dashboard-v227.js?v=2.27';
+    script.dataset.nexusHomeDashboard = 'v2.27';
     script.async = false;
+    document.head.appendChild(script);
+  };
+
+  const loadPolarIntelligence = () => {
+    if (document.querySelector('script[data-nexus-polar-intelligence]')) {
+      loadHomeDashboard();
+      return;
+    }
+    const script = document.createElement('script');
+    script.src = 'polar-intelligence-v222.js?v=2.27';
+    script.dataset.nexusPolarIntelligence = 'v2.27';
+    script.async = false;
+    script.onload = loadHomeDashboard;
+    script.onerror = loadHomeDashboard;
     document.head.appendChild(script);
   };
 
@@ -20,7 +34,7 @@ window.NEXUS_CLOUD = {
       return;
     }
     const script = document.createElement('script');
-    script.src = 'home-mesocycle-v221.js?v=2.21';
+    script.src = 'home-mesocycle-v221.js?v=2.21.1';
     script.dataset.nexusHomeMesocycle = 'v2.21';
     script.async = false;
     script.onload = loadPolarIntelligence;
@@ -48,7 +62,7 @@ window.NEXUS_CLOUD = {
       return;
     }
     const script = document.createElement('script');
-    script.src = 'polar-v218.js?v=2.19';
+    script.src = 'polar-v218.js?v=2.19.1';
     script.dataset.nexusPolar = 'v2.19';
     script.async = false;
     script.onload = loadPlanEditor;
@@ -62,7 +76,7 @@ window.NEXUS_CLOUD = {
       return;
     }
     const script = document.createElement('script');
-    script.src = 'profile-cardio-access-v217.js?v=2.17';
+    script.src = 'profile-cardio-access-v217.js?v=2.17.1';
     script.dataset.nexusProfileCardioAccess = 'v2.17';
     script.async = false;
     script.onload = loadPolar;
@@ -73,7 +87,7 @@ window.NEXUS_CLOUD = {
   const loadAnaPlan = () => {
     if (document.querySelector('script[data-nexus-ana-plan]')) return;
     const script = document.createElement('script');
-    script.src = 'ana-plan-v216.js?v=2.16';
+    script.src = 'ana-plan-v216.js?v=2.16.1';
     script.dataset.nexusAnaPlan = 'v2.16';
     script.async = false;
     document.head.appendChild(script);
@@ -82,7 +96,7 @@ window.NEXUS_CLOUD = {
   const loadCardioReport = () => {
     if (document.querySelector('script[data-nexus-cardio-report]')) return;
     const script = document.createElement('script');
-    script.src = 'cardio-report-v215.js?v=2.15';
+    script.src = 'cardio-report-v215.js?v=2.15.1';
     script.dataset.nexusCardioReport = 'v2.15';
     script.async = false;
     document.head.appendChild(script);
@@ -96,7 +110,7 @@ window.NEXUS_CLOUD = {
       return;
     }
     const script = document.createElement('script');
-    script.src = 'cardio-david-v214.js?v=2.14';
+    script.src = 'cardio-david-v214.js?v=2.14.1';
     script.dataset.nexusDavidCardio = 'v2.14';
     script.async = false;
     script.onload = () => { loadCardioReport(); loadAnaPlan(); loadProfileCardioAccess(); };
@@ -110,7 +124,7 @@ window.NEXUS_CLOUD = {
       return;
     }
     const script = document.createElement('script');
-    script.src = 'mesocycle-david-v213.js?v=2.13';
+    script.src = 'mesocycle-david-v213.js?v=2.13.1';
     script.dataset.nexusDavidMesocycle = 'v2.13';
     script.async = false;
     script.onload = loadDavidCardio;
@@ -124,7 +138,7 @@ window.NEXUS_CLOUD = {
       return;
     }
     const controls = document.createElement('script');
-    controls.src = 'workout-controls-v212.js?v=2.12';
+    controls.src = 'workout-controls-v212.js?v=2.12.1';
     controls.dataset.nexusWorkoutControls = 'v2.12';
     controls.async = false;
     controls.onload = loadDavidMesocycle;
