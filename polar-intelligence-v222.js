@@ -1,5 +1,5 @@
 (() => {
-  const VERSION='v2.29';
+  const VERSION='v2.30';
   const STAMP='01/09/2026 16:40:00';
   const CFG=window.NEXUS_CLOUD||{};
   const BASE=(CFG.url||'').replace(/\/$/,'')+'/functions/v1';
