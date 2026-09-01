@@ -8,8 +8,8 @@ window.NEXUS_CLOUD = {
   const loadPolarIntelligence = () => {
     if (document.querySelector('script[data-nexus-polar-intelligence]')) return;
     const script = document.createElement('script');
-    script.src = 'polar-intelligence-v222.js?v=2.25';
-    script.dataset.nexusPolarIntelligence = 'v2.25';
+    script.src = 'polar-intelligence-v222.js?v=2.26';
+    script.dataset.nexusPolarIntelligence = 'v2.26';
     script.async = false;
     document.head.appendChild(script);
   };
