@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.30';
-  const STAMP='01/09/2026 16:40:00';
+  const VERSION='v2.31';
+  const STAMP='01/09/2026 20:17:00';
   const CFG=window.NEXUS_CLOUD||{};
   const BASE=(CFG.url||'').replace(/\/$/,'')+'/functions/v1';
   const BOOT_KEY='nexus_polar_v222_bootstrap';
@@ -57,6 +57,7 @@
       .nexus-rest-chevron{font-size:18px;color:#94a3b8;transition:transform .18s ease}
       .nexus-readiness.open .nexus-rest-chevron{transform:rotate(180deg)}
       .nexus-readiness-date{font-size:11px;color:var(--muted);font-weight:800}
+      .nexus-readiness-advice{margin-top:10px;padding:10px 12px;border-radius:12px;background:#eff6ff;color:#1e3a8a;font-size:12px;line-height:1.45;font-weight:800}
       .nexus-readiness-details{display:none;margin-top:12px;padding-top:12px;border-top:1px solid #e2e8f0}
       .nexus-readiness.open .nexus-readiness-details{display:block}
       .nexus-readiness-grid{display:grid;grid-template-columns:1fr;gap:8px}
@@ -104,6 +105,7 @@
           <div class="nexus-rest-chevron">⌄</div>
         </div>
       </div>
+      <div class="nexus-readiness-advice" id="nexusReadinessAdvice">Analizando recuperación…</div>
       <div class="nexus-readiness-details" id="nexusReadinessDetails">
         <div id="nexusReadinessBody"><div class="small muted">Cargando recuperación…</div></div>
       </div>
@@ -185,11 +187,13 @@
     const restTitle=document.getElementById('nexusRestTitle');
     const restSub=document.getElementById('nexusRestSub');
     const restIcon=document.getElementById('nexusRestToggle');
+    const advice=document.getElementById('nexusReadinessAdvice');
     if(!latest){
       dateEl.textContent='Sin datos';
       if(restTitle)restTitle.textContent='Descanso';
       if(restSub)restSub.textContent='Sin datos de Polar';
       if(restIcon)restIcon.className='nexus-rest-icon neutral';
+      if(advice)advice.textContent='Conecta y sincroniza Polar para calcular tu estado diario.';
       body.innerHTML='<div class="small muted">Conecta y sincroniza Polar para calcular tu estado diario.</div>';
       return;
     }
@@ -253,6 +257,7 @@
     else if(Number.isFinite(indicator)&&indicator>=5) conclusion='La recuperación es favorable. Mantén el entrenamiento previsto sin añadir carga extra por ello.';
 
     const trend=Number.isFinite(rmssdDelta)?`RMSSD vs referencia ~14 noches: ${rmssdDelta>=0?'+':''}${pct(rmssdDelta)}%.`:'Aún construyendo referencia individual de HRV.';
+    if(advice) advice.textContent=conclusion;
 
     body.innerHTML=`
       <div class="nexus-readiness-grid">
@@ -260,7 +265,6 @@
         <div class="nexus-readiness-row"><span class="nexus-readiness-label">Sueño: ${sleepLabel(sleepScore)}</span><span class="nexus-readiness-value">(${sleepQty})</span></div>
         <div class="nexus-readiness-row"><span class="nexus-readiness-label">Carga reciente: ${loadLabel(loadRatio)}</span><span class="nexus-readiness-value">(${loadText})</span></div>
       </div>
-      <div class="nexus-readiness-conclusion">${conclusion}</div>
       <div class="nexus-readiness-detail">${trend} La interpretación Nexus combina tendencia, carga y datos de Polar; no cambia el plan automáticamente.</div>
     `;
   }
