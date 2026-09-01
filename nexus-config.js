@@ -8,8 +8,8 @@ window.NEXUS_CLOUD = {
   const loadHomeDashboard = () => {
     if (document.querySelector('script[data-nexus-home-dashboard]')) return;
     const script = document.createElement('script');
-    script.src = 'home-dashboard-v227.js?v=2.29';
-    script.dataset.nexusHomeDashboard = 'v2.29';
+    script.src = 'home-dashboard-v227.js?v=2.30';
+    script.dataset.nexusHomeDashboard = 'v2.30';
     script.async = false;
     document.head.appendChild(script);
   };
@@ -20,8 +20,8 @@ window.NEXUS_CLOUD = {
       return;
     }
     const script = document.createElement('script');
-    script.src = 'polar-intelligence-v222.js?v=2.29';
-    script.dataset.nexusPolarIntelligence = 'v2.29';
+    script.src = 'polar-intelligence-v222.js?v=2.30';
+    script.dataset.nexusPolarIntelligence = 'v2.30';
     script.async = false;
     script.onload = loadHomeDashboard;
     script.onerror = loadHomeDashboard;
@@ -124,7 +124,7 @@ window.NEXUS_CLOUD = {
       return;
     }
     const script = document.createElement('script');
-    script.src = 'mesocycle-david-v213.js?v=2.13.1';
+    script.src = 'mesocycle-david-v213.js?v=2.13.2';
     script.dataset.nexusDavidMesocycle = 'v2.13';
     script.async = false;
     script.onload = loadDavidCardio;
