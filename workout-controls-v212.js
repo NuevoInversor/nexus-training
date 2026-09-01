@@ -94,11 +94,7 @@
     renderWorkout=wrapped;
   }
 
-  function updateVersion(){
-    const v=document.querySelector('header .version');
-    if(v) v.textContent=`Training - ${VERSION} (${STAMP})`;
-    document.title=`Nexus Training ${VERSION}`;
-  }
+  function updateVersion(){ /* Version centralizada en polar-intelligence-v222.js */ }
 
   function boot(){
     ensureStyle();
