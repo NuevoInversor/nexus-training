@@ -1,5 +1,5 @@
 (() => {
-  const VERSION='v2.30';
+  const VERSION='v2.31';
   const STAMP='01/09/2026 20:02:00';
 
   function currentProfile(){
