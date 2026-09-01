@@ -383,15 +383,17 @@
     const p=profileId();
     if(!p||syncLock)return;
     const key=BOOT_KEY+'_'+p;
-    if(localStorage.getItem(key)==='1')return;
     syncLock=true;
     try{
       const status=await api({action:'status',profile_id:p});
       if(!status.connected)return;
+      const bootstrapDone=localStorage.getItem(key)==='1';
+      const lastMs=status.last_sync_at?new Date(status.last_sync_at).getTime():0;
+      const stale=!lastMs || (Date.now()-lastMs)>=6*60*60*1000;
+      if(bootstrapDone && !stale)return;
       const x=await api({action:'sync',profile_id:p});
       localStorage.setItem(key,'1');
       await consumeLatest(x,true);
-      window.dispatchEvent(new CustomEvent('nexus:polar-synced',{detail:x}));
       try{
         const meta=document.getElementById('polarMeta');
         if(meta)meta.textContent='Última sincronización: '+new Date(x.last_sync_at).toLocaleString('es-ES');
