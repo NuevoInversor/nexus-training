@@ -196,12 +196,35 @@
     }
   }
 
+  function mergeById(remoteArr,localArr){
+    const map=new Map();
+    (Array.isArray(remoteArr)?remoteArr:[]).forEach(x=>{ if(x?.id) map.set(String(x.id),clone(x)); });
+    (Array.isArray(localArr)?localArr:[]).forEach(x=>{ if(x?.id) map.set(String(x.id),clone(x)); });
+    return Array.from(map.values());
+  }
+
+  function mergeSnapshots(remoteData,localData){
+    if(!remoteData||typeof remoteData!=='object') return localData;
+    const merged={...remoteData,...localData};
+    merged.workouts=mergeById(remoteData.workouts,localData.workouts);
+    merged.activities=mergeById(remoteData.activities,localData.activities);
+    if((remoteData.workouts||[]).length && !(localData.workouts||[]).length) merged.workouts=clone(remoteData.workouts);
+    if((remoteData.activities||[]).length && !(localData.activities||[]).length) merged.activities=clone(remoteData.activities);
+    return merged;
+  }
+
   async function push(showToast=false){
     if(!sb||!user||!profileId||!ready)return false;
     lastError='';
     try{
       const now=new Date().toISOString();
-      const {error}=await sb.from('nexus_state').upsert({user_id:user.id,profile_id:profileId,data:snapshot(),updated_at:now},{onConflict:'user_id,profile_id'});
+      const localSnap=snapshot();
+      let outgoing=localSnap;
+      try{
+        const row=await fetchRemote();
+        if(row?.data) outgoing=mergeSnapshots(row.data,localSnap);
+      }catch(_){}
+      const {error}=await sb.from('nexus_state').upsert({user_id:user.id,profile_id:profileId,data:outgoing,updated_at:now},{onConflict:'user_id,profile_id'});
       if(error) throw error;
       hasRemote=true;
       originalRemoveItem.call(localStorage,pendingKey());
