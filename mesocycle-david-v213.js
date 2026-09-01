@@ -163,6 +163,15 @@
       getTargetRir=wrapped;
     }
 
+    if(typeof getCurrentWeekWorkout==='function' && !getCurrentWeekWorkout.__nexusPlanScoped){
+      const wrapped=function(routineId){
+        const week=getWeek();
+        return (workouts||[]).find(w=>w.planId===plan?.id && w.routineId===routineId && Number(w.mesocycleWeek)===Number(week)) || null;
+      };
+      wrapped.__nexusPlanScoped=true;
+      getCurrentWeekWorkout=wrapped;
+    }
+
     if(typeof previousWeekExercise==='function' && !previousWeekExercise.__nexusV213){
       const wrapped=function(routineId,key,currentWeek){
         const target=Number(currentWeek)-1;
