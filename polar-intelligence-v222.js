@@ -1,5 +1,5 @@
 (() => {
-  const VERSION='v2.28';
+  const VERSION='v2.29';
   const STAMP='01/09/2026 16:40:00';
   const CFG=window.NEXUS_CLOUD||{};
   const BASE=(CFG.url||'').replace(/\/$/,'')+'/functions/v1';
@@ -317,7 +317,14 @@
       const exact=activities.find(a=>String(a?.polar?.sessionId||'')===sid);
       if(exact)return exact;
     }
-    const candidates=activities.filter(a=>a?.date===date && !a?.cardioNexus);
+    const candidates=activities.filter(a=>a?.date===date);
+    const cardio=candidates.find(a=>{
+      if(!a?.cardioNexus)return false;
+      const code=String(a.cardioNexus.session||'');
+      const sp=String(s?.sport?.id??'');
+      return (sp==='1'&&(code==='C1'||code==='C2'))||(sp==='3'&&code==='C3');
+    });
+    if(cardio)return cardio;
 
     const sm=Number(s?.durationMillis||0)/60000;
     const similar=candidates.find(a=>{
