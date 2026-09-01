@@ -5,12 +5,26 @@ window.NEXUS_CLOUD = {
 };
 
 (() => {
+  const loadPolarIntelligence = () => {
+    if (document.querySelector('script[data-nexus-polar-intelligence]')) return;
+    const script = document.createElement('script');
+    script.src = 'polar-intelligence-v222.js?v=2.22';
+    script.dataset.nexusPolarIntelligence = 'v2.22';
+    script.async = false;
+    document.head.appendChild(script);
+  };
+
   const loadHomeMesocycle = () => {
-    if (document.querySelector('script[data-nexus-home-mesocycle]')) return;
+    if (document.querySelector('script[data-nexus-home-mesocycle]')) {
+      loadPolarIntelligence();
+      return;
+    }
     const script = document.createElement('script');
     script.src = 'home-mesocycle-v221.js?v=2.21';
     script.dataset.nexusHomeMesocycle = 'v2.21';
     script.async = false;
+    script.onload = loadPolarIntelligence;
+    script.onerror = loadPolarIntelligence;
     document.head.appendChild(script);
   };
 
