@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.25';
-  const STAMP='01/09/2026 16:31:00';
+  const VERSION='v2.26';
+  const STAMP='01/09/2026 16:40:00';
   const CFG=window.NEXUS_CLOUD||{};
   const BASE=(CFG.url||'').replace(/\/$/,'')+'/functions/v1';
   const BOOT_KEY='nexus_polar_v222_bootstrap';
@@ -75,12 +75,16 @@
   function ensureCard(){
     ensureStyle();
     let card=document.getElementById('nexusReadinessCard');
-    if(card)return card;
     const hero=document.querySelector('#homeView .hero');
-    if(!hero)return null;
-    card=document.createElement('div');
+    if(!hero)return card||null;
+    const needsRebuild=!card || !card.querySelector('#nexusRestToggle');
+    if(!card){
+      card=document.createElement('div');
+      card.className='card nexus-readiness';
+      card.id='nexusReadinessCard';
+    }
+    if(!needsRebuild)return card;
     card.className='card nexus-readiness';
-    card.id='nexusReadinessCard';
     card.innerHTML=`
       <div class="nexus-rest-summary">
         <div class="nexus-rest-main">
@@ -103,7 +107,7 @@
         <div id="nexusReadinessBody"><div class="small muted">Cargando recuperación…</div></div>
       </div>
     `;
-    hero.insertAdjacentElement('afterend',card);
+    if(!card.isConnected) hero.insertAdjacentElement('afterend',card);
     const toggle=document.getElementById('nexusRestToggle');
     const summary=card.querySelector('.nexus-rest-summary');
     const flip=()=>{const open=card.classList.toggle('open');toggle?.setAttribute('aria-expanded',String(open));};
