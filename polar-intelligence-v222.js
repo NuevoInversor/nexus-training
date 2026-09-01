@@ -1,9 +1,10 @@
 (() => {
-  const VERSION='v2.27';
+  const VERSION='v2.28';
   const STAMP='01/09/2026 16:40:00';
   const CFG=window.NEXUS_CLOUD||{};
   const BASE=(CFG.url||'').replace(/\/$/,'')+'/functions/v1';
   const BOOT_KEY='nexus_polar_v222_bootstrap';
+  const POLAR_IMPORT_FROM='2026-09-01';
   let syncLock=false;
 
   function profileId(){
@@ -316,14 +317,7 @@
       const exact=activities.find(a=>String(a?.polar?.sessionId||'')===sid);
       if(exact)return exact;
     }
-    const candidates=activities.filter(a=>a?.date===date);
-    const cardio=candidates.find(a=>{
-      if(!a?.cardioNexus)return false;
-      const code=String(a.cardioNexus.session||'');
-      const sp=String(s?.sport?.id??'');
-      return (sp==='1'&&(code==='C1'||code==='C2'))||(sp==='3'&&code==='C3');
-    });
-    if(cardio)return cardio;
+    const candidates=activities.filter(a=>a?.date===date && !a?.cardioNexus);
 
     const sm=Number(s?.durationMillis||0)/60000;
     const similar=candidates.find(a=>{
@@ -351,7 +345,7 @@
     let added=0,enriched=0,skipped=0;
     sessions.forEach(s=>{
       const sid=sessionId(s),date=String(s?.startTime||'').slice(0,10);
-      if(!sid||!date){skipped++;return}
+      if(!sid||!date||date<POLAR_IMPORT_FROM){skipped++;return}
       const existing=findExisting(s);
       if(existing){enrichActivity(existing,s);enriched++;return}
 
