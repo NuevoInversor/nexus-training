@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.31';
-  const STAMP='01/09/2026 20:02:00';
+  const VERSION='v2.32';
+  const STAMP='01/09/2026 21:58:00';
 
   function currentProfile(){
     const t=document.getElementById('profileSwitchBtn')?.textContent?.trim()?.toLowerCase();
