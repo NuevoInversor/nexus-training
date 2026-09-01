@@ -426,7 +426,8 @@
     },true);
     let n=0;const fast=setInterval(()=>{tick();if(++n>10)clearInterval(fast)},700);
     setInterval(tick,30000);
-    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){tick();refreshLatest()}});
+    setInterval(autoSyncOnce,60*60*1000);
+    document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible'){tick();refreshLatest();autoSyncOnce()}});
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
