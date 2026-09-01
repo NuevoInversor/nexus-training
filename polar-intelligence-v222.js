@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.23';
-  const STAMP='01/09/2026 10:16:00';
+  const VERSION='v2.24';
+  const STAMP='01/09/2026 16:25:00';
   const CFG=window.NEXUS_CLOUD||{};
   const BASE=(CFG.url||'').replace(/\/$/,'')+'/functions/v1';
   const BOOT_KEY='nexus_polar_v222_bootstrap';
@@ -42,11 +42,23 @@
     const s=document.createElement('style');
     s.id='polarIntelV222Style';
     s.textContent=`
-      .nexus-readiness{border:1px solid #dbe3ee;background:linear-gradient(180deg,#fff,#f8fafc)}
-      .nexus-readiness-head{display:flex;align-items:flex-start;justify-content:space-between;gap:12px}
-      .nexus-readiness-title{font-size:18px;font-weight:900;letter-spacing:-.02em}
+      .nexus-readiness{border:1px solid #dbe3ee;background:linear-gradient(180deg,#fff,#f8fafc);padding:14px 16px}
+      .nexus-rest-summary{display:flex;align-items:center;justify-content:space-between;gap:12px}
+      .nexus-rest-main{display:flex;align-items:center;gap:12px;min-width:0}
+      .nexus-rest-icon{width:46px;height:46px;border:0;border-radius:15px;display:flex;align-items:center;justify-content:center;padding:0;flex:0 0 auto;box-shadow:inset 0 0 0 1px rgba(15,23,42,.06)}
+      .nexus-rest-icon svg{width:25px;height:25px}
+      .nexus-rest-icon.good{background:#dcfce7;color:#15803d}
+      .nexus-rest-icon.warn{background:#ffedd5;color:#c2410c}
+      .nexus-rest-icon.bad{background:#fee2e2;color:#b91c1c}
+      .nexus-rest-icon.neutral{background:#f1f5f9;color:#64748b}
+      .nexus-rest-title{font-size:15px;font-weight:900;letter-spacing:-.01em;color:#0f172a}
+      .nexus-rest-sub{font-size:11px;color:#64748b;font-weight:750;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+      .nexus-rest-chevron{font-size:18px;color:#94a3b8;transition:transform .18s ease}
+      .nexus-readiness.open .nexus-rest-chevron{transform:rotate(180deg)}
       .nexus-readiness-date{font-size:11px;color:var(--muted);font-weight:800}
-      .nexus-readiness-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-top:12px}
+      .nexus-readiness-details{display:none;margin-top:12px;padding-top:12px;border-top:1px solid #e2e8f0}
+      .nexus-readiness.open .nexus-readiness-details{display:block}
+      .nexus-readiness-grid{display:grid;grid-template-columns:1fr;gap:8px}
       .nexus-readiness-row{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 11px;border:1px solid #e2e8f0;border-radius:12px;background:#fff}
       .nexus-readiness-label{font-size:13px;font-weight:900;color:#0f172a}
       .nexus-readiness-value{font-size:12px;color:#475569;text-align:right;font-weight:750}
@@ -70,16 +82,33 @@
     card.className='card nexus-readiness';
     card.id='nexusReadinessCard';
     card.innerHTML=`
-      <div class="nexus-readiness-head">
-        <div>
-          <div class="eyebrow" style="color:#2563eb">Polar + Nexus</div>
-          <div class="nexus-readiness-title">Estado de hoy</div>
+      <div class="nexus-rest-summary">
+        <div class="nexus-rest-main">
+          <button class="nexus-rest-icon neutral" id="nexusRestToggle" type="button" aria-expanded="false" aria-controls="nexusReadinessDetails" aria-label="Ver detalle del descanso">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M3 7v10"/><path d="M21 10v7"/><path d="M3 13h18"/><path d="M7 13V8a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v5"/><path d="M3 17h18"/>
+            </svg>
+          </button>
+          <div style="min-width:0">
+            <div class="nexus-rest-title" id="nexusRestTitle">Descanso</div>
+            <div class="nexus-rest-sub" id="nexusRestSub">Cargando datos de Polar…</div>
+          </div>
         </div>
-        <div class="nexus-readiness-date" id="nexusReadinessDate">—</div>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="nexus-readiness-date" id="nexusReadinessDate">—</div>
+          <div class="nexus-rest-chevron">⌄</div>
+        </div>
       </div>
-      <div id="nexusReadinessBody"><div class="small muted" style="margin-top:12px">Cargando recuperación…</div></div>
+      <div class="nexus-readiness-details" id="nexusReadinessDetails">
+        <div id="nexusReadinessBody"><div class="small muted">Cargando recuperación…</div></div>
+      </div>
     `;
     hero.insertAdjacentElement('afterend',card);
+    const toggle=document.getElementById('nexusRestToggle');
+    const summary=card.querySelector('.nexus-rest-summary');
+    const flip=()=>{const open=card.classList.toggle('open');toggle?.setAttribute('aria-expanded',String(open));};
+    if(toggle)toggle.onclick=flip;
+    if(summary)summary.addEventListener('click',e=>{if(e.target.closest('#nexusRestToggle'))return;flip();});
     return card;
   }
 
@@ -148,9 +177,15 @@
     ensureCard();
     const body=document.getElementById('nexusReadinessBody');
     const dateEl=document.getElementById('nexusReadinessDate');
+    const restTitle=document.getElementById('nexusRestTitle');
+    const restSub=document.getElementById('nexusRestSub');
+    const restIcon=document.getElementById('nexusRestToggle');
     if(!latest){
       dateEl.textContent='Sin datos';
-      body.innerHTML='<div class="small muted" style="margin-top:12px">Conecta y sincroniza Polar para calcular tu estado diario.</div>';
+      if(restTitle)restTitle.textContent='Descanso';
+      if(restSub)restSub.textContent='Sin datos de Polar';
+      if(restIcon)restIcon.className='nexus-rest-icon neutral';
+      body.innerHTML='<div class="small muted">Conecta y sincroniza Polar para calcular tu estado diario.</div>';
       return;
     }
 
@@ -192,6 +227,20 @@
     if(Number.isFinite(rmssdDelta)&&rmssdDelta<=-20)flags.push('HRV por debajo de tu referencia');
     if(Number.isFinite(sleepScore)&&sleepScore<55)flags.push('sueño bajo');
     if(Number.isFinite(loadRatio)&&loadRatio>=1.35)flags.push('carga reciente alta');
+
+    let restTone='warn';
+    let restWord='Normal';
+    if((Number.isFinite(indicator)&&indicator<=2)||(Number.isFinite(sleepScore)&&sleepScore<55)||flags.length>=2){
+      restTone='bad'; restWord='Bajo';
+    }else if((Number.isFinite(indicator)&&indicator>=5)&&(Number.isFinite(sleepScore)&&sleepScore>=70)&&( !Number.isFinite(rmssdDelta) || rmssdDelta>-20 )){
+      restTone='good'; restWord='Bueno';
+    }
+    if(restTitle)restTitle.textContent=`Descanso: ${restWord}`;
+    if(restSub)restSub.textContent=[
+      Number.isFinite(sleepScore)?`Sueño ${Math.round(sleepScore)}/100`:null,
+      Number.isFinite(indicator)?`Recuperación ${Math.round(indicator)}/6`:null
+    ].filter(Boolean).join(' · ')||'Datos de Polar';
+    if(restIcon)restIcon.className=`nexus-rest-icon ${restTone}`;
 
     let conclusion='Sin señales claras para modificar el entrenamiento previsto.';
     if(flags.length>=2) conclusion='Hay varias señales de fatiga. Conviene priorizar sensaciones y plantear reducir intensidad o volumen.';
