@@ -8,8 +8,8 @@ window.NEXUS_CLOUD = {
   const loadHomeDashboard = () => {
     if (document.querySelector('script[data-nexus-home-dashboard]')) return;
     const script = document.createElement('script');
-    script.src = 'home-dashboard-v227.js?v=2.33';
-    script.dataset.nexusHomeDashboard = 'v2.33';
+    script.src = 'home-dashboard-v227.js?v=2.34';
+    script.dataset.nexusHomeDashboard = 'v2.34';
     script.async = false;
     document.head.appendChild(script);
   };
@@ -20,8 +20,8 @@ window.NEXUS_CLOUD = {
       return;
     }
     const script = document.createElement('script');
-    script.src = 'polar-intelligence-v222.js?v=2.33';
-    script.dataset.nexusPolarIntelligence = 'v2.33';
+    script.src = 'polar-intelligence-v222.js?v=2.34';
+    script.dataset.nexusPolarIntelligence = 'v2.34';
     script.async = false;
     script.onload = loadHomeDashboard;
     script.onerror = loadHomeDashboard;
