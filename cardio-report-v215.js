@@ -202,6 +202,15 @@
               <input id="polarReviewDiscomfort" placeholder="Ej. Ninguna">
             </div>
             <div class="full">
+              <label>¿Es una sesión de Cardio Nexus?</label>
+              <select id="polarReviewCardioNexus">
+                <option value="">No / actividad libre</option>
+                <option value="C1">Sí · C1</option>
+                <option value="C2">Sí · C2</option>
+                <option value="C3">Sí · C3</option>
+              </select>
+            </div>
+            <div class="full">
               <label>Comentario</label>
               <textarea id="polarReviewNotes" rows="3" placeholder="Terreno, ritmo, cómo te encontraste, cualquier detalle útil…"></textarea>
             </div>
@@ -225,6 +234,28 @@
         sensations:(document.getElementById('polarReviewSensations')?.value||'').trim()
       };
       a.notes=(document.getElementById('polarReviewNotes')?.value||'').trim();
+
+      const cardioCode=(document.getElementById('polarReviewCardioNexus')?.value||'').trim();
+      if(cardioCode){
+        try{
+          const week=typeof getWeek==='function'?getWeek():null;
+          const session=(typeof getCardioNexusSession==='function' && week)?getCardioNexusSession(week,cardioCode):null;
+          a.cardioNexus={
+            ...(a.cardioNexus||{}),
+            week:Number(week)||a.cardioNexus?.week||null,
+            session:cardioCode,
+            type:session?.type||a.cardioNexus?.type||'',
+            icon:session?.icon||a.cardioNexus?.icon||'',
+            visual:session?.visual||a.cardioNexus?.visual||'',
+            training:session?.training||a.cardioNexus?.training||'',
+            plannedDuration:session?.duration||a.cardioNexus?.plannedDuration||'',
+            objective:session?.objective||a.cardioNexus?.objective||'',
+            programId:'cardio-mesociclo-2-2026-08-31',
+            programName:'Cardio - Mesociclo 2'
+          };
+        }catch(_){}
+      }
+
       a.cardioReviewCompletedAt=new Date().toISOString();
       try{
         if(typeof save==='function') save(STORAGE.activities,activities);
@@ -265,6 +296,8 @@
     for(const id of ['polarReviewGeneralFatigue','polarReviewLegFatigue','polarReviewSensations','polarReviewDiscomfort','polarReviewNotes']){
       const el=document.getElementById(id); if(el) el.value='';
     }
+    const cnSel=document.getElementById('polarReviewCardioNexus');
+    if(cnSel) cnSel.value=a.cardioNexus?.session||'';
     document.getElementById('polarCardioReviewModal')?.classList.add('open');
   }
 
