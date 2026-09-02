@@ -56,9 +56,7 @@
     `;
     if(!document.getElementById(style.id)) document.head.appendChild(style);
 
-    const version=document.querySelector('header .version');
-    if(version) version.textContent='Training - v2.10 (24/08/2026 14:51:00)';
-    document.title='Nexus Training v2.10';
+    
     return true;
   }
 
