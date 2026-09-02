@@ -8,8 +8,8 @@ window.NEXUS_CLOUD = {
   const loadHomeDashboard = () => {
     if (document.querySelector('script[data-nexus-home-dashboard]')) return;
     const script = document.createElement('script');
-    script.src = 'home-dashboard-v227.js?v=2.32';
-    script.dataset.nexusHomeDashboard = 'v2.32';
+    script.src = 'home-dashboard-v227.js?v=2.33';
+    script.dataset.nexusHomeDashboard = 'v2.33';
     script.async = false;
     document.head.appendChild(script);
   };
@@ -20,8 +20,8 @@ window.NEXUS_CLOUD = {
       return;
     }
     const script = document.createElement('script');
-    script.src = 'polar-intelligence-v222.js?v=2.32';
-    script.dataset.nexusPolarIntelligence = 'v2.32';
+    script.src = 'polar-intelligence-v222.js?v=2.33';
+    script.dataset.nexusPolarIntelligence = 'v2.33';
     script.async = false;
     script.onload = loadHomeDashboard;
     script.onerror = loadHomeDashboard;
@@ -48,7 +48,7 @@ window.NEXUS_CLOUD = {
       return;
     }
     const script = document.createElement('script');
-    script.src = 'plan-editor-v220.js?v=2.20';
+    script.src = 'plan-editor-v220.js?v=2.20.1';
     script.dataset.nexusPlanEditor = 'v2.20';
     script.async = false;
     script.onload = loadHomeMesocycle;
@@ -168,7 +168,7 @@ window.NEXUS_CLOUD = {
     };
 
     const script = document.createElement('script');
-    script.src = 'profile-ui-v211.js?v=2.11.1';
+    script.src = 'profile-ui-v211.js?v=2.11.2';
     script.dataset.nexusProfileUi = 'v2.11.1';
     script.async = false;
     script.onload = finishProfileLoad;
