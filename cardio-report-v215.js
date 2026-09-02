@@ -18,6 +18,11 @@
       .nexus-cardio-feedback-title{font-size:13px;font-weight:900;color:#0f172a}
       .nexus-cardio-feedback-sub{font-size:12px;color:var(--muted);margin-top:3px;line-height:1.4}
       .nexus-cardio-report-text{min-height:330px;font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,"Liberation Mono",monospace;font-size:13px;line-height:1.45;white-space:pre-wrap}
+      .nexus-polar-review-meta{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:12px 0}
+      .nexus-polar-review-chip{padding:9px 10px;border:1px solid #e2e8f0;border-radius:12px;background:#f8fafc;font-size:12px}
+      .nexus-polar-review-fields{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+      .nexus-polar-review-fields .full{grid-column:1/-1}
+      @media(max-width:560px){.nexus-polar-review-fields{grid-template-columns:1fr 1fr}}
       @media(max-width:560px){.nexus-cardio-feedback{padding:12px}.nexus-cardio-feedback .activity-form-grid{grid-template-columns:1fr 1fr}}
     `;
     document.head.appendChild(s);
@@ -162,6 +167,114 @@
     document.getElementById('cardioSummaryModal')?.classList.add('open');
   }
 
+
+  let polarReviewActivityId=null;
+
+  function ensurePolarReviewModal(){
+    if(document.getElementById('polarCardioReviewModal')) return;
+    document.body.insertAdjacentHTML('beforeend',`
+      <div id="polarCardioReviewModal" class="modal">
+        <div class="sheet">
+          <div class="row between">
+            <div>
+              <div class="eyebrow" style="color:#64748b">Actividad detectada por Polar</div>
+              <h2 style="margin:4px 0">¿Cómo ha ido la sesión?</h2>
+            </div>
+            <button class="iconbtn" id="closePolarCardioReviewBtn">✕</button>
+          </div>
+          <div class="muted small" id="polarCardioReviewIntro" style="margin-top:8px"></div>
+          <div class="nexus-polar-review-meta" id="polarCardioReviewMeta"></div>
+          <div class="nexus-polar-review-fields">
+            <div>
+              <label>Fatiga general</label>
+              <input id="polarReviewGeneralFatigue" inputmode="numeric" placeholder="Ej. 5/10">
+            </div>
+            <div>
+              <label>Fatiga de piernas</label>
+              <input id="polarReviewLegFatigue" inputmode="numeric" placeholder="Ej. 6/10">
+            </div>
+            <div>
+              <label>Sensaciones</label>
+              <input id="polarReviewSensations" inputmode="numeric" placeholder="Ej. 8/10">
+            </div>
+            <div>
+              <label>Molestias</label>
+              <input id="polarReviewDiscomfort" placeholder="Ej. Ninguna">
+            </div>
+            <div class="full">
+              <label>Comentario</label>
+              <textarea id="polarReviewNotes" rows="3" placeholder="Terreno, ritmo, cómo te encontraste, cualquier detalle útil…"></textarea>
+            </div>
+          </div>
+          <button class="btn btn-primary btn-block" id="savePolarCardioReviewBtn" style="margin-top:14px">Guardar sensaciones</button>
+          <button class="btn btn-secondary btn-block" id="laterPolarCardioReviewBtn" style="margin-top:9px">Ahora no</button>
+        </div>
+      </div>
+    `);
+
+    const close=()=>document.getElementById('polarCardioReviewModal')?.classList.remove('open');
+    document.getElementById('closePolarCardioReviewBtn').onclick=close;
+    document.getElementById('laterPolarCardioReviewBtn').onclick=close;
+    document.getElementById('savePolarCardioReviewBtn').onclick=()=>{
+      const a=activities?.find(x=>x.id===polarReviewActivityId);
+      if(!a) return close();
+      a.cardioFeedback={
+        generalFatigue:(document.getElementById('polarReviewGeneralFatigue')?.value||'').trim(),
+        legFatigue:(document.getElementById('polarReviewLegFatigue')?.value||'').trim(),
+        discomfort:(document.getElementById('polarReviewDiscomfort')?.value||'').trim(),
+        sensations:(document.getElementById('polarReviewSensations')?.value||'').trim()
+      };
+      a.notes=(document.getElementById('polarReviewNotes')?.value||'').trim();
+      a.cardioReviewCompletedAt=new Date().toISOString();
+      try{
+        if(typeof save==='function') save(STORAGE.activities,activities);
+        else localStorage.setItem(STORAGE.activities,JSON.stringify(activities));
+      }catch(_){}
+      try{renderHistory()}catch(_){}
+      sessionStorage.setItem('nexus_polar_review_'+a.id,'1');
+      close();
+      if(typeof toast==='function') toast('Sensaciones guardadas');
+      setTimeout(scanPendingPolarCardio,350);
+    };
+  }
+
+  function isPolarCardioPending(a){
+    if(!a || !a.polar || a.cardioReviewCompletedAt || a.cardioFeedback) return false;
+    if(!CARDIO_TYPES.has(a.type)) return false;
+    if(String(a.date||'')<'2026-09-01') return false;
+    if(sessionStorage.getItem('nexus_polar_review_'+a.id)==='1') return false;
+    return true;
+  }
+
+  function openPolarCardioReview(a){
+    ensurePolarReviewModal();
+    polarReviewActivityId=a.id;
+    sessionStorage.setItem('nexus_polar_review_'+a.id,'1');
+    const label=typeLabel(a);
+    const intro=document.getElementById('polarCardioReviewIntro');
+    if(intro) intro.textContent=`${label} · ${String(a.date||'').split('-').reverse().join('/')}`;
+    const p=a.polar||{};
+    const metrics=[
+      a.duration?['Duración',a.duration]:null,
+      a.distance?['Distancia',a.distance]:null,
+      p.hrAvg?['FC media',p.hrAvg+' bpm']:null,
+      p.hrMax?['FC máx.',p.hrMax+' bpm']:null
+    ].filter(Boolean);
+    const meta=document.getElementById('polarCardioReviewMeta');
+    if(meta) meta.innerHTML=metrics.map(m=>`<div class="nexus-polar-review-chip"><span class="muted">${m[0]}</span><br><strong>${m[1]}</strong></div>`).join('');
+    for(const id of ['polarReviewGeneralFatigue','polarReviewLegFatigue','polarReviewSensations','polarReviewDiscomfort','polarReviewNotes']){
+      const el=document.getElementById(id); if(el) el.value='';
+    }
+    document.getElementById('polarCardioReviewModal')?.classList.add('open');
+  }
+
+  function scanPendingPolarCardio(){
+    if(typeof activities==='undefined' || !Array.isArray(activities)) return;
+    if(document.querySelector('.modal.open')) return;
+    const pending=[...activities].filter(isPolarCardioPending).sort((a,b)=>String(b.date).localeCompare(String(a.date)));
+    if(pending[0]) openPolarCardioReview(pending[0]);
+  }
+
   function patchOpenActivity(){
     if(typeof openActivityModal!=='function' || openActivityModal.__nexusV215) return;
     const original=openActivityModal;
@@ -235,6 +348,7 @@
     ensureStyle();
     ensureFeedbackFields();
     ensureSummaryModal();
+    ensurePolarReviewModal();
     patchOpenActivity();
     patchSaveActivity();
     patchHistory();
@@ -245,6 +359,8 @@
     tick();
     let n=0;
     const fast=setInterval(()=>{tick();if(++n>=12)clearInterval(fast);},1000);
+    setTimeout(scanPendingPolarCardio,2800);
+    window.addEventListener('nexus:polar-synced',()=>setTimeout(scanPendingPolarCardio,600));
   }
 
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});
