@@ -113,13 +113,29 @@
     renderAll();
   }
 
+  function activeWorkoutProgress(w){
+    if(!w || typeof w!=='object') return 0;
+    try{
+      return (w.exercises||[]).reduce((total,e)=>total+(e.sets||[]).filter(s=>s?.completed || s?.weight || s?.reps || s?.rir).length,0);
+    }catch(_){return 0}
+  }
+
+  function chooseActiveWorkout(remoteActive,localActive){
+    const rp=activeWorkoutProgress(remoteActive), lp=activeWorkoutProgress(localActive);
+    if(lp>rp) return localActive;
+    if(rp>lp) return remoteActive;
+    if(localActive && !remoteActive) return localActive;
+    return remoteActive||localActive||null;
+  }
+
   function applyRemote(data){
     if(!data || typeof data!=='object') return;
+    const localActive=activeWorkout?clone(activeWorkout):null;
     applying=true;
     try{
       if(Array.isArray(data.routines)) routines=data.routines;
       if(Array.isArray(data.workouts)) workouts=data.workouts;
-      if(Object.prototype.hasOwnProperty.call(data,'activeWorkout')) activeWorkout=data.activeWorkout||null;
+      if(Object.prototype.hasOwnProperty.call(data,'activeWorkout')) activeWorkout=chooseActiveWorkout(data.activeWorkout||null,localActive);
       if(data.plan) plan=data.plan;
       if(data.notesStore) notesStore=data.notesStore;
       if(Array.isArray(data.activities)) activities=data.activities;
@@ -167,7 +183,12 @@
       const row=await fetchRemote();
       hasRemote=!!row;
       if(row?.data){
-        applyRemote(row.data);
+        const incoming=clone(row.data);
+        if(plan?.id==='hipertrofia-general-2026-08-31' && incoming?.plan?.id==='mesociclo-agosto-2026'){
+          incoming.plan=clone(plan);
+          incoming.routines=clone(routines);
+        }
+        applyRemote(incoming);
         originalRemoveItem.call(localStorage,pendingKey());
         originalSetItem.call(localStorage,lastSyncKey(),new Date().toISOString());
       } else {
@@ -184,7 +205,6 @@
     originalSetItem.call(localStorage,PROFILE_CACHE_KEY,id);
     document.getElementById('profileGate')?.classList.add('hidden');
     lastError=''; hasRemote=false; ready=false;
-    resetEmptyProfile();
     renderStatus();
     if(sb){
       const {data}=await sb.auth.getSession();
@@ -205,6 +225,7 @@
     const merged={...remoteData,...localData};
     merged.workouts=mergeById(remoteData.workouts,localData.workouts);
     merged.activities=mergeById(remoteData.activities,localData.activities);
+    merged.activeWorkout=chooseActiveWorkout(remoteData.activeWorkout||null,localData.activeWorkout||null);
     if((remoteData.workouts||[]).length && !(localData.workouts||[]).length) merged.workouts=clone(remoteData.workouts);
     if((remoteData.activities||[]).length && !(localData.activities||[]).length) merged.activities=clone(remoteData.activities);
     return merged;
@@ -262,7 +283,14 @@
     try{
       const row=await fetchRemote();
       hasRemote=!!row;
-      if(row?.data) applyRemote(row.data); else resetEmptyProfile();
+      if(row?.data){
+        const incoming=clone(row.data);
+        if(plan?.id==='hipertrofia-general-2026-08-31' && incoming?.plan?.id==='mesociclo-agosto-2026'){
+          incoming.plan=clone(plan);
+          incoming.routines=clone(routines);
+        }
+        applyRemote(incoming);
+      } else resetEmptyProfile();
       originalSetItem.call(localStorage,lastSyncKey(),new Date().toISOString());
       msg('Sincronización completada.','good');
       renderModal();
