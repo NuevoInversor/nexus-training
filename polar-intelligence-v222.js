@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.41';
-  const STAMP='02/09/2026 21:14:00';
+  const VERSION='v2.42';
+  const STAMP='02/09/2026 21:55:00';
   const CFG=window.NEXUS_CLOUD||{};
   const BASE=(CFG.url||'').replace(/\/$/,'')+'/functions/v1';
   const BOOT_KEY='nexus_polar_v222_bootstrap';
@@ -273,6 +273,7 @@
     const id=String(session?.sport?.id??'');
     if(id==='1' || id==='17')return'run';
     if(id==='3')return'hike';
+    if(id==='55')return'elliptical';
     if(id==='65')return'pilates';
     return'other';
   }
@@ -374,25 +375,39 @@
 
   function importPolarSessions(training){
     if(typeof activities==='undefined'||typeof save!=='function'||typeof STORAGE==='undefined')return {added:0,enriched:0,skipped:0};
+
+    // If Pilates was already entered manually, keep the manual record and remove any Polar duplicate.
+    for(let i=activities.length-1;i>=0;i--){
+      const a=activities[i];
+      if(a?.type!=='pilates' || !a?.polar) continue;
+      const manual=activities.find(x=>x?.date===a.date && x?.type==='pilates' && !x?.polar);
+      if(manual) activities.splice(i,1);
+    }
+
     const sessions=training?.trainingSessions||[];
     let added=0,enriched=0,skipped=0;
     sessions.forEach(s=>{
       const sid=sessionId(s),date=String(s?.startTime||'').slice(0,10);
       if(!sid||!date||date<POLAR_IMPORT_FROM){skipped++;return}
+      const type=sportType(s);
+      if(type==='pilates'){
+        const manualPilates=activities.find(a=>a?.date===date && a?.type==='pilates' && !a?.polar);
+        if(manualPilates){skipped++;return}
+      }
+
       const existing=findExisting(s);
       if(existing){enrichActivity(existing,s);enriched++;return}
 
       const p=polarPayload(s);
       const hasDistance=p.distanceMeters>0;
       const sameDayWorkout=typeof workouts!=='undefined' && workouts.some(w=>getWorkoutDate(w)===date);
-      const isStrengthLike=!hasDistance && sportType(s)==='other';
+      const isStrengthLike=String(p.sportId)==='15';
       if(isStrengthLike && sameDayWorkout){
         if(linkPolarToWorkout(s)) enriched++;
         else skipped++;
         return;
       }
 
-      const type=sportType(s);
       activities.push({
         id:'polar-'+sid,
         date,
