@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.32';
-  const STAMP='01/09/2026 21:58:00';
+  const VERSION='v2.33';
+  const STAMP='02/09/2026 11:28:00';
 
   function currentProfile(){
     const t=document.getElementById('profileSwitchBtn')?.textContent?.trim()?.toLowerCase();
@@ -252,11 +252,7 @@
     const old=document.getElementById('nexusCardioMeso2Card'); if(old) old.style.display='none';
   }
 
-  function updateVersion(){
-    const v=document.querySelector('header .version');
-    if(v) v.textContent=`Training - ${VERSION} (${STAMP})`;
-    document.title=`Nexus Training ${VERSION}`;
-  }
+  function updateVersion(){ /* Version centralizada en polar-intelligence-v222.js */ }
 
   function tick(){
     ensureStyle();
