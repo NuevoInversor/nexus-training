@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.40';
-  const STAMP='02/09/2026 20:01:00';
+  const VERSION='v2.41';
+  const STAMP='02/09/2026 21:14:00';
   const CFG=window.NEXUS_CLOUD||{};
   const BASE=(CFG.url||'').replace(/\/$/,'')+'/functions/v1';
   const BOOT_KEY='nexus_polar_v222_bootstrap';
@@ -273,6 +273,7 @@
     const id=String(session?.sport?.id??'');
     if(id==='1' || id==='17')return'run';
     if(id==='3')return'hike';
+    if(id==='65')return'pilates';
     return'other';
   }
 
