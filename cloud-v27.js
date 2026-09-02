@@ -134,8 +134,12 @@
     applying=true;
     try{
       if(Array.isArray(data.routines)) routines=data.routines;
-      if(Array.isArray(data.workouts)) workouts=data.workouts;
-      if(Object.prototype.hasOwnProperty.call(data,'activeWorkout')) activeWorkout=chooseActiveWorkout(data.activeWorkout||null,localActive);
+      if(Array.isArray(data.workouts)) workouts=data.workouts.filter(w=>{
+        const count=Number(w?.completedSets ?? 0);
+        return count>0 || (w?.exercises||[]).some(e=>(e?.sets||[]).some(s=>s?.completed));
+      });
+      const localActiveAlreadyFinished=localActive && workouts.some(w=>w?.id===localActive.id && !!w?.finishedAt);
+      if(Object.prototype.hasOwnProperty.call(data,'activeWorkout')) activeWorkout=chooseActiveWorkout(data.activeWorkout||null,localActiveAlreadyFinished?null:localActive);
       if(data.plan) plan=data.plan;
       if(data.notesStore) notesStore=data.notesStore;
       if(Array.isArray(data.activities)) activities=data.activities;
@@ -223,7 +227,11 @@
   function mergeSnapshots(remoteData,localData){
     if(!remoteData||typeof remoteData!=='object') return localData;
     const merged={...remoteData,...localData};
-    merged.workouts=mergeById(remoteData.workouts,localData.workouts);
+    merged.workouts=mergeById(remoteData.workouts,localData.workouts).filter(w=>{
+      const count=Number(w?.completedSets ?? 0);
+      const recorded=count>0 || (w?.exercises||[]).some(e=>(e?.sets||[]).some(s=>s?.completed));
+      return recorded || !w?.finishedAt;
+    });
     merged.activities=mergeById(remoteData.activities,localData.activities);
     merged.activeWorkout=chooseActiveWorkout(remoteData.activeWorkout||null,localData.activeWorkout||null);
     if((remoteData.workouts||[]).length && !(localData.workouts||[]).length) merged.workouts=clone(remoteData.workouts);
@@ -333,6 +341,13 @@
     const {data}=await sb.auth.getSession();
     user=data?.session?.user||null;
     renderStatus();
+    window.addEventListener('nexus:set-completed',()=>{
+      if(user && profileId && ready && !applying){
+        clearTimeout(timer);
+        originalSetItem.call(localStorage,pendingKey(),'1');
+        push(false);
+      }
+    });
     document.addEventListener('visibilitychange',()=>{
       if(document.visibilityState==='visible' && user && profileId && hasRemote){
         if(localStorage.getItem(pendingKey())==='1') push(false); else syncNow();
