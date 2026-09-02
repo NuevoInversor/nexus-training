@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.37';
-  const STAMP='02/09/2026 13:34:00';
+  const VERSION='v2.38';
+  const STAMP='02/09/2026 17:42:00';
   const CFG=window.NEXUS_CLOUD||{};
   const BASE=(CFG.url||'').replace(/\/$/,'')+'/functions/v1';
   const BOOT_KEY='nexus_polar_v222_bootstrap';
@@ -350,6 +350,27 @@
     return a;
   }
 
+  function linkPolarToWorkout(s){
+    if(typeof workouts==='undefined'||!Array.isArray(workouts)||typeof save!=='function'||typeof STORAGE==='undefined') return false;
+    const sid=sessionId(s),date=String(s?.startTime||'').slice(0,10);
+    if(!sid||!date) return false;
+
+    const already=workouts.find(w=>String(w?.polar?.sessionId||'')===sid);
+    if(already) return true;
+
+    const candidates=workouts.filter(w=>getWorkoutDate(w)===date);
+    if(!candidates.length) return false;
+
+    const w=candidates[candidates.length-1];
+    w.polar=polarPayload(s);
+    w.source=w.source||'nexus+polar';
+    w.polarLinkedAt=new Date().toISOString();
+    try{save(STORAGE.workouts,workouts)}catch(_){return false}
+    try{renderHistory()}catch(_){}
+    try{renderHome()}catch(_){}
+    return true;
+  }
+
   function importPolarSessions(training){
     if(typeof activities==='undefined'||typeof save!=='function'||typeof STORAGE==='undefined')return {added:0,enriched:0,skipped:0};
     const sessions=training?.trainingSessions||[];
@@ -363,7 +384,12 @@
       const p=polarPayload(s);
       const hasDistance=p.distanceMeters>0;
       const sameDayWorkout=typeof workouts!=='undefined' && workouts.some(w=>getWorkoutDate(w)===date);
-      if(!hasDistance && sameDayWorkout){skipped++;return}
+      const isStrengthLike=!hasDistance && sportType(s)==='other';
+      if(isStrengthLike && sameDayWorkout){
+        if(linkPolarToWorkout(s)) enriched++;
+        else skipped++;
+        return;
+      }
 
       const type=sportType(s);
       activities.push({
@@ -383,6 +409,37 @@
     save(STORAGE.activities,activities);
     try{renderHistory()}catch(_){}
     return {added,enriched,skipped};
+  }
+
+  function patchWorkoutHistoryDetails(){
+    if(typeof openHistoryWorkout!=='function'||openHistoryWorkout.__polarStrengthV238)return;
+    const original=openHistoryWorkout;
+    const wrapped=function(id){
+      const result=original.apply(this,arguments);
+      try{
+        const w=workouts?.find(x=>x.id===id);
+        const p=w?.polar;
+        const c=document.getElementById('historyWorkoutContent');
+        if(p&&c&&!c.querySelector('.polar-history-block')){
+          const metrics=[
+            p.durationMillis?['Duración Polar',fmtDurationMs(p.durationMillis)]:null,
+            p.hrAvg?['FC media',p.hrAvg+' bpm']:null,
+            p.hrMax?['FC máx.',p.hrMax+' bpm']:null,
+            p.calories?['Calorías',p.calories+' kcal']:null,
+            p.recoveryTimeMillis?['Recuperación Polar',fmtDurationMs(p.recoveryTimeMillis)]:null
+          ].filter(Boolean);
+          c.insertAdjacentHTML('beforeend',`
+            <div class="polar-history-block">
+              <strong>Datos Polar · Fuerza</strong>
+              <div class="polar-history-grid">${metrics.map(m=>`<div><span class="muted">${m[0]}</span><br><strong>${m[1]}</strong></div>`).join('')}</div>
+              <div class="polar-source-badge">⌚ Vinculado al entrenamiento de Nexus</div>
+            </div>`);
+        }
+      }catch(_){}
+      return result;
+    };
+    wrapped.__polarStrengthV238=true;
+    openHistoryWorkout=wrapped;
   }
 
   function patchHistoryDetails(){
@@ -470,6 +527,7 @@
 
   function tick(){
     ensureCard();
+    patchWorkoutHistoryDetails();
     patchHistoryDetails();
     updateVersion();
   }
