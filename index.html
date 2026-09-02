@@ -299,7 +299,7 @@ select{
 </head>
 <body>
 <div class="app">
-<header><div><div class="brand">NEXUS</div><div class="version">Training - v2.40 (02/09/2026 20:01:00)</div></div><span class="pill" id="todayPill"></span></header>
+<header><div><div class="brand">NEXUS</div><div class="version">Training - v2.41 (02/09/2026 21:14:00)</div></div><span class="pill" id="todayPill"></span></header>
 <main>
 <section id="homeView" class="view active">
   <div class="hero"><div class="eyebrow">Plan Nexus</div><h1 id="weekHero">Semana 3</h1><p id="cycleHero">Mesociclo actual</p></div>
@@ -931,8 +931,9 @@ function renderWorkout(){
   </div>`;
 
   c.querySelectorAll('input[data-field]').forEach(inp=>{
-    const saveValue=()=>{
+    const saveValue=(renderAfter=false)=>{
       const s=e.sets[Number(inp.dataset.set)];
+      const wasRecorded=isSetRecorded(s,e);
       if(inp.dataset.field==='restActual'){
         const parsed=parseRestValue(inp.value);
         s.restActual=parsed==null ? Number(e.rest)||0 : parsed;
@@ -940,10 +941,15 @@ function renderWorkout(){
         s[inp.dataset.field]=inp.value;
       }
       syncRecordedSets(e);
+      const nowRecorded=isSetRecorded(s,e);
       save(STORAGE.active,activeWorkout);
-      renderWorkout();
+      if(!wasRecorded && nowRecorded){
+        try{window.dispatchEvent(new CustomEvent('nexus:set-completed',{detail:{workoutId:activeWorkout.id,exerciseKey:e.key,setNumber:s.number}}));}catch(_){}
+      }
+      if(renderAfter) renderWorkout();
     };
-    inp.onchange=saveValue;
+    inp.oninput=()=>saveValue(false);
+    inp.onchange=()=>saveValue(true);
   });
   document.getElementById('exerciseNote').oninput=(ev)=>setNote(e.key,ev.target.value);
 }
@@ -1020,6 +1026,11 @@ function finishWorkout(){
   const total=activeWorkout.exercises.reduce((a,e)=>a+e.sets.length,0);
   const done=activeWorkout.exercises.reduce((a,e)=>a+recordedSetCount(e),0);
   const incomplete=done<total;
+
+  if(done===0){
+    toast('No puedes finalizar un entrenamiento sin ninguna serie registrada');
+    return;
+  }
 
   pendingFinishMeta={total,done,incomplete};
 
@@ -1233,6 +1244,7 @@ function svgIcon(name){
     run: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="14" cy="4" r="2"/><path d="M10 9l4-2 3 3M12 9l-2 5-4 2M10 14l4 2 2 5M8 12l-5 3"/></svg>`,
     bike: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="6" cy="17" r="4"/><circle cx="18" cy="17" r="4"/><path d="M6 17l5-8h4l3 8M10 9l4 8M9 6h4"/></svg>`,
     hike: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 20l6-9 4 5 2-3 6 7H3z"/><path d="M15 5l2-2 2 2"/></svg>`,
+    pilates: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="5" r="2"/><path d="M12 7v5"/><path d="M7 10c2 1 3 2 5 2s3-1 5-2"/><path d="M8 20c1.4-3.2 2.7-5 4-5s2.6 1.8 4 5"/><path d="M5 20h14"/></svg>`,
     other: `<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 12h8M12 8v8"/></svg>`
   };
   return icons[name] || icons.other;
@@ -1246,6 +1258,7 @@ function getActivityVisual(type){
     run:{icon:'run', cls:'run', label:'Correr'},
     bike:{icon:'bike', cls:'bike', label:'Bicicleta'},
     hike:{icon:'hike', cls:'hike', label:'Montaña'},
+    pilates:{icon:'pilates', cls:'purple', label:'Pilates'},
     other:{icon:'other', cls:'other', label:'Otra'}
   };
   return map[type] || map.other;
@@ -1621,7 +1634,7 @@ function savePlan(){
 init();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="nexus-config.js?v=2.40"></script>
-<script src="cloud-v27.js?v=2.39"></script>
+<script src="nexus-config.js?v=2.41"></script>
+<script src="cloud-v27.js?v=2.41"></script>
 </body>
 </html>
