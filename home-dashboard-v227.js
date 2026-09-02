@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.34';
-  const STAMP='02/09/2026 11:32:00';
+  const VERSION='v2.35';
+  const STAMP='02/09/2026 12:43:00';
 
   function currentProfile(){
     const t=document.getElementById('profileSwitchBtn')?.textContent?.trim()?.toLowerCase();
@@ -201,7 +201,14 @@
 
   function cardioDone(week,code){
     try{
-      return Array.isArray(activities)&&activities.some(a=>Number(a?.cardioNexus?.week)===Number(week)&&a?.cardioNexus?.session===code);
+      return Array.isArray(activities)&&activities.some(a=>{
+        const cn=a?.cardioNexus;
+        if(!cn || Number(cn.week)!==Number(week) || cn.session!==code) return false;
+        const date=String(a?.date||'');
+        const currentProgram=cn.programId==='cardio-mesociclo-2-2026-08-31';
+        const currentDates=date>='2026-08-31' && date<='2026-09-27';
+        return currentProgram || currentDates;
+      });
     }catch(_){return false}
   }
 
