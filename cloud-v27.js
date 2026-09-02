@@ -50,9 +50,6 @@
       document.getElementById('profileSwitchBtn').onclick=showProfileGate;
     }
 
-    const version=document.querySelector('header .version');
-    if(version) version.textContent='Training - v2.9 (24/08/2026 14:25:00)';
-    document.title='Nexus Training v2.9';
 
     const hero=document.querySelector('#homeView .hero');
     if(hero && !document.getElementById('cloudCard')) hero.insertAdjacentHTML('afterend',`<div class="card" id="cloudCard"><div class="row between"><div><h3 style="margin-bottom:4px">Nexus Cloud</h3><div class="cloud-status"><span id="cloudDot" class="cloud-dot"></span><span id="cloudStatusText">Selecciona un perfil</span></div><div id="cloudAccount" class="cloud-account"></div></div><button class="btn btn-secondary" id="cloudOpenBtn">Conectar</button></div></div>`);
