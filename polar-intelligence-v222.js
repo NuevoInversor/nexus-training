@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.32';
-  const STAMP='01/09/2026 21:58:00';
+  const VERSION='v2.33';
+  const STAMP='02/09/2026 11:28:00';
   const CFG=window.NEXUS_CLOUD||{};
   const BASE=(CFG.url||'').replace(/\/$/,'')+'/functions/v1';
   const BOOT_KEY='nexus_polar_v222_bootstrap';
