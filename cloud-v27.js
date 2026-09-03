@@ -120,7 +120,20 @@
     }catch(_){return 0}
   }
 
-  function chooseActiveWorkout(remoteActive,localActive){
+  function samePlan(active,planData){
+    if(!active) return true;
+    if(!active.planId || !planData?.id) return false;
+    return String(active.planId)===String(planData.id);
+  }
+
+  function isFinishedActive(active,finishedWorkouts){
+    if(!active?.id) return false;
+    return (finishedWorkouts||[]).some(w=>String(w?.id)===String(active.id) && !!w?.finishedAt);
+  }
+
+  function chooseActiveWorkout(remoteActive,localActive,planData,finishedWorkouts=[]){
+    if(remoteActive && (!samePlan(remoteActive,planData) || isFinishedActive(remoteActive,finishedWorkouts))) remoteActive=null;
+    if(localActive && (!samePlan(localActive,planData) || isFinishedActive(localActive,finishedWorkouts))) localActive=null;
     const rp=activeWorkoutProgress(remoteActive), lp=activeWorkoutProgress(localActive);
     if(lp>rp) return localActive;
     if(rp>lp) return remoteActive;
@@ -138,8 +151,8 @@
         const count=Number(w?.completedSets ?? 0);
         return count>0 || (w?.exercises||[]).some(e=>(e?.sets||[]).some(s=>s?.completed));
       });
-      const localActiveAlreadyFinished=localActive && workouts.some(w=>w?.id===localActive.id && !!w?.finishedAt);
-      if(Object.prototype.hasOwnProperty.call(data,'activeWorkout')) activeWorkout=chooseActiveWorkout(data.activeWorkout||null,localActiveAlreadyFinished?null:localActive);
+      const incomingPlan=data.plan||plan;
+      if(Object.prototype.hasOwnProperty.call(data,'activeWorkout')) activeWorkout=chooseActiveWorkout(data.activeWorkout||null,localActive,incomingPlan,workouts);
       if(data.plan) plan=data.plan;
       if(data.notesStore) notesStore=data.notesStore;
       if(Array.isArray(data.activities)) activities=data.activities;
@@ -209,6 +222,12 @@
     originalSetItem.call(localStorage,PROFILE_CACHE_KEY,id);
     document.getElementById('profileGate')?.classList.add('hidden');
     lastError=''; hasRemote=false; ready=false;
+    applying=true;
+    try{
+      activeWorkout=null;
+      originalRemoveItem.call(localStorage,STORAGE.active);
+    } finally { applying=false; }
+    renderAll();
     renderStatus();
     if(sb){
       const {data}=await sb.auth.getSession();
@@ -233,7 +252,8 @@
       return recorded || !w?.finishedAt;
     });
     merged.activities=mergeById(remoteData.activities,localData.activities);
-    merged.activeWorkout=chooseActiveWorkout(remoteData.activeWorkout||null,localData.activeWorkout||null);
+    const mergedPlan=localData.plan||remoteData.plan;
+    merged.activeWorkout=chooseActiveWorkout(remoteData.activeWorkout||null,localData.activeWorkout||null,mergedPlan,merged.workouts);
     if((remoteData.workouts||[]).length && !(localData.workouts||[]).length) merged.workouts=clone(remoteData.workouts);
     if((remoteData.activities||[]).length && !(localData.activities||[]).length) merged.activities=clone(remoteData.activities);
     return merged;
