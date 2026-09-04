@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.51';
-  const STAMP='04/09/2026 12:28:00';
+  const VERSION='v2.52';
+  const STAMP='04/09/2026 12:36:00';
   const VERSION_TEXT=`Training - ${VERSION} (${STAMP})`;
 
   function setRecorded(s,e){
