@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.54';
-  const STAMP='04/09/2026 13:24:00';
+  const VERSION='v2.55';
+  const STAMP='04/09/2026 13:31:00';
   const VERSION_TEXT=`Training - ${VERSION} (${STAMP})`;
   const PILATES_SVG=`<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="7.3" cy="6" r="1.6"/><path d="M8.5 8.2c1.1 1 1.8 2.3 2.1 3.8"/><path d="M9.1 9.6c2 .9 4.2.5 6.3-.7"/><path d="M15.4 8.9l2.2-1.2"/><path d="M10.5 12.1c.9 1.7 2 2.8 3.6 3.6"/><path d="M14.1 15.7l5-7.1"/><path d="M14 15.8l5.9-2.1"/><path d="M6.2 18.7c1.2-2.3 2.5-3.7 4.1-4.5"/><path d="M5 19h14"/></svg>`;
 

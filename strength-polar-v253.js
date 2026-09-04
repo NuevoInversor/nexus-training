@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.54';
-  const STAMP='04/09/2026 13:24:00';
+  const VERSION='v2.55';
+  const STAMP='04/09/2026 13:31:00';
   let busy=false;
 
   const strengthSvg=()=>`<svg class="icon-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 9v6M6 7v10M9 10h6M15 7v10M18 9v6"/><path d="M4.5 7h1.5M4.5 17h1.5M17 7h1.5M17 17h1.5"/></svg>`;
