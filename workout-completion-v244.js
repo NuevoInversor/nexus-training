@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.44';
-  const STAMP='04/09/2026 09:49:00';
+  const VERSION='v2.48';
+  const STAMP='04/09/2026 11:27:00';
 
   function setRecorded(s,e){
     const repsOk=String(s?.reps??'').trim()!=='';
