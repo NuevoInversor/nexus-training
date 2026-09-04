@@ -5,12 +5,26 @@ window.NEXUS_CLOUD = {
 };
 
 (() => {
+  const loadWorkoutCompletion = () => {
+    if (document.querySelector('script[data-nexus-workout-completion]')) return;
+    const script = document.createElement('script');
+    script.src = 'workout-completion-v244.js?v=2.44';
+    script.dataset.nexusWorkoutCompletion = 'v2.44';
+    script.async = false;
+    document.head.appendChild(script);
+  };
+
   const loadHomeDashboard = () => {
-    if (document.querySelector('script[data-nexus-home-dashboard]')) return;
+    if (document.querySelector('script[data-nexus-home-dashboard]')) {
+      loadWorkoutCompletion();
+      return;
+    }
     const script = document.createElement('script');
     script.src = 'home-dashboard-v227.js?v=2.43';
     script.dataset.nexusHomeDashboard = 'v2.43';
     script.async = false;
+    script.onload = loadWorkoutCompletion;
+    script.onerror = loadWorkoutCompletion;
     document.head.appendChild(script);
   };
 
