@@ -5,12 +5,26 @@ window.NEXUS_CLOUD = {
 };
 
 (() => {
+  const loadCardioPersistence = () => {
+    if (document.querySelector('script[data-nexus-cardio-persistence]')) return;
+    const script = document.createElement('script');
+    script.src = 'cardio-persistence-v245.js?v=2.45';
+    script.dataset.nexusCardioPersistence = 'v2.45';
+    script.async = false;
+    document.head.appendChild(script);
+  };
+
   const loadWorkoutCompletion = () => {
-    if (document.querySelector('script[data-nexus-workout-completion]')) return;
+    if (document.querySelector('script[data-nexus-workout-completion]')) {
+      loadCardioPersistence();
+      return;
+    }
     const script = document.createElement('script');
     script.src = 'workout-completion-v244.js?v=2.44';
     script.dataset.nexusWorkoutCompletion = 'v2.44';
     script.async = false;
+    script.onload = loadCardioPersistence;
+    script.onerror = loadCardioPersistence;
     document.head.appendChild(script);
   };
 
