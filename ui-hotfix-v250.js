@@ -12,9 +12,9 @@
   </svg>`;
 
   function ensureStyle(){
-    if(document.getElementById('nexusUiHotfixV250Style')) return;
+    if(document.getElementById('nexusUiHotfixV251Style')) return;
     const s=document.createElement('style');
-    s.id='nexusUiHotfixV250Style';
+    s.id='nexusUiHotfixV251Style';
     s.textContent=`
       .activity-chip.pilates{background:#ede9fe!important;color:#7c3aed!important}
       .history-badge.pilates{background:#f5f3ff!important;color:#6d28d9!important}
@@ -27,18 +27,18 @@
     ensureStyle();
     let changed=false;
 
-    if(typeof window.svgIcon==='function' && !window.svgIcon.__pilatesV250){
+    if(typeof window.svgIcon==='function' && !window.svgIcon.__pilatesV251){
       const original=window.svgIcon;
       const wrapped=function(name){
         if(String(name||'').toLowerCase()==='pilates') return PILATES_SVG;
         return original.apply(this,arguments);
       };
-      wrapped.__pilatesV250=true;
+      wrapped.__pilatesV251=true;
       window.svgIcon=wrapped;
       changed=true;
     }
 
-    if(typeof window.getActivityVisual==='function' && !window.getActivityVisual.__pilatesV250){
+    if(typeof window.getActivityVisual==='function' && !window.getActivityVisual.__pilatesV251){
       const original=window.getActivityVisual;
       const wrapped=function(type){
         const t=String(type||'').trim().toLowerCase();
@@ -46,7 +46,7 @@
         if(t==='elliptical') return {icon:'elliptical',cls:'elliptical',label:'Elíptica'};
         return original.apply(this,arguments);
       };
-      wrapped.__pilatesV250=true;
+      wrapped.__pilatesV251=true;
       window.getActivityVisual=wrapped;
       changed=true;
     }
