@@ -1,17 +1,6 @@
 (() => {
-  const VERSION='v2.49';
-  const STAMP='04/09/2026 11:36:00';
   const STORE_PREFIX='nxs_cardio_meta_v245_';
   let restoring=false;
-
-  function loadPilatesIcon(){
-    if(document.querySelector('script[data-nexus-pilates-icon]')) return;
-    const s=document.createElement('script');
-    s.src='pilates-icon-v247.js?v=2.49';
-    s.dataset.nexusPilatesIcon='v2.49';
-    s.async=false;
-    document.head.appendChild(s);
-  }
 
   function profileId(){
     try{return localStorage.getItem('nexus_local_profile_v29')||'default';}catch(_){return'default'}
@@ -101,12 +90,11 @@
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(reconcile,200);});
   document.addEventListener('change',()=>setTimeout(capture,100));
 
-  loadPilatesIcon();
   let runs=0;
   const boot=setInterval(()=>{
-    reconcile(); loadPilatesIcon();
+    reconcile();
     if(++runs>=12) clearInterval(boot);
   },500);
-  setTimeout(()=>{reconcile();loadPilatesIcon();},50);
+  setTimeout(reconcile,50);
   setInterval(reconcile,10000);
 })();
