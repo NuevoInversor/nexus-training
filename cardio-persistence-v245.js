@@ -1,14 +1,14 @@
 (() => {
-  const VERSION='v2.47';
-  const STAMP='04/09/2026 11:22:00';
+  const VERSION='v2.49';
+  const STAMP='04/09/2026 11:36:00';
   const STORE_PREFIX='nxs_cardio_meta_v245_';
   let restoring=false;
 
   function loadPilatesIcon(){
     if(document.querySelector('script[data-nexus-pilates-icon]')) return;
     const s=document.createElement('script');
-    s.src='pilates-icon-v247.js?v=2.47';
-    s.dataset.nexusPilatesIcon='v2.47';
+    s.src='pilates-icon-v247.js?v=2.49';
+    s.dataset.nexusPilatesIcon='v2.49';
     s.async=false;
     document.head.appendChild(s);
   }
@@ -82,9 +82,7 @@
     for(let i=window.activities.length-1;i>=0;i--){
       const a=window.activities[i];
       const sid=String(a?.polar?.sessionId||'');
-      if(String(a?.polar?.sportId||'')==='15' && sid && linked.has(sid)){
-        window.activities.splice(i,1);
-      }
+      if(String(a?.polar?.sportId||'')==='15' && sid && linked.has(sid)) window.activities.splice(i,1);
     }
     if(window.activities.length===before) return;
 
@@ -98,23 +96,17 @@
   }
 
   function reconcile(){capture();restore();removeLinkedStrengthDuplicates();capture();}
-  function updateVersion(){
-    const el=document.querySelector('header .version,.version');
-    if(el) el.textContent=`Training - ${VERSION} (${STAMP})`;
-  }
-
   window.addEventListener('nexus:polar-synced',()=>setTimeout(reconcile,250));
   window.addEventListener('focus',()=>setTimeout(reconcile,150));
   document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(reconcile,200);});
   document.addEventListener('change',()=>setTimeout(capture,100));
 
   loadPilatesIcon();
-
   let runs=0;
   const boot=setInterval(()=>{
-    reconcile(); updateVersion(); loadPilatesIcon();
+    reconcile(); loadPilatesIcon();
     if(++runs>=12) clearInterval(boot);
   },500);
-  setTimeout(()=>{reconcile();updateVersion();loadPilatesIcon();},50);
+  setTimeout(()=>{reconcile();loadPilatesIcon();},50);
   setInterval(reconcile,10000);
 })();
