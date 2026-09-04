@@ -5,208 +5,68 @@ window.NEXUS_CLOUD = {
 };
 
 (() => {
-  const loadCardioPersistence = () => {
-    if (document.querySelector('script[data-nexus-cardio-persistence]')) return;
-    const script = document.createElement('script');
-    script.src = 'cardio-persistence-v245.js?v=2.45';
-    script.dataset.nexusCardioPersistence = 'v2.45';
-    script.async = false;
-    document.head.appendChild(script);
+  const VERSION='v2.49';
+  const STAMP='04/09/2026 11:36:00';
+  const setVersion=()=>{
+    const el=document.querySelector('.version');
+    if(el) el.textContent=`Training - ${VERSION} (${STAMP})`;
   };
 
-  const loadWorkoutCompletion = () => {
-    if (document.querySelector('script[data-nexus-workout-completion]')) {
-      loadCardioPersistence();
+  function load(src,attr,value,next){
+    if(document.querySelector(`script[${attr}]`)){
+      next?.();
       return;
     }
-    const script = document.createElement('script');
-    script.src = 'workout-completion-v244.js?v=2.44';
-    script.dataset.nexusWorkoutCompletion = 'v2.44';
-    script.async = false;
-    script.onload = loadCardioPersistence;
-    script.onerror = loadCardioPersistence;
-    document.head.appendChild(script);
+    const s=document.createElement('script');
+    s.src=src;
+    s.setAttribute(attr,value);
+    s.async=false;
+    s.onload=()=>next?.();
+    s.onerror=()=>next?.();
+    document.head.appendChild(s);
+  }
+
+  const loadCardioPersistence=()=>load('cardio-persistence-v245.js?v=2.49','data-nexus-cardio-persistence','v2.49');
+  const loadWorkoutCompletion=()=>load('workout-completion-v244.js?v=2.49','data-nexus-workout-completion','v2.49',loadCardioPersistence);
+  const loadHomeDashboard=()=>load('home-dashboard-v227.js?v=2.49','data-nexus-home-dashboard','v2.49',loadWorkoutCompletion);
+  const loadPolarIntelligence=()=>load('polar-intelligence-v222.js?v=2.49','data-nexus-polar-intelligence','v2.49',loadHomeDashboard);
+  const loadHomeMesocycle=()=>load('home-mesocycle-v221.js?v=2.49','data-nexus-home-mesocycle','v2.49',loadPolarIntelligence);
+  const loadPlanEditor=()=>load('plan-editor-v220.js?v=2.49','data-nexus-plan-editor','v2.49',loadHomeMesocycle);
+  const loadPolar=()=>load('polar-v218.js?v=2.49','data-nexus-polar','v2.49',loadPlanEditor);
+  const loadProfileCardioAccess=()=>load('profile-cardio-access-v217.js?v=2.49','data-nexus-profile-cardio-access','v2.49',loadPolar);
+
+  const loadAnaPlan=()=>load('ana-plan-v216.js?v=2.49','data-nexus-ana-plan','v2.49');
+  const loadCardioReport=()=>load('cardio-report-v215.js?v=2.49','data-nexus-cardio-report','v2.49');
+
+  const loadDavidCardio=()=>{
+    const after=()=>{loadCardioReport();loadAnaPlan();loadProfileCardioAccess();};
+    load('cardio-david-v214.js?v=2.49','data-nexus-david-cardio','v2.49',after);
   };
+  const loadDavidMesocycle=()=>load('mesocycle-david-v213.js?v=2.49','data-nexus-david-mesocycle','v2.49',loadDavidCardio);
+  const loadWorkoutControls=()=>load('workout-controls-v212.js?v=2.49','data-nexus-workout-controls','v2.49',loadDavidMesocycle);
 
-  const loadHomeDashboard = () => {
-    if (document.querySelector('script[data-nexus-home-dashboard]')) {
-      loadWorkoutCompletion();
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'home-dashboard-v227.js?v=2.43';
-    script.dataset.nexusHomeDashboard = 'v2.43';
-    script.async = false;
-    script.onload = loadWorkoutCompletion;
-    script.onerror = loadWorkoutCompletion;
-    document.head.appendChild(script);
-  };
-
-  const loadPolarIntelligence = () => {
-    if (document.querySelector('script[data-nexus-polar-intelligence]')) {
-      loadHomeDashboard();
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'polar-intelligence-v222.js?v=2.43';
-    script.dataset.nexusPolarIntelligence = 'v2.43';
-    script.async = false;
-    script.onload = loadHomeDashboard;
-    script.onerror = loadHomeDashboard;
-    document.head.appendChild(script);
-  };
-
-  const loadHomeMesocycle = () => {
-    if (document.querySelector('script[data-nexus-home-mesocycle]')) {
-      loadPolarIntelligence();
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'home-mesocycle-v221.js?v=2.21.1';
-    script.dataset.nexusHomeMesocycle = 'v2.21';
-    script.async = false;
-    script.onload = loadPolarIntelligence;
-    script.onerror = loadPolarIntelligence;
-    document.head.appendChild(script);
-  };
-
-  const loadPlanEditor = () => {
-    if (document.querySelector('script[data-nexus-plan-editor]')) {
-      loadHomeMesocycle();
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'plan-editor-v220.js?v=2.20.1';
-    script.dataset.nexusPlanEditor = 'v2.20';
-    script.async = false;
-    script.onload = loadHomeMesocycle;
-    script.onerror = loadHomeMesocycle;
-    document.head.appendChild(script);
-  };
-
-  const loadPolar = () => {
-    if (document.querySelector('script[data-nexus-polar]')) {
-      loadPlanEditor();
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'polar-v218.js?v=2.19.1';
-    script.dataset.nexusPolar = 'v2.19';
-    script.async = false;
-    script.onload = loadPlanEditor;
-    script.onerror = loadPlanEditor;
-    document.head.appendChild(script);
-  };
-
-  const loadProfileCardioAccess = () => {
-    if (document.querySelector('script[data-nexus-profile-cardio-access]')) {
-      loadPolar();
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'profile-cardio-access-v217.js?v=2.17.1';
-    script.dataset.nexusProfileCardioAccess = 'v2.17';
-    script.async = false;
-    script.onload = loadPolar;
-    script.onerror = loadPolar;
-    document.head.appendChild(script);
-  };
-
-  const loadAnaPlan = () => {
-    if (document.querySelector('script[data-nexus-ana-plan]')) return;
-    const script = document.createElement('script');
-    script.src = 'ana-plan-v216.js?v=2.16.1';
-    script.dataset.nexusAnaPlan = 'v2.16';
-    script.async = false;
-    document.head.appendChild(script);
-  };
-
-  const loadCardioReport = () => {
-    if (document.querySelector('script[data-nexus-cardio-report]')) return;
-    const script = document.createElement('script');
-    script.src = 'cardio-report-v215.js?v=2.42';
-    script.dataset.nexusCardioReport = 'v2.42';
-    script.async = false;
-    document.head.appendChild(script);
-  };
-
-  const loadDavidCardio = () => {
-    if (document.querySelector('script[data-nexus-david-cardio]')) {
-      loadCardioReport();
-      loadAnaPlan();
-      loadProfileCardioAccess();
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'cardio-david-v214.js?v=2.14.1';
-    script.dataset.nexusDavidCardio = 'v2.14';
-    script.async = false;
-    script.onload = () => { loadCardioReport(); loadAnaPlan(); loadProfileCardioAccess(); };
-    script.onerror = () => { loadCardioReport(); loadAnaPlan(); loadProfileCardioAccess(); };
-    document.head.appendChild(script);
-  };
-
-  const loadDavidMesocycle = () => {
-    if (document.querySelector('script[data-nexus-david-mesocycle]')) {
-      loadDavidCardio();
-      return;
-    }
-    const script = document.createElement('script');
-    script.src = 'mesocycle-david-v213.js?v=2.13.2';
-    script.dataset.nexusDavidMesocycle = 'v2.13';
-    script.async = false;
-    script.onload = loadDavidCardio;
-    script.onerror = loadDavidCardio;
-    document.head.appendChild(script);
-  };
-
-  const loadWorkoutControls = () => {
-    if (document.querySelector('script[data-nexus-workout-controls]')) {
-      loadDavidMesocycle();
-      return;
-    }
-    const controls = document.createElement('script');
-    controls.src = 'workout-controls-v212.js?v=2.12.1';
-    controls.dataset.nexusWorkoutControls = 'v2.12';
-    controls.async = false;
-    controls.onload = loadDavidMesocycle;
-    controls.onerror = loadDavidMesocycle;
-    document.head.appendChild(controls);
-  };
-
-  const loadProfileUI = () => {
-    if (document.querySelector('script[data-nexus-profile-ui]')) {
-      loadWorkoutControls();
-      return;
-    }
-
-    const NativeMutationObserver = window.MutationObserver;
-    if (NativeMutationObserver) {
-      window.MutationObserver = class NexusOneShotObserver {
-        constructor() {}
-        observe() {}
-        disconnect() {}
-        takeRecords() { return []; }
+  const loadProfileUI=()=>{
+    if(document.querySelector('script[data-nexus-profile-ui]')){loadWorkoutControls();return;}
+    const NativeMutationObserver=window.MutationObserver;
+    if(NativeMutationObserver){
+      window.MutationObserver=class NexusOneShotObserver{
+        constructor(){} observe(){} disconnect(){} takeRecords(){return[];}
       };
     }
-
-    const finishProfileLoad = () => {
-      if (NativeMutationObserver) window.MutationObserver = NativeMutationObserver;
+    const finish=()=>{
+      if(NativeMutationObserver) window.MutationObserver=NativeMutationObserver;
       loadWorkoutControls();
     };
-
-    const script = document.createElement('script');
-    script.src = 'profile-ui-v211.js?v=2.11.2';
-    script.dataset.nexusProfileUi = 'v2.11.1';
-    script.async = false;
-    script.onload = finishProfileLoad;
-    script.onerror = finishProfileLoad;
-    document.head.appendChild(script);
+    const s=document.createElement('script');
+    s.src='profile-ui-v211.js?v=2.49';
+    s.dataset.nexusProfileUi='v2.49';
+    s.async=false;
+    s.onload=finish;
+    s.onerror=finish;
+    document.head.appendChild(s);
   };
 
-  if (document.readyState === 'loading') {
-    document.addEventListener('DOMContentLoaded', loadProfileUI, { once: true });
-  } else {
-    loadProfileUI();
-  }
+  setVersion();
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>{setVersion();loadProfileUI();},{once:true});
+  else loadProfileUI();
 })();
