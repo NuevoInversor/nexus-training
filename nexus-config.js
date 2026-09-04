@@ -66,7 +66,14 @@ window.NEXUS_CLOUD = {
     document.head.appendChild(s);
   };
 
+  const boot=()=>{
+    setVersion();
+    // Load the version lock first so later legacy modules cannot repaint older versions.
+    loadWorkoutCompletion();
+    loadProfileUI();
+  };
+
   setVersion();
-  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',()=>{setVersion();loadProfileUI();},{once:true});
-  else loadProfileUI();
+  if(document.readyState==='loading') document.addEventListener('DOMContentLoaded',boot,{once:true});
+  else boot();
 })();
