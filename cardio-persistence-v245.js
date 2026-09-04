@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.45';
-  const STAMP='04/09/2026 09:58:00';
+  const VERSION='v2.46';
+  const STAMP='04/09/2026 10:04:00';
   const STORE_PREFIX='nxs_cardio_meta_v245_';
   let restoring=false;
 
@@ -60,7 +60,35 @@
     }
   }
 
-  function reconcile(){capture();restore();capture();}
+  function removeLinkedStrengthDuplicates(){
+    if(restoring || !Array.isArray(window.activities) || !Array.isArray(window.workouts)) return;
+    const linked=new Set(
+      window.workouts
+        .filter(w=>String(w?.polar?.sportId||'')==='15' && w?.polar?.sessionId)
+        .map(w=>String(w.polar.sessionId))
+    );
+    if(!linked.size) return;
+
+    const before=window.activities.length;
+    for(let i=window.activities.length-1;i>=0;i--){
+      const a=window.activities[i];
+      const sid=String(a?.polar?.sessionId||'');
+      if(String(a?.polar?.sportId||'')==='15' && sid && linked.has(sid)){
+        window.activities.splice(i,1);
+      }
+    }
+    if(window.activities.length===before) return;
+
+    restoring=true;
+    try{
+      if(typeof window.save==='function' && window.STORAGE?.activities) window.save(window.STORAGE.activities,window.activities);
+      else if(window.STORAGE?.activities) localStorage.setItem(window.STORAGE.activities,JSON.stringify(window.activities));
+      try{window.renderHistory?.();}catch(_){}
+      try{window.renderHome?.();}catch(_){}
+    }catch(_){} finally {restoring=false;}
+  }
+
+  function reconcile(){capture();restore();removeLinkedStrengthDuplicates();capture();}
   function updateVersion(){
     const el=document.querySelector('header .version,.version');
     if(el) el.textContent=`Training - ${VERSION} (${STAMP})`;
