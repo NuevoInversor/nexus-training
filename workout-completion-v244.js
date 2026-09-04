@@ -1,6 +1,7 @@
 (() => {
-  const VERSION='v2.48';
-  const STAMP='04/09/2026 11:27:00';
+  const VERSION='v2.49';
+  const STAMP='04/09/2026 11:36:00';
+  const VERSION_TEXT=`Training - ${VERSION} (${STAMP})`;
 
   function setRecorded(s,e){
     const repsOk=String(s?.reps??'').trim()!=='';
@@ -60,23 +61,33 @@
     window.markExerciseComplete=wrapped;
   }
 
-  function updateVersion(){
+  function enforceVersion(){
     const el=document.querySelector('.version');
-    if(el) el.textContent=`Training - ${VERSION} (${STAMP})`;
+    if(el && el.textContent!==VERSION_TEXT) el.textContent=VERSION_TEXT;
+  }
+
+  function installVersionLock(){
+    enforceVersion();
+    const el=document.querySelector('.version');
+    if(!el || el.__nexusVersionLockV249) return;
+    el.__nexusVersionLockV249=true;
+    const obs=new MutationObserver(()=>enforceVersion());
+    obs.observe(el,{childList:true,characterData:true,subtree:true});
   }
 
   function install(){
     patchRender();
     patchMarkExerciseComplete();
     repairCompletedExercises();
-    updateVersion();
+    installVersionLock();
   }
 
   install();
-  setTimeout(install,250);
+  setTimeout(install,100);
+  setTimeout(install,350);
   setTimeout(install,900);
-  setTimeout(updateVersion,1600);
+  setTimeout(install,1800);
   document.addEventListener('visibilitychange',()=>{
-    if(document.visibilityState==='visible') setTimeout(install,100);
+    if(document.visibilityState==='visible') setTimeout(install,50);
   });
 })();
