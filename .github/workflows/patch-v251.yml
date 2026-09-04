@@ -1,4 +1,4 @@
-name: Patch Nexus v2.54
+name: Patch Nexus v2.55
 
 on:
   push:
@@ -17,32 +17,54 @@ jobs:
           ref: main
           fetch-depth: 0
 
-      - name: Patch root cache and version writers
+      - name: Patch Step mapping, UI and release version
         run: |
           python - <<'PY'
           from pathlib import Path
           import re
 
-          VERSION='v2.54'
-          STAMP='04/09/2026 13:24:00'
+          VERSION='v2.55'
+          STAMP='04/09/2026 13:31:00'
 
+          # Polar: sport 63 is Step.
+          p=Path('polar-intelligence-v222.js')
+          s=p.read_text()
+          s=s.replace("if(id==='65')return'pilates';\n    return'other';", "if(id==='65')return'pilates';\n    if(id==='63')return'step';\n    return'other';")
+          p.write_text(s)
+
+          # Native history visual for Step.
           p=Path('index.html')
           s=p.read_text()
+          if "step: `<svg class=\"icon-svg\"" not in s:
+              marker="pilates: `<svg class=\"icon-svg\""
+              idx=s.find(marker)
+              if idx!=-1:
+                  end=s.find("`,",idx)
+                  if end!=-1:
+                      insert="\n      step: `<svg class=\"icon-svg\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentColor\" stroke-width=\"1.9\" stroke-linecap=\"round\" stroke-linejoin=\"round\" aria-hidden=\"true\"><path d=\"M4 17h16\"/><path d=\"M6 14h12\"/><path d=\"M8 11h8\"/><path d=\"M9 8h6\"/><path d=\"M12 4v4\"/><path d=\"M9.5 6.5 12 4l2.5 2.5\"/></svg>`,"
+                      s=s[:end+2]+insert+s[end+2:]
+          s=s.replace("pilates:{icon:'pilates', cls:'pilates', label:'Pilates'},", "pilates:{icon:'pilates', cls:'pilates', label:'Pilates'},\n    step:{icon:'step', cls:'step', label:'Step'},")
+          if '.activity-chip.step{' not in s:
+              s=s.replace('.activity-chip.pilates{background:#ede9fe;color:#7c3aed}', '.activity-chip.pilates{background:#ede9fe;color:#7c3aed}\n.activity-chip.step{background:#ffedd5;color:#c2410c}')
+          if '.history-badge.step{' not in s:
+              s=s.replace('.activity-chip.step{background:#ffedd5;color:#c2410c}', '.activity-chip.step{background:#ffedd5;color:#c2410c}\n.history-badge.step{background:#fff7ed;color:#c2410c}')
+
+          # Release/cache busting.
           s=re.sub(r'<title>Nexus Training v[^<]+</title>', f'<title>Nexus Training {VERSION}</title>', s)
           s=re.sub(r'<div class="version">Training - v[^<]+</div>', f'<div class="version">Training - {VERSION} ({STAMP})</div>', s)
-          s=re.sub(r'nexus-config\.js\?v=[0-9.]+', 'nexus-config.js?v=2.54', s)
-          s=re.sub(r'cloud-v27\.js\?v=[0-9.]+', 'cloud-v27.js?v=2.54', s)
+          s=re.sub(r'nexus-config\.js\?v=[0-9.]+', 'nexus-config.js?v=2.55', s)
+          s=re.sub(r'cloud-v27\.js\?v=[0-9.]+', 'cloud-v27.js?v=2.55', s)
           p.write_text(s)
 
           for fn in ['nexus-config.js','polar-intelligence-v222.js','workout-completion-v244.js','cardio-persistence-v245.js','home-dashboard-v227.js','ui-hotfix-v250.js','ui-final-v252.js','strength-polar-v253.js']:
               p=Path(fn)
               if not p.exists(): continue
               s=p.read_text()
-              s=re.sub(r"const VERSION='v[0-9.]+';", "const VERSION='v2.54';", s)
-              s=re.sub(r"const STAMP='[^']+';", "const STAMP='04/09/2026 13:24:00';", s)
-              s=re.sub(r'\?v=2\.(?:50|51|52|53)', '?v=2.54', s)
-              for old in ['v2.50','v2.51','v2.52','v2.53']:
-                  s=s.replace(f"'{old}'", "'v2.54'")
+              s=re.sub(r"const VERSION='v[0-9.]+';", "const VERSION='v2.55';", s)
+              s=re.sub(r"const STAMP='[^']+';", "const STAMP='04/09/2026 13:31:00';", s)
+              s=re.sub(r'\?v=2\.(?:50|51|52|53|54)', '?v=2.55', s)
+              for old in ['v2.50','v2.51','v2.52','v2.53','v2.54']:
+                  s=s.replace(f"'{old}'", "'v2.55'")
               p.write_text(s)
           PY
 
@@ -51,5 +73,5 @@ jobs:
           git config user.name "Nexus Bot"
           git config user.email "actions@users.noreply.github.com"
           git add index.html nexus-config.js polar-intelligence-v222.js workout-completion-v244.js cardio-persistence-v245.js home-dashboard-v227.js ui-hotfix-v250.js ui-final-v252.js strength-polar-v253.js
-          git commit -m "Fix strength duplicate reconciliation v2.54" || exit 0
+          git commit -m "Identify Polar Step activities v2.55" || exit 0
           git push origin main
