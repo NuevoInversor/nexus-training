@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.49';
-  const STAMP='04/09/2026 11:36:00';
+  const VERSION='v2.50';
+  const STAMP='04/09/2026 12:18:00';
   const VERSION_TEXT=`Training - ${VERSION} (${STAMP})`;
 
   function setRecorded(s,e){
@@ -64,13 +64,14 @@
   function enforceVersion(){
     const el=document.querySelector('.version');
     if(el && el.textContent!==VERSION_TEXT) el.textContent=VERSION_TEXT;
+    if(document.title!==`Nexus Training ${VERSION}`) document.title=`Nexus Training ${VERSION}`;
   }
 
   function installVersionLock(){
     enforceVersion();
     const el=document.querySelector('.version');
-    if(!el || el.__nexusVersionLockV249) return;
-    el.__nexusVersionLockV249=true;
+    if(!el || el.__nexusVersionLockV250) return;
+    el.__nexusVersionLockV250=true;
     const obs=new MutationObserver(()=>enforceVersion());
     obs.observe(el,{childList:true,characterData:true,subtree:true});
   }
@@ -83,11 +84,12 @@
   }
 
   install();
+  setTimeout(install,25);
   setTimeout(install,100);
   setTimeout(install,350);
   setTimeout(install,900);
   setTimeout(install,1800);
   document.addEventListener('visibilitychange',()=>{
-    if(document.visibilityState==='visible') setTimeout(install,50);
+    if(document.visibilityState==='visible') setTimeout(install,25);
   });
 })();
