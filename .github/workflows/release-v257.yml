@@ -1,0 +1,61 @@
+name: Release Nexus v2.57
+
+on:
+  push:
+    paths:
+      - '.github/workflows/release-v257.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Align release version and cache busting
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+
+          VERSION='v2.57'
+          STAMP='06/09/2026 13:38:00'
+
+          p=Path('index.html')
+          s=p.read_text()
+          s=re.sub(r'<title>Nexus Training v[^<]+</title>', f'<title>Nexus Training {VERSION}</title>', s)
+          s=re.sub(r'<div class="version">Training - v[^<]+</div>', f'<div class="version">Training - {VERSION} ({STAMP})</div>', s)
+          s=re.sub(r'nexus-config\.js\?v=[0-9.]+', 'nexus-config.js?v=2.57', s)
+          s=re.sub(r'cloud-v27\.js\?v=[0-9.]+', 'cloud-v27.js?v=2.57', s)
+          p.write_text(s)
+
+          writers=[
+              'nexus-config.js','polar-intelligence-v222.js','workout-completion-v244.js',
+              'cardio-persistence-v245.js','home-dashboard-v227.js','ui-hotfix-v250.js',
+              'ui-final-v252.js','strength-polar-v253.js'
+          ]
+          for fn in writers:
+              p=Path(fn)
+              if not p.exists():
+                  continue
+              s=p.read_text()
+              s=re.sub(r"const VERSION='v[0-9.]+';", "const VERSION='v2.57';", s)
+              s=re.sub(r"const STAMP='[^']+';", "const STAMP='06/09/2026 13:38:00';", s)
+              s=re.sub(r'\?v=2\.(?:50|51|52|53|54|55|56)', '?v=2.57', s)
+              for old in ['v2.50','v2.51','v2.52','v2.53','v2.54','v2.55','v2.56']:
+                  s=s.replace(f"'{old}'", "'v2.57'")
+              p.write_text(s)
+          PY
+
+      - name: Commit release
+        run: |
+          git config user.name "Nexus Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html nexus-config.js polar-intelligence-v222.js workout-completion-v244.js cardio-persistence-v245.js home-dashboard-v227.js ui-hotfix-v250.js ui-final-v252.js strength-polar-v253.js
+          git commit -m "Resume active workout at next incomplete exercise v2.57" || exit 0
+          git push origin main
