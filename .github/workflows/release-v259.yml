@@ -1,0 +1,132 @@
+name: Release Nexus v2.59
+
+on:
+  push:
+    paths:
+      - '.github/workflows/release-v259.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Add week 2 exercise targets and target load UI
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re, json
+
+          VERSION='v2.59'
+          STAMP='07/09/2026 13:02:00'
+
+          targets={
+            'press-banca':{'reps':'6-7','rir':'2','weight':'15','note':'Subir carga tras completar el máximo del rango con margen suficiente.'},
+            'remo-maquina':{'reps':'9','rir':'2','weight':'27,5','note':'Mantener carga y progresar repeticiones antes de volver a subir peso.'},
+            'press-inclinado':{'reps':'9','rir':'2','weight':'20','note':''},
+            'jalon-neutro':{'reps':'12','rir':'2','weight':'35','note':'Mantener carga; progresar primero mediante menor RIR antes de aumentar el salto de máquina.'},
+            'elevaciones-laterales-polea':{'reps':'12-16','rir':'2','weight':'2,5','note':''},
+            'curl-biceps':{'reps':'11-12','rir':'2','weight':'12','note':''},
+            'extension-triceps-polea':{'reps':'10','rir':'2','weight':'20','note':''},
+            'sentadilla-trasera':{'reps':'7','rir':'2','weight':'22,5','note':''},
+            'prensa-inclinada':{'reps':'11','rir':'2','weight':'27,5','note':''},
+            'extension-cuadriceps':{'reps':'13-14','rir':'2','weight':'25','note':''},
+            'curl-femoral-tumbado':{'reps':'10-12','rir':'2','weight':'15','note':'Volver al rango 10-12 sin forzar.'},
+            'gemelos-sentado':{'reps':'12-15','rir':'2','weight':'37,5','note':'No aumentar carga esta semana.'},
+            'plancha':{'reps':'45-60 s','rir':'técnico','weight':'Sin carga','note':''},
+            'dominadas-asistidas':{'reps':'6','rir':'2','weight':'14','note':'Si 14 kg de ayuda te sitúan claramente por debajo de RIR 2, vuelve a 21 kg y realiza 4x8.'},
+            'press-militar':{'reps':'7','rir':'2','weight':'6,25','note':'Mantener carga y priorizar repeticiones antes de aumentarla.'},
+            'remo-polea-baja':{'reps':'10','rir':'2','weight':'35','note':''},
+            'aperturas-maquina':{'reps':'11-12','rir':'2','weight':'20','note':''},
+            'fondos-paralela':{'reps':'10','rir':'2','weight':'Peso corporal','note':'No añadir lastre todavía.'},
+            'facepull':{'reps':'20','rir':'2','weight':'17,5','note':''},
+            'peso-muerto-rumano-dia4':{'reps':'8','rir':'2','weight':'15','note':'Mantener carga y priorizar tolerancia antes de aumentarla.'},
+            'sentadilla-bulgara':{'reps':'10','rir':'2','weight':'7,5','note':'Mantener carga.'},
+            'hip-thrust':{'reps':'10','rir':'2','weight':'23,65','note':'Mantener carga.'},
+            'curl-femoral-sentado':{'reps':'11-12','rir':'2','weight':'32,5','note':''},
+            'gemelos-prensa':{'reps':'12-15','rir':'2','weight':'Sin aumento · registrar carga real','note':'No aumentar carga esta semana y registrar la carga real utilizada.'},
+            'elevaciones-piernas':{'reps':'10-15','rir':'2','weight':'Peso corporal','note':''},
+            'dominadas':{'reps':'3','rir':'2','weight':'Peso corporal','note':'Mantener 5x3 y progresar repeticiones antes de añadir lastre.'},
+            'elevaciones-laterales-polea-dia5':{'reps':'18-20','rir':'2','weight':'2,5','note':''},
+            'pajaros-peck-deck':{'reps':'15-16','rir':'2','weight':'10','note':'Subir carga tras completar el máximo del rango con margen adecuado.'},
+            'curl-biceps-polea':{'reps':'11-12','rir':'2','weight':'20','note':''},
+            'extension-triceps-overhead':{'reps':'10','rir':'2','weight':'22,5','note':''},
+            'pallof-press':{'reps':'13-15','rir':'técnico','weight':'10','note':'Priorizar ejecución técnica.'},
+            'abd-wheel':{'reps':'12','rir':'técnico','weight':'Peso corporal','note':'Priorizar ejecución técnica.'}
+          }
+
+          # Canonical week-2 targets in David's mesocycle script. These merge into existing
+          # local/cloud routines instead of requiring a plan reset.
+          p=Path('mesocycle-david-v213.js')
+          s=p.read_text()
+          marker='  function applyWeekTargets(){'
+          if 'const WEEK2_TARGETS=' not in s:
+              js=json.dumps(targets,ensure_ascii=False,separators=(',',':'))
+              s=s.replace(marker, f"  const WEEK2_TARGETS={js};\n\n{marker}")
+          old="""    routines.forEach(r=>r.exercises?.forEach(e=>{\n      if(e.weeklySets?.[week]!=null){"""
+          new="""    routines.forEach(r=>r.exercises?.forEach(e=>{\n      if(week==='2' && WEEK2_TARGETS[e.key]){\n        const t=WEEK2_TARGETS[e.key];\n        e.weeklyReps=e.weeklyReps||{};\n        e.weeklyRir=e.weeklyRir||{};\n        e.weeklyWeight=e.weeklyWeight||{};\n        e.weeklyTargetNote=e.weeklyTargetNote||{};\n        if(e.weeklyReps['2']!==t.reps){e.weeklyReps['2']=t.reps;changed=true;}\n        if(e.weeklyRir['2']!==t.rir){e.weeklyRir['2']=t.rir;changed=true;}\n        if(e.weeklyWeight['2']!==t.weight){e.weeklyWeight['2']=t.weight;changed=true;}\n        if((e.weeklyTargetNote['2']||'')!==(t.note||'')){e.weeklyTargetNote['2']=t.note||'';changed=true;}\n      }\n      if(e.weeklySets?.[week]!=null){"""
+          if old in s and "WEEK2_TARGETS[e.key]" not in s[s.find(marker):]:
+              s=s.replace(old,new,1)
+          p.write_text(s)
+
+          # Native target-load display in workout list and exercise detail.
+          p=Path('index.html')
+          s=p.read_text()
+          if 'function getTargetWeight(exercise' not in s:
+              anchor="function weightDisplay(s,unit){if(!s)return unit==='peso corporal'?'Peso corporal':'—'; if(!unit)return s; if(unit==='peso corporal')return 'Peso corporal'; return `${s} ${unit}`}"
+              addition="""function getTargetWeight(exercise,week=getWeek()){\n  const v=exercise?.weeklyWeight?.[String(week)];\n  if(v!==undefined && v!==null && String(v).trim()!=='') return String(v);\n  if(exercise?.unit==='peso corporal') return 'Peso corporal';\n  return '—';\n}\nfunction targetWeightDisplay(exercise,week=getWeek()){\n  const v=getTargetWeight(exercise,week);\n  if(v==='—' || v==='Peso corporal' || v==='Sin carga' || !/^-?\\d+(?:[.,]\\d+)?$/.test(v)) return v;\n  return exercise?.unit ? `${v} ${exercise.unit}` : v;\n}\nfunction getTargetNote(exercise,week=getWeek()){\n  return String(exercise?.weeklyTargetNote?.[String(week)]||'').trim();\n}\n"""
+              s=s.replace(anchor,anchor+'\n'+addition)
+          if '.target-note{' not in s:
+              s=s.replace('.target{color:var(--muted);margin-bottom:14px}', '.target{color:var(--muted);margin-bottom:14px}\n.target-note{margin:-5px 0 14px;padding:9px 11px;border-radius:11px;background:#eff6ff;color:#1e3a8a;font-size:12px;font-weight:750;line-height:1.4}')
+
+          old_meta='''<div class="meta">${e.sets.length} × ${esc(getTargetRepRange(e.key,activeWorkout.mesocycleWeek,e.targetReps))} · RIR ${esc(getTargetRir(e.key,activeWorkout.mesocycleWeek))} · descanso ${formatTime(e.rest)}</div>'''
+          new_meta='''<div class="meta">${e.sets.length} × ${esc(getTargetRepRange(e.key,activeWorkout.mesocycleWeek,e.targetReps))} · RIR ${esc(getTargetRir(e.key,activeWorkout.mesocycleWeek))}</div>\n            <div class="meta" style="margin-top:3px"><strong>Carga objetivo:</strong> ${esc(targetWeightDisplay(e,activeWorkout.mesocycleWeek))} · descanso ${formatTime(e.rest)}</div>'''
+          s=s.replace(old_meta,new_meta)
+
+          old_target='''<div class="target">Objetivo: ${e.sets.length} x ${esc(getTargetRepRange(e.key,week,e.targetReps))} - RIR ${esc(targetRir)} - Descanso ${formatTime(e.rest)}</div>'''
+          new_target='''<div class="target">Objetivo: ${e.sets.length} x ${esc(getTargetRepRange(e.key,week,e.targetReps))} · RIR ${esc(targetRir)} · Carga ${esc(targetWeightDisplay(e,week))} · Descanso ${formatTime(e.rest)}</div>\n    ${getTargetNote(e,week)?`<div class="target-note">Ajuste Nexus: ${esc(getTargetNote(e,week))}</div>`:''}'''
+          s=s.replace(old_target,new_target)
+
+          old_input='''<div><label>Peso</label><input data-field="weight" data-set="${i}" inputmode="decimal" value="${esc(s.weight)}"><div class="unit-hint">${esc(e.unit||'')}</div></div>'''
+          new_input='''<div><label>Peso</label><input data-field="weight" data-set="${i}" inputmode="decimal" value="${esc(s.weight)}" placeholder="${esc(getTargetWeight(e,week)==='—'?'':getTargetWeight(e,week))}"><div class="unit-hint">${esc(e.unit||'')}</div></div>'''
+          s=s.replace(old_input,new_input)
+
+          # Release/cache busting on entry point.
+          s=re.sub(r'<title>Nexus Training v[^<]+</title>', f'<title>Nexus Training {VERSION}</title>', s)
+          s=re.sub(r'<div class="version">Training - v[^<]+</div>', f'<div class="version">Training - {VERSION} ({STAMP})</div>', s)
+          s=re.sub(r'nexus-config\.js\?v=[0-9.]+', 'nexus-config.js?v=2.59', s)
+          s=re.sub(r'cloud-v27\.js\?v=[0-9.]+', 'cloud-v27.js?v=2.59', s)
+          p.write_text(s)
+
+          # Central loader/cache keys.
+          p=Path('nexus-config.js')
+          s=p.read_text()
+          s=re.sub(r"const VERSION='v[0-9.]+';", "const VERSION='v2.59';", s)
+          s=re.sub(r"const STAMP='[^']+';", f"const STAMP='{STAMP}';", s)
+          s=s.replace('V258','V259').replace('v2.58','v2.59').replace('v=2.58','v=2.59')
+          p.write_text(s)
+
+          # Keep modules that write/lock version aligned. Mesocycle is cache-busted by the loader.
+          for fn in ['polar-intelligence-v222.js','workout-completion-v244.js','cardio-persistence-v245.js','home-dashboard-v227.js','ui-hotfix-v250.js','ui-final-v252.js','strength-polar-v253.js']:
+              p=Path(fn)
+              if not p.exists(): continue
+              s=p.read_text()
+              s=re.sub(r"const VERSION='v[0-9.]+';", "const VERSION='v2.59';", s)
+              s=re.sub(r"const STAMP='[^']+';", f"const STAMP='{STAMP}';", s)
+              s=s.replace('V258','V259').replace("'v2.58'", "'v2.59'").replace('?v=2.58','?v=2.59')
+              p.write_text(s)
+          PY
+
+      - name: Commit release
+        run: |
+          git config user.name "Nexus Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html nexus-config.js mesocycle-david-v213.js polar-intelligence-v222.js workout-completion-v244.js cardio-persistence-v245.js home-dashboard-v227.js ui-hotfix-v250.js ui-final-v252.js strength-polar-v253.js
+          git commit -m "Show per-exercise targets for David v2.59" || exit 0
+          git push origin main
