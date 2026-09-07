@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.57';
-  const STAMP='06/09/2026 13:38:00';
+  const VERSION='v2.58';
+  const STAMP='07/09/2026 12:20:00';
   const CFG=window.NEXUS_CLOUD||{};
   const BASE=(CFG.url||'').replace(/\/$/,'')+'/functions/v1';
   const BOOT_KEY='nexus_polar_v222_bootstrap';
@@ -276,6 +276,7 @@
     if(id==='55')return'elliptical';
     if(id==='65')return'pilates';
     if(id==='63')return'step';
+    if(id==='118')return'spinning';
     return'other';
   }
 

@@ -1,7 +1,7 @@
 (() => {
   const VERSION='v2.42';
   const STAMP='02/09/2026 21:55:00';
-  const CARDIO_TYPES=new Set(['padel','walk','swim','run','bike','hike','elliptical']);
+  const CARDIO_TYPES=new Set(['padel','walk','swim','run','bike','hike','elliptical','spinning']);
 
   function isCardioForm(){
     return !!document.getElementById('cardioNexusToggle')?.checked ||
