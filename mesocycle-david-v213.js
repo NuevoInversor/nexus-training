@@ -90,11 +90,24 @@
     return null;
   }
 
+  const WEEK2_TARGETS={"press-banca":{"reps":"6-7","rir":"2","weight":"15","note":"Subir carga tras completar el máximo del rango con margen suficiente."},"remo-maquina":{"reps":"9","rir":"2","weight":"27,5","note":"Mantener carga y progresar repeticiones antes de volver a subir peso."},"press-inclinado":{"reps":"9","rir":"2","weight":"20","note":""},"jalon-neutro":{"reps":"12","rir":"2","weight":"35","note":"Mantener carga; progresar primero mediante menor RIR antes de aumentar el salto de máquina."},"elevaciones-laterales-polea":{"reps":"12-16","rir":"2","weight":"2,5","note":""},"curl-biceps":{"reps":"11-12","rir":"2","weight":"12","note":""},"extension-triceps-polea":{"reps":"10","rir":"2","weight":"20","note":""},"sentadilla-trasera":{"reps":"7","rir":"2","weight":"22,5","note":""},"prensa-inclinada":{"reps":"11","rir":"2","weight":"27,5","note":""},"extension-cuadriceps":{"reps":"13-14","rir":"2","weight":"25","note":""},"curl-femoral-tumbado":{"reps":"10-12","rir":"2","weight":"15","note":"Volver al rango 10-12 sin forzar."},"gemelos-sentado":{"reps":"12-15","rir":"2","weight":"37,5","note":"No aumentar carga esta semana."},"plancha":{"reps":"45-60 s","rir":"técnico","weight":"Sin carga","note":""},"dominadas-asistidas":{"reps":"6","rir":"2","weight":"14","note":"Si 14 kg de ayuda te sitúan claramente por debajo de RIR 2, vuelve a 21 kg y realiza 4x8."},"press-militar":{"reps":"7","rir":"2","weight":"6,25","note":"Mantener carga y priorizar repeticiones antes de aumentarla."},"remo-polea-baja":{"reps":"10","rir":"2","weight":"35","note":""},"aperturas-maquina":{"reps":"11-12","rir":"2","weight":"20","note":""},"fondos-paralela":{"reps":"10","rir":"2","weight":"Peso corporal","note":"No añadir lastre todavía."},"facepull":{"reps":"20","rir":"2","weight":"17,5","note":""},"peso-muerto-rumano-dia4":{"reps":"8","rir":"2","weight":"15","note":"Mantener carga y priorizar tolerancia antes de aumentarla."},"sentadilla-bulgara":{"reps":"10","rir":"2","weight":"7,5","note":"Mantener carga."},"hip-thrust":{"reps":"10","rir":"2","weight":"23,65","note":"Mantener carga."},"curl-femoral-sentado":{"reps":"11-12","rir":"2","weight":"32,5","note":""},"gemelos-prensa":{"reps":"12-15","rir":"2","weight":"Sin aumento · registrar carga real","note":"No aumentar carga esta semana y registrar la carga real utilizada."},"elevaciones-piernas":{"reps":"10-15","rir":"2","weight":"Peso corporal","note":""},"dominadas":{"reps":"3","rir":"2","weight":"Peso corporal","note":"Mantener 5x3 y progresar repeticiones antes de añadir lastre."},"elevaciones-laterales-polea-dia5":{"reps":"18-20","rir":"2","weight":"2,5","note":""},"pajaros-peck-deck":{"reps":"15-16","rir":"2","weight":"10","note":"Subir carga tras completar el máximo del rango con margen adecuado."},"curl-biceps-polea":{"reps":"11-12","rir":"2","weight":"20","note":""},"extension-triceps-overhead":{"reps":"10","rir":"2","weight":"22,5","note":""},"pallof-press":{"reps":"13-15","rir":"técnico","weight":"10","note":"Priorizar ejecución técnica."},"abd-wheel":{"reps":"12","rir":"técnico","weight":"Peso corporal","note":"Priorizar ejecución técnica."}};
+
   function applyWeekTargets(){
     if(typeof plan==='undefined' || plan?.id!==PLAN_ID || !Array.isArray(routines)) return false;
     const week=String(typeof getWeek==='function'?getWeek():1);
     let changed=false;
     routines.forEach(r=>r.exercises?.forEach(e=>{
+      if(week==='2' && WEEK2_TARGETS[e.key]){
+        const t=WEEK2_TARGETS[e.key];
+        e.weeklyReps=e.weeklyReps||{};
+        e.weeklyRir=e.weeklyRir||{};
+        e.weeklyWeight=e.weeklyWeight||{};
+        e.weeklyTargetNote=e.weeklyTargetNote||{};
+        if(e.weeklyReps['2']!==t.reps){e.weeklyReps['2']=t.reps;changed=true;}
+        if(e.weeklyRir['2']!==t.rir){e.weeklyRir['2']=t.rir;changed=true;}
+        if(e.weeklyWeight['2']!==t.weight){e.weeklyWeight['2']=t.weight;changed=true;}
+        if((e.weeklyTargetNote['2']||'')!==(t.note||'')){e.weeklyTargetNote['2']=t.note||'';changed=true;}
+      }
       if(e.weeklySets?.[week]!=null){
         const nextSets=Number(e.weeklySets[week]);
         if(Number(e.sets)!==nextSets){e.sets=nextSets;changed=true;}
