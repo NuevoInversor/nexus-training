@@ -1,5 +1,5 @@
 (() => {
-  const VERSION='v2.60';
+  const VERSION='v2.61';
   const STAMP='11/09/2026 11:00:00';
   let busy=false;
 

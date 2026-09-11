@@ -43,6 +43,10 @@
       'woodchop-polea':['10/lado','2-3','2,5 o incremento pequeño','Mantener 2,5 kg si el siguiente salto es grande.']
     }
   };
+  // Ana no completa necesariamente las cuatro rutinas dentro de una semana natural.
+  // Lower B usa ya en semana 2 la progresión definida para su próxima vuelta,
+  // sin modificar el entrenamiento ya guardado.
+  Object.assign(T['2'],T['3']);
   const ORDER={
     '2':{
       'dia-1':['prensa-inclinada','peso-muerto-rumano-mancuernas','extension-cuadriceps','pallof-press-lower-a','curl-femoral-sentado','gemelo-maquina','aductores-maquina','abduccion-cadera-maquina'],

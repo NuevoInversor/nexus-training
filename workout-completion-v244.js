@@ -1,5 +1,5 @@
 (() => {
-  const VERSION='v2.60';
+  const VERSION='v2.61';
   const STAMP='11/09/2026 11:00:00';
   const VERSION_TEXT=`Training - ${VERSION} (${STAMP})`;
   let resumePending=false;
@@ -97,18 +97,18 @@
   }
 
   function patchRender(){
-    if(typeof window.renderWorkout!=='function' || window.renderWorkout.__completionV260) return;
+    if(typeof window.renderWorkout!=='function' || window.renderWorkout.__completionV261) return;
     const original=window.renderWorkout;
     const wrapped=function(){
       repairCompletedExercises();
       return original.apply(this,arguments);
     };
-    wrapped.__completionV260=true;
+    wrapped.__completionV261=true;
     window.renderWorkout=wrapped;
   }
 
   function patchMarkExerciseComplete(){
-    if(typeof window.markExerciseComplete!=='function' || window.markExerciseComplete.__completionV260) return;
+    if(typeof window.markExerciseComplete!=='function' || window.markExerciseComplete.__completionV261) return;
     const original=window.markExerciseComplete;
     const wrapped=function(){
       const beforeAw=getActiveWorkout();
@@ -121,7 +121,7 @@
       }catch(_){}
       return result;
     };
-    wrapped.__completionV260=true;
+    wrapped.__completionV261=true;
     window.markExerciseComplete=wrapped;
   }
 
@@ -141,8 +141,8 @@
   function installVersionLock(){
     enforceVersion();
     const el=document.querySelector('.version');
-    if(!el || el.__nexusVersionLockV260) return;
-    el.__nexusVersionLockV260=true;
+    if(!el || el.__nexusVersionLockV261) return;
+    el.__nexusVersionLockV261=true;
     const obs=new MutationObserver(()=>enforceVersion());
     obs.observe(el,{childList:true,characterData:true,subtree:true});
   }
