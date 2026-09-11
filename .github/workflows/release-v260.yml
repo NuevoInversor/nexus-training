@@ -1,0 +1,203 @@
+name: Release Nexus v2.60
+
+on:
+  push:
+    paths:
+      - '.github/workflows/release-v260.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  patch:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+          fetch-depth: 0
+
+      - name: Apply Ana week 2-3 progression and bump release
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re, json
+
+          VERSION='v2.60'
+          STAMP='11/09/2026 10:55:00'
+
+          # --- Ana progression ---
+          p=Path('ana-plan-v216.js')
+          s=p.read_text()
+
+          # Keep the plan rules aligned with the reviewed progression.
+          s=s.replace(
+            "progressionRule:'Si se completa el rango alto con el RIR objetivo, aumentar carga aproximadamente 2,5-5%. Si una sesión acumula demasiada fatiga, reducir antes una serie accesoria que alargar los descansos.'",
+            "progressionRule:'Doble progresión: primero aumentar repeticiones dentro del rango; al alcanzar el rango alto con el RIR objetivo, subir carga aproximadamente 2,5-5%. Mantener descansos máximos de 60 s (accesorios 45-60 s). Si la fatiga aumenta demasiado, reducir antes una serie accesoria que aumentar los descansos. Las series de aproximación no cuentan como series efectivas.'"
+          )
+          s=s.replace("estimatedDuration:'45-50 min'", "estimatedDuration:'50-55 min'")
+
+          marker="  function applyWeekTargets(){\n"
+          if 'const ANA_WEEK_TARGETS=' not in s:
+            targets={
+              '2':{
+                # Lower A
+                'prensa-inclinada':{'reps':'8','rir':'2-3','weight':'40','note':'3 series efectivas con 40 kg. Aproximación: 20 kg y 30 kg; no cuentan como series efectivas.'},
+                'peso-muerto-rumano-mancuernas':{'reps':'10','rir':'2-3','weight':'16','note':'3 series efectivas con 16 kg. Aproximación: 8 kg; no cuenta como serie efectiva.'},
+                'extension-cuadriceps':{'reps':'12','rir':'2-3','weight':'20','note':'Superserie A con Pallof press. Descanso 45-60 s tras completar la pareja.'},
+                'curl-femoral-sentado':{'reps':'9-10','rir':'2-3','weight':'5','note':'Objetivo práctico: 9-9-9 o 10-9-9. Superserie B con Gemelo.'},
+                'aductores-maquina':{'reps':'12-15','rir':'2-3','weight':'35','note':'Usar 35 kg en las 3 series. Superserie C con Abducción.'},
+                'gemelo-maquina':{'reps':'12-15','rir':'2-3','weight':'20','note':'Superserie B con Curl femoral. Descanso 45-60 s tras la pareja.'},
+                'abduccion-cadera-maquina':{'reps':'15-20','rir':'2-3','weight':'30','note':'Mínimo 15 reps. Superserie C con Aductores. Descanso 45 s tras la pareja.'},
+                'pallof-press-lower-a':{'reps':'10-12/lado','rir':'2-3','weight':'5','note':'Superserie A con Extensión de cuádriceps. Descanso 45-60 s tras la pareja.'},
+                # Upper A
+                'jalon-pecho':{'reps':'8-10','rir':'2-3','weight':'22,5 aprox.','note':'Subir al menor incremento disponible; referencia ideal ~22,5 kg.'},
+                'remo-polea-baja':{'reps':'9-10','rir':'2-3','weight':'20','note':'Mantener carga y progresar repeticiones.'},
+                'press-hombro-sentado':{'reps':'8-10','rir':'2-3','weight':'7,5','note':'3 series efectivas con 7,5 kg. Aproximación: 5 kg; no cuenta como serie efectiva.'},
+                'elevacion-lateral-unilateral-polea':{'reps':'8-12','rir':'2-3','weight':'1,25 o inferior','note':'No subir carga. Si existe carga inferior a 1,25 kg, usarla y trabajar 12-15 reps; si 1,25 kg es el mínimo, usar 8-12 reps.'},
+                'pullover-polea':{'reps':'10-12','rir':'2-3','weight':'6,25','note':'Usar 6,25 kg en las 3 series.'},
+                'face-pull':{'reps':'15','rir':'2-3','weight':'5','note':'Buscar 15-15 con control técnico.'},
+                'pajaros-peck-deck':{'reps':'14-15','rir':'2-3','weight':'2,5','note':'Mantener carga.'},
+                'curl-biceps-polea':{'reps':'10-12','rir':'2-3','weight':'5 o incremento pequeño','note':'Si existe un incremento pequeño, subir ligeramente; si no, mantener 5 kg.'},
+                'extension-triceps-polea':{'reps':'11-12','rir':'2-3','weight':'5','note':'Mantener carga.'},
+                'farmer-walk':{'reps':'35 s','rir':'2-3','weight':'20','note':'3 series de 35 s. No aumentar carga y tiempo a la vez.'},
+                # Upper B / Full Body
+                'remo-maquina-apoyo':{'reps':'10','rir':'2-3','weight':'12,5','note':'3 series efectivas con 12,5 kg. Aproximación: 10 kg.'},
+                'press-pecho-maquina-inclinada':{'reps':'8-10','rir':'2-3','weight':'10','note':'3 series efectivas con 10 kg. Aproximación: 5 kg.'},
+                'goblet-squat':{'reps':'10-12','rir':'2-3','weight':'16','note':'Mantener como tercer ejercicio, en la primera parte de la sesión.'},
+                'jalon-unilateral-polea':{'reps':'10-12/lado','rir':'2-3','weight':'7,5','note':'3 series efectivas con 7,5 kg. Aproximación: 5 kg.'},
+                'elevaciones-laterales-upper-b':{'reps':'13-15','rir':'2-3','weight':'3','note':'Superserie A con Extensión de tríceps con cuerda. Descanso 45 s tras la pareja.'},
+                'extension-triceps-cuerda':{'reps':'11-12','rir':'2-3','weight':'7,5','note':'Superserie A con Elevaciones laterales. Descanso 45 s tras la pareja.'},
+                'remo-alto-cuerda':{'reps':'12-15','rir':'2-3','weight':'10','note':'Superserie B con Curl martillo. Descanso 45 s tras la pareja.'},
+                'curl-martillo':{'reps':'11-12','rir':'2-3','weight':'5','note':'Superserie B con Remo alto con cuerda. Descanso 45 s tras la pareja.'},
+                'aperturas-pecho-maquina':{'reps':'15','rir':'2-3','weight':'5','note':'Buscar 15-15. Superserie C con Pallof press. Descanso 45 s tras la pareja.'},
+                'pallof-press-pie':{'reps':'12/lado','rir':'2-3','weight':'5','note':'2x12 por lado. Superserie C con Aperturas de pecho. Descanso 45 s tras la pareja.'},
+              },
+              '3':{
+                # Lower B — next rotation
+                'step-up-alto':{'reps':'8/lado','rir':'2','weight':'8','note':'3x8 por lado. Mantener al principio de la sesión; no subir carga todavía.'},
+                'prensa-unilateral':{'reps':'10/lado','rir':'2','weight':'20','note':'3x10 por lado.'},
+                'pull-through-polea':{'reps':'10-12','rir':'2','weight':'12-12,5 aprox.','note':'Subir al menor incremento disponible; referencia ideal ~12-12,5 kg.'},
+                'patada-gluteo-polea':{'reps':'13-14/lado','rir':'2','weight':'7,5','note':'Mantener carga.'},
+                'curl-femoral-sentado-lower-b':{'reps':'10-12','rir':'2','weight':'siguiente escalón >12,5','note':'Subir al siguiente escalón razonable de máquina.'},
+                'abduccion-maquina-lower-b':{'reps':'19-20','rir':'2-3','weight':'30','note':'Mantener carga.'},
+                'gemelo-pie-prensa':{'reps':'14-15','rir':'2','weight':'20','note':'Mantener carga.'},
+                'suitcase-carry':{'reps':'35 s/lado','rir':'2','weight':'12','note':'3 series de 35 s por lado. No subir carga y tiempo simultáneamente.'},
+                'woodchop-polea':{'reps':'10/lado','rir':'2-3','weight':'2,5 o incremento pequeño','note':'Mantener 2,5 kg si el siguiente incremento es grande; subir solo si existe un incremento pequeño.'},
+              }
+            }
+            orders={
+              '2':{
+                'dia-1':['prensa-inclinada','peso-muerto-rumano-mancuernas','extension-cuadriceps','pallof-press-lower-a','curl-femoral-sentado','gemelo-maquina','aductores-maquina','abduccion-cadera-maquina'],
+                'dia-4':['remo-maquina-apoyo','press-pecho-maquina-inclinada','goblet-squat','jalon-unilateral-polea','elevaciones-laterales-upper-b','extension-triceps-cuerda','remo-alto-cuerda','curl-martillo','aperturas-pecho-maquina','pallof-press-pie']
+              }
+            }
+            js_targets=json.dumps(targets,ensure_ascii=False,separators=(',',':'))
+            js_orders=json.dumps(orders,ensure_ascii=False,separators=(',',':'))
+            block=(
+              f"  const ANA_WEEK_TARGETS={js_targets};\n"
+              f"  const ANA_WEEK_ORDER={js_orders};\n\n"
+            )
+            s=s.replace(marker,block+marker)
+
+          old_apply=re.compile(r"  function applyWeekTargets\(\)\{.*?\n  \}\n\n  function ensureAnaPlan",re.S)
+          new_apply="""  function applyWeekTargets(){
+    if(!isAna() || plan?.id!==PLAN_ID || !Array.isArray(routines)) return false;
+    const week=String(typeof getWeek==='function'?getWeek():1);
+    let changed=false;
+    const weekTargets=ANA_WEEK_TARGETS?.[week]||{};
+
+    routines.forEach(r=>{
+      r.exercises?.forEach(e=>{
+        const t=weekTargets[e.key]||null;
+        if(t){
+          e.weeklyReps=e.weeklyReps||{};
+          e.weeklyRir=e.weeklyRir||{};
+          e.weeklyWeight=e.weeklyWeight||{};
+          e.weeklyTargetNote=e.weeklyTargetNote||{};
+          if(t.reps && e.weeklyReps[week]!==t.reps){e.weeklyReps[week]=t.reps;changed=true;}
+          if(t.rir!==undefined && e.weeklyRir[week]!==t.rir){e.weeklyRir[week]=t.rir;changed=true;}
+          if(t.weight!==undefined && e.weeklyWeight[week]!==t.weight){e.weeklyWeight[week]=t.weight;changed=true;}
+          if((t.note||'')!==String(e.weeklyTargetNote[week]||'')){e.weeklyTargetNote[week]=t.note||'';changed=true;}
+        }
+        const nextSets=e.weeklySets?.[week];
+        if(nextSets!=null && Number(e.sets)!==Number(nextSets)){e.sets=Number(nextSets);changed=true;}
+        const nextReps=e.weeklyReps?.[week];
+        if(nextReps && e.reps!==nextReps){e.reps=nextReps;changed=true;}
+        if(Number(e.rest)>60){e.rest=60;changed=true;}
+      });
+
+      const desired=ANA_WEEK_ORDER?.[week]?.[r.id];
+      if(Array.isArray(desired) && Array.isArray(r.exercises)){
+        const pos=new Map(desired.map((k,i)=>[k,i]));
+        const before=r.exercises.map(e=>e.key).join('|');
+        r.exercises.sort((a,b)=>(pos.has(a.key)?pos.get(a.key):999)-(pos.has(b.key)?pos.get(b.key):999));
+        if(r.exercises.map(e=>e.key).join('|')!==before) changed=true;
+      }
+      if(r.estimatedDuration!=='50-55 min'){r.estimatedDuration='50-55 min';changed=true;}
+    });
+    return changed;
+  }
+
+  function ensureAnaPlan"""
+          s,n=old_apply.subn(new_apply,s,count=1)
+          if n!=1:
+            raise SystemExit('Could not patch Ana applyWeekTargets')
+
+          # Ana needs exercise-specific RIR in the generic workout target UI.
+          if 'getTargetRir.__nexusAnaV260' not in s:
+            anchor="""    if(typeof startWorkout==='function' && !startWorkout.__nexusAnaV216){"""
+            rir_patch="""    if(typeof getTargetRir==='function' && !getTargetRir.__nexusAnaV260){
+      const originalRir=getTargetRir;
+      const wrappedRir=function(key,week=getWeek()){
+        if(isAna() && plan?.id===PLAN_ID){
+          const e=findAnaExercise(key);
+          const v=e?.weeklyRir?.[String(week)];
+          if(v!==undefined && v!=='') return v;
+        }
+        return originalRir(key,week);
+      };
+      wrappedRir.__nexusAnaV260=true;
+      getTargetRir=wrappedRir;
+    }
+
+"""
+            s=s.replace(anchor,rir_patch+anchor)
+
+          s=re.sub(r"const VERSION='v[0-9.]+';", "const VERSION='v2.60';", s, count=1)
+          s=re.sub(r"const STAMP='[^']+';", f"const STAMP='{STAMP}';", s, count=1)
+          p.write_text(s)
+
+          # --- Release/cache busting ---
+          p=Path('index.html')
+          s=p.read_text()
+          s=re.sub(r'<title>Nexus Training v[^<]+</title>', f'<title>Nexus Training {VERSION}</title>', s)
+          s=re.sub(r'<div class="version">Training - v[^<]+</div>', f'<div class="version">Training - {VERSION} ({STAMP})</div>', s)
+          s=re.sub(r'nexus-config\.js\?v=[0-9.]+', 'nexus-config.js?v=2.60', s)
+          s=re.sub(r'cloud-v27\.js\?v=[0-9.]+', 'cloud-v27.js?v=2.60', s)
+          p.write_text(s)
+
+          p=Path('nexus-config.js')
+          s=p.read_text()
+          s=re.sub(r"const VERSION='v[0-9.]+';", "const VERSION='v2.60';", s)
+          s=re.sub(r"const STAMP='[^']+';", f"const STAMP='{STAMP}';", s)
+          s=s.replace('V259','V260').replace('v2.59','v2.60').replace('v=2.59','v=2.60')
+          p.write_text(s)
+
+          for fn in ['polar-intelligence-v222.js','workout-completion-v244.js','cardio-persistence-v245.js','home-dashboard-v227.js','ui-hotfix-v250.js','ui-final-v252.js','strength-polar-v253.js']:
+              p=Path(fn)
+              if not p.exists(): continue
+              s=p.read_text()
+              s=re.sub(r"const VERSION='v[0-9.]+';", "const VERSION='v2.60';", s)
+              s=re.sub(r"const STAMP='[^']+';", f"const STAMP='{STAMP}';", s)
+              s=s.replace('V259','V260').replace("'v2.59'", "'v2.60'").replace('?v=2.59','?v=2.60')
+              p.write_text(s)
+          PY
+
+      - name: Commit release
+        run: |
+          git config user.name "Nexus Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html nexus-config.js ana-plan-v216.js polar-intelligence-v222.js workout-completion-v244.js cardio-persistence-v245.js home-dashboard-v227.js ui-hotfix-v250.js ui-final-v252.js strength-polar-v253.js
+          git commit -m "Apply Ana week 2-3 progression v2.60" || exit 0
+          git push origin main
