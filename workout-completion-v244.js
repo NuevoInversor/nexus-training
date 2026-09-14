@@ -1,8 +1,9 @@
 (() => {
-  const VERSION='v2.63';
-  const STAMP='14/09/2026 08:05:00';
+  const VERSION='v2.64';
+  const STAMP='14/09/2026 18:50:00';
   const VERSION_TEXT=`Training - ${VERSION} (${STAMP})`;
   let resumePending=false;
+  let coldRoutePending=true;
 
   function getActiveWorkout(){
     try{
@@ -70,11 +71,8 @@
       return current;
     }
 
-    const start=Number.isInteger(current) && current>=0 && current<exercises.length ? (current+1)%exercises.length : 0;
-    for(let offset=0;offset<exercises.length;offset++){
-      const idx=(start+offset)%exercises.length;
-      if(exerciseIncomplete(exercises[idx])) return idx;
-    }
+    // Si el último ejercicio quedó completado, al volver a Nexus mostramos la lista.
+    // No saltamos automáticamente al siguiente ejercicio: el usuario elige el orden.
     return null;
   }
 
@@ -97,18 +95,30 @@
   }
 
   function patchRender(){
-    if(typeof window.renderWorkout!=='function' || window.renderWorkout.__completionV262) return;
+    if(typeof window.renderWorkout!=='function' || window.renderWorkout.__completionV264) return;
     const original=window.renderWorkout;
     const wrapped=function(){
       repairCompletedExercises();
+      try{
+        const aw=getActiveWorkout();
+        if(coldRoutePending && aw && Array.isArray(aw.exercises)){
+          const target=chooseResumeExercise(aw);
+          const normalizedCurrent=aw.currentExercise===null||aw.currentExercise===undefined ? null : Number(aw.currentExercise);
+          if(normalizedCurrent!==target){
+            aw.currentExercise=target;
+            persistActive('cold-start-exercise-routing',false);
+          }
+          coldRoutePending=false;
+        }
+      }catch(_){}
       return original.apply(this,arguments);
     };
-    wrapped.__completionV262=true;
+    wrapped.__completionV264=true;
     window.renderWorkout=wrapped;
   }
 
   function patchMarkExerciseComplete(){
-    if(typeof window.markExerciseComplete!=='function' || window.markExerciseComplete.__completionV262) return;
+    if(typeof window.markExerciseComplete!=='function' || window.markExerciseComplete.__completionV264) return;
     const original=window.markExerciseComplete;
     const wrapped=function(){
       const beforeAw=getActiveWorkout();
@@ -121,7 +131,7 @@
       }catch(_){}
       return result;
     };
-    wrapped.__completionV262=true;
+    wrapped.__completionV264=true;
     window.markExerciseComplete=wrapped;
   }
 
@@ -141,8 +151,8 @@
   function installVersionLock(){
     enforceVersion();
     const el=document.querySelector('.version');
-    if(!el || el.__nexusVersionLockV262) return;
-    el.__nexusVersionLockV262=true;
+    if(!el || el.__nexusVersionLockV264) return;
+    el.__nexusVersionLockV264=true;
     const obs=new MutationObserver(()=>enforceVersion());
     obs.observe(el,{childList:true,characterData:true,subtree:true});
   }

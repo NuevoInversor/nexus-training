@@ -5,8 +5,8 @@ window.NEXUS_CLOUD = {
 };
 
 (() => {
-  const VERSION='v2.63';
-  const STAMP='14/09/2026 08:05:00';
+  const VERSION='v2.64';
+  const STAMP='14/09/2026 18:50:00';
   const VERSION_TEXT=`Training - ${VERSION} (${STAMP})`;
 
   const setVersion=()=>{
@@ -40,30 +40,30 @@ window.NEXUS_CLOUD = {
     document.head.appendChild(s);
   }
 
-  const loadProfileActiveIsolation=()=>load('profile-active-isolation-v262.js?v=2.63','data-nexus-profile-active-isolation','v2.63');
-  const loadFinalUi=()=>load('ui-final-v252.js?v=2.63','data-nexus-ui-final','v2.63');
-  const loadUiHotfix=()=>load('ui-hotfix-v250.js?v=2.63','data-nexus-ui-hotfix','v2.63');
-  const loadCardioPersistence=()=>load('cardio-persistence-v245.js?v=2.63','data-nexus-cardio-persistence','v2.63',loadFinalUi);
-  const loadWorkoutCompletion=()=>load('workout-completion-v244.js?v=2.63','data-nexus-workout-completion','v2.63',loadCardioPersistence);
-  const loadHomeDashboard=()=>load('home-dashboard-v227.js?v=2.63','data-nexus-home-dashboard','v2.63',loadWorkoutCompletion);
-  const loadStrengthPolar=()=>load('strength-polar-v253.js?v=2.63','data-nexus-strength-polar','v2.63',loadHomeDashboard);
-  const loadPolarIntelligence=()=>load('polar-intelligence-v222.js?v=2.63','data-nexus-polar-intelligence','v2.63',loadStrengthPolar);
-  const loadHomeMesocycle=()=>load('home-mesocycle-v221.js?v=2.63','data-nexus-home-mesocycle','v2.63',loadPolarIntelligence);
-  const loadPlanEditor=()=>load('plan-editor-v220.js?v=2.63','data-nexus-plan-editor','v2.63',loadHomeMesocycle);
-  const loadPolar=()=>load('polar-v218.js?v=2.63','data-nexus-polar','v2.63',loadPlanEditor);
-  const loadProfileCardioAccess=()=>load('profile-cardio-access-v217.js?v=2.63','data-nexus-profile-cardio-access','v2.63',loadPolar);
+  const loadProfileActiveIsolation=()=>load('profile-active-isolation-v262.js?v=2.64','data-nexus-profile-active-isolation','v2.64');
+  const loadFinalUi=()=>load('ui-final-v252.js?v=2.64','data-nexus-ui-final','v2.64');
+  const loadUiHotfix=()=>load('ui-hotfix-v250.js?v=2.64','data-nexus-ui-hotfix','v2.64');
+  const loadCardioPersistence=()=>load('cardio-persistence-v245.js?v=2.64','data-nexus-cardio-persistence','v2.64',loadFinalUi);
+  const loadWorkoutCompletion=()=>load('workout-completion-v244.js?v=2.64','data-nexus-workout-completion','v2.64',loadCardioPersistence);
+  const loadHomeDashboard=()=>load('home-dashboard-v227.js?v=2.64','data-nexus-home-dashboard','v2.64',loadWorkoutCompletion);
+  const loadStrengthPolar=()=>load('strength-polar-v253.js?v=2.64','data-nexus-strength-polar','v2.64',loadHomeDashboard);
+  const loadPolarIntelligence=()=>load('polar-intelligence-v222.js?v=2.64','data-nexus-polar-intelligence','v2.64',loadStrengthPolar);
+  const loadHomeMesocycle=()=>load('home-mesocycle-v221.js?v=2.64','data-nexus-home-mesocycle','v2.64',loadPolarIntelligence);
+  const loadPlanEditor=()=>load('plan-editor-v220.js?v=2.64','data-nexus-plan-editor','v2.64',loadHomeMesocycle);
+  const loadPolar=()=>load('polar-v218.js?v=2.64','data-nexus-polar','v2.64',loadPlanEditor);
+  const loadProfileCardioAccess=()=>load('profile-cardio-access-v217.js?v=2.64','data-nexus-profile-cardio-access','v2.64',loadPolar);
 
-  const loadAnaProgression=()=>load('ana-progression-v260.js?v=2.63','data-nexus-ana-progression','v2.63');
-  const loadAnaPlan=()=>load('ana-plan-v216.js?v=2.63','data-nexus-ana-plan','v2.63',loadAnaProgression);
-  const loadCardioReport=()=>load('cardio-report-v215.js?v=2.63','data-nexus-cardio-report','v2.63');
+  const loadAnaProgression=()=>load('ana-progression-v260.js?v=2.64','data-nexus-ana-progression','v2.64');
+  const loadAnaPlan=()=>load('ana-plan-v216.js?v=2.64','data-nexus-ana-plan','v2.64',loadAnaProgression);
+  const loadCardioReport=()=>load('cardio-report-v215.js?v=2.64','data-nexus-cardio-report','v2.64');
 
   const loadDavidCardio=()=>{
     const after=()=>{loadCardioReport();loadAnaPlan();loadProfileCardioAccess();};
-    load('cardio-david-v214.js?v=2.63','data-nexus-david-cardio','v2.63',after);
+    load('cardio-david-v214.js?v=2.64','data-nexus-david-cardio','v2.64',after);
   };
-  const loadDavidProgression=()=>load('david-progression-v263.js?v=2.63','data-nexus-david-progression','v2.63',loadDavidCardio);
-  const loadDavidMesocycle=()=>load('mesocycle-david-v213.js?v=2.63','data-nexus-david-mesocycle','v2.63',loadDavidProgression);
-  const loadWorkoutControls=()=>load('workout-controls-v212.js?v=2.63','data-nexus-workout-controls','v2.63',loadDavidMesocycle);
+  const loadDavidProgression=()=>load('david-progression-v263.js?v=2.64','data-nexus-david-progression','v2.64',loadDavidCardio);
+  const loadDavidMesocycle=()=>load('mesocycle-david-v213.js?v=2.64','data-nexus-david-mesocycle','v2.64',loadDavidProgression);
+  const loadWorkoutControls=()=>load('workout-controls-v212.js?v=2.64','data-nexus-workout-controls','v2.64',loadDavidMesocycle);
 
   const loadProfileUI=()=>{
     if(document.querySelector('script[data-nexus-profile-ui]')){loadWorkoutControls();return;}
@@ -78,8 +78,8 @@ window.NEXUS_CLOUD = {
       loadWorkoutControls();
     };
     const s=document.createElement('script');
-    s.src='profile-ui-v211.js?v=2.63';
-    s.dataset.nexusProfileUi='v2.63';
+    s.src='profile-ui-v211.js?v=2.64';
+    s.dataset.nexusProfileUi='v2.64';
     s.async=false;
     s.onload=finish;
     s.onerror=finish;
