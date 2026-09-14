@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.62';
-  const STAMP='12/09/2026 10:40:00';
+  const VERSION='v2.63';
+  const STAMP='14/09/2026 08:05:00';
   const VERSION_TEXT=`Training - ${VERSION} (${STAMP})`;
   let resumePending=false;
 
