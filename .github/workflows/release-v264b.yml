@@ -1,0 +1,72 @@
+name: Release Nexus v2.64 corrected
+
+on:
+  push:
+    paths:
+      - '.github/workflows/release-v264b.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply v2.64 release
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          OLD_VERSION='v2.63'
+          NEW_VERSION='v2.64'
+          OLD_STAMP='14/09/2026 08:05:00'
+          NEW_STAMP='14/09/2026 18:50:00'
+
+          for p in [Path('index.html'), *Path('.').glob('*.js')]:
+              if not p.exists():
+                  continue
+              text=p.read_text(encoding='utf-8')
+              new=(text.replace(OLD_VERSION,NEW_VERSION).replace('?v=2.63','?v=2.64').replace(OLD_STAMP,NEW_STAMP))
+              if new!=text:
+                  p.write_text(new,encoding='utf-8')
+
+          p=Path('workout-completion-v244.js')
+          text=p.read_text(encoding='utf-8')
+
+          old="  const VERSION_TEXT=`Training - ${VERSION} (${STAMP})`;\n  let resumePending=false;\n"
+          new="  const VERSION_TEXT=`Training - ${VERSION} (${STAMP})`;\n  let resumePending=false;\n  let coldRoutePending=true;\n"
+          if old not in text:
+              raise SystemExit('resume state block not found')
+          text=text.replace(old,new,1)
+
+          old="  function chooseResumeExercise(aw){\n    const exercises=Array.isArray(aw?.exercises)?aw.exercises:[];\n    if(!exercises.length) return null;\n\n    const currentRaw=aw.currentExercise;\n    const current=currentRaw===null||currentRaw===undefined ? null : Number(currentRaw);\n    if(Number.isInteger(current) && current>=0 && current<exercises.length && exerciseIncomplete(exercises[current])){\n      return current;\n    }\n\n    const start=Number.isInteger(current) && current>=0 && current<exercises.length ? (current+1)%exercises.length : 0;\n    for(let offset=0;offset<exercises.length;offset++){\n      const idx=(start+offset)%exercises.length;\n      if(exerciseIncomplete(exercises[idx])) return idx;\n    }\n    return null;\n  }\n"
+          new="  function chooseResumeExercise(aw){\n    const exercises=Array.isArray(aw?.exercises)?aw.exercises:[];\n    if(!exercises.length) return null;\n\n    const currentRaw=aw.currentExercise;\n    const current=currentRaw===null||currentRaw===undefined ? null : Number(currentRaw);\n    if(Number.isInteger(current) && current>=0 && current<exercises.length && exerciseIncomplete(exercises[current])){\n      return current;\n    }\n\n    // Si el último ejercicio quedó completado, al volver a Nexus mostramos la lista.\n    // No saltamos automáticamente al siguiente ejercicio: el usuario elige el orden.\n    return null;\n  }\n"
+          if old not in text:
+              raise SystemExit('chooseResumeExercise block not found')
+          text=text.replace(old,new,1)
+
+          old="  function patchRender(){\n    if(typeof window.renderWorkout!=='function' || window.renderWorkout.__completionV262) return;\n    const original=window.renderWorkout;\n    const wrapped=function(){\n      repairCompletedExercises();\n      return original.apply(this,arguments);\n    };\n    wrapped.__completionV262=true;\n    window.renderWorkout=wrapped;\n  }\n"
+          new="  function patchRender(){\n    if(typeof window.renderWorkout!=='function' || window.renderWorkout.__completionV264) return;\n    const original=window.renderWorkout;\n    const wrapped=function(){\n      repairCompletedExercises();\n      try{\n        const aw=getActiveWorkout();\n        if(coldRoutePending && aw && Array.isArray(aw.exercises)){\n          const target=chooseResumeExercise(aw);\n          const normalizedCurrent=aw.currentExercise===null||aw.currentExercise===undefined ? null : Number(aw.currentExercise);\n          if(normalizedCurrent!==target){\n            aw.currentExercise=target;\n            persistActive('cold-start-exercise-routing',false);\n          }\n          coldRoutePending=false;\n        }\n      }catch(_){}\n      return original.apply(this,arguments);\n    };\n    wrapped.__completionV264=true;\n    window.renderWorkout=wrapped;\n  }\n"
+          if old not in text:
+              raise SystemExit('patchRender block not found')
+          text=text.replace(old,new,1)
+          text=text.replace('__completionV262','__completionV264')
+          text=text.replace('__nexusVersionLockV262','__nexusVersionLockV264')
+          p.write_text(text,encoding='utf-8')
+          PY
+
+      - name: Commit release
+        run: |
+          git config user.name "Nexus Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html *.js
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git commit -m "Fix cold resume exercise routing v2.64"
+          git push
