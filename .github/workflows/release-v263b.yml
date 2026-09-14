@@ -1,0 +1,59 @@
+name: Release Nexus v2.63 corrected
+
+on:
+  push:
+    paths:
+      - '.github/workflows/release-v263b.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply v2.63 release
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          OLD_VERSION='v2.62'
+          NEW_VERSION='v2.63'
+          OLD_STAMP='12/09/2026 10:40:00'
+          NEW_STAMP='14/09/2026 08:05:00'
+
+          for p in [Path('index.html'), *Path('.').glob('*.js')]:
+              if not p.exists():
+                  continue
+              text=p.read_text(encoding='utf-8')
+              new=(text
+                   .replace(OLD_VERSION,NEW_VERSION)
+                   .replace('?v=2.62','?v=2.63')
+                   .replace(OLD_STAMP,NEW_STAMP))
+              if new!=text:
+                  p.write_text(new,encoding='utf-8')
+
+          p=Path('nexus-config.js')
+          text=p.read_text(encoding='utf-8')
+          old="const loadDavidMesocycle=()=>load('mesocycle-david-v213.js?v=2.63','data-nexus-david-mesocycle','v2.63',loadDavidCardio);"
+          new="const loadDavidProgression=()=>load('david-progression-v263.js?v=2.63','data-nexus-david-progression','v2.63',loadDavidCardio);\n  const loadDavidMesocycle=()=>load('mesocycle-david-v213.js?v=2.63','data-nexus-david-mesocycle','v2.63',loadDavidProgression);"
+          if old not in text:
+              raise SystemExit('Expected David mesocycle loader not found')
+          p.write_text(text.replace(old,new),encoding='utf-8')
+          PY
+
+      - name: Commit release
+        run: |
+          git config user.name "Nexus Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html *.js
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git commit -m "Apply David week 3 progression v2.63"
+          git push
