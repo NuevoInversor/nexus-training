@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.64';
-  const STAMP='14/09/2026 18:50:00';
+  const VERSION='v2.65';
+  const STAMP='15/09/2026 15:57:00';
   const CFG=window.NEXUS_CLOUD||{};
   const BASE=(CFG.url||'').replace(/\/$/,'')+'/functions/v1';
   const BOOT_KEY='nexus_polar_v222_bootstrap';
@@ -180,6 +180,68 @@
     return d.toISOString().slice(0,10);
   }
 
+  function nexusWorkouts(){
+    try{return (typeof workouts!=='undefined' && Array.isArray(workouts))?workouts:[];}catch(_){return[]}
+  }
+
+  function workoutRirForSession(session){
+    const sid=typeof sessionId==='function'?sessionId(session):String(session?.identifier?.id||'');
+    const date=String(session?.startTime||'').slice(0,10);
+    const list=nexusWorkouts();
+    let w=sid?list.find(x=>String(x?.polar?.sessionId||'')===sid):null;
+    if(!w && date){
+      w=list.find(x=>String(x?.polar?.startTime||x?.startedAt||'').slice(0,10)===date && (x?.isComplete||x?.finishedAt));
+    }
+    if(!w)return null;
+    const vals=[];
+    (w.exercises||[]).forEach(e=>(e.sets||[]).forEach(s=>{
+      const v=Number(String(s?.rir??'').replace(',','.'));
+      if(Number.isFinite(v)&&v>=0&&v<=10)vals.push(v);
+    }));
+    return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;
+  }
+
+  function strengthLoadFactor(session){
+    const rir=workoutRirForSession(session);
+    if(!Number.isFinite(rir))return 0.35;
+    return Math.min(0.45,Math.max(0.25,0.35*(1+(2-rir)*0.10)));
+  }
+
+  function sessionLoadFactor(session){
+    const id=String(session?.sport?.id??'');
+    if(id==='15')return{factor:strengthLoadFactor(session),kind:'Fuerza'};
+    if(id==='65')return{factor:0.85,kind:'Pilates'};
+    if(id==='63')return{factor:0.85,kind:'Mixta'};
+    const benefit=String(session?.trainingBenefit||'').toUpperCase();
+    if(benefit.includes('RECOVERY'))return{factor:0.20,kind:'Regenerativa'};
+    if(['1','17','3','55','118'].includes(id))return{factor:1.00,kind:'Cardio'};
+    return{factor:0.85,kind:'Mixta'};
+  }
+
+  function weightedLoad(sessions){
+    const parts={Cardio:0,Pilates:0,Mixta:0,Fuerza:0,Regenerativa:0};
+    let weightedMs=0,rawMs=0;
+    (sessions||[]).forEach(s=>{
+      const ms=Math.max(0,Number(s?.durationMillis||0));
+      const meta=sessionLoadFactor(s);
+      const weighted=ms*meta.factor;
+      rawMs+=ms;
+      weightedMs+=weighted;
+      parts[meta.kind]=(parts[meta.kind]||0)+weighted;
+    });
+    return{weightedMs,rawMs,parts};
+  }
+
+  function loadPartsText(parts){
+    return Object.entries(parts||{}).filter(([,ms])=>ms>=60000).map(([k,ms])=>`${k} ${fmtDurationMs(ms)}`).join(' · ');
+  }
+
+  function inclusiveDays(a,b){
+    const x=Date.parse(a+'T00:00:00Z'),y=Date.parse(b+'T00:00:00Z');
+    if(!Number.isFinite(x)||!Number.isFinite(y)||y<x)return 0;
+    return Math.floor((y-x)/86400000)+1;
+  }
+
   function buildReadiness(latest){
     ensureCard();
     const body=document.getElementById('nexusReadinessBody');
@@ -224,10 +286,16 @@
     const inRange=(s,a,b)=>{const d=String(s?.startTime||'').slice(0,10);return d>=a&&d<=b};
     const last7=sessions.filter(s=>inRange(s,start7,refDate));
     const prev21=sessions.filter(s=>inRange(s,start28,prevEnd));
-    const dur7=last7.reduce((a,s)=>a+Number(s?.durationMillis||0),0);
-    const prevWeekly=prev21.reduce((a,s)=>a+Number(s?.durationMillis||0),0)/3;
-    const loadRatio=prevWeekly>0?dur7/prevWeekly:null;
-    const loadText=`${last7.length} sesiones · ${fmtDurationMs(dur7)}`;
+    const load7=weightedLoad(last7);
+    const loadPrev=weightedLoad(prev21);
+    const baselineStart=start28>POLAR_IMPORT_FROM?start28:POLAR_IMPORT_FROM;
+    const coverageDays=baselineStart<=prevEnd?inclusiveDays(baselineStart,prevEnd):0;
+    const prevWeekly=coverageDays>=7?loadPrev.weightedMs*(7/coverageDays):null;
+    const loadRatio=prevWeekly>0?load7.weightedMs/prevWeekly:null;
+    const loadText=`${last7.length} sesiones · ${fmtDurationMs(load7.weightedMs)} equivalentes`;
+    const partsText=loadPartsText(load7.parts);
+    const provisional=coverageDays<21?`referencia provisional (${coverageDays} días previos)`:'referencia 21 días';
+    const loadDetail=[partsText,provisional].filter(Boolean).join(' · ');
 
     const recText=Number.isFinite(indicator)?`${Math.round(indicator)}/6${Number.isFinite(rmssd)?' · RMSSD '+Math.round(rmssd)+' ms':''}`:(Number.isFinite(rmssd)?`RMSSD ${Math.round(rmssd)} ms`:'sin dato');
 

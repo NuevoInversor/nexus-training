@@ -1,5 +1,5 @@
 (() => {
-  const VERSION='v2.64';
+  const VERSION='v2.65';
   const PREFIX='nx_active_profile_v262_';
   let finishing=false;
 

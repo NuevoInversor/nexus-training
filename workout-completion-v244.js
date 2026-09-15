@@ -1,6 +1,6 @@
 (() => {
-  const VERSION='v2.64';
-  const STAMP='14/09/2026 18:50:00';
+  const VERSION='v2.65';
+  const STAMP='15/09/2026 15:57:00';
   const VERSION_TEXT=`Training - ${VERSION} (${STAMP})`;
   let resumePending=false;
   let coldRoutePending=true;
