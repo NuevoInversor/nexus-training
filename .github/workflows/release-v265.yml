@@ -1,0 +1,152 @@
+name: Release Nexus v2.65 weighted load
+
+on:
+  push:
+    paths:
+      - '.github/workflows/release-v265.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply v2.65 release
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+
+          OLD_VERSION='v2.64'
+          NEW_VERSION='v2.65'
+          OLD_STAMP='14/09/2026 18:50:00'
+          NEW_STAMP='15/09/2026 15:57:00'
+
+          for p in [Path('index.html'), *Path('.').glob('*.js')]:
+              if not p.exists():
+                  continue
+              text=p.read_text(encoding='utf-8')
+              new=text.replace(OLD_VERSION,NEW_VERSION).replace('?v=2.64','?v=2.65').replace(OLD_STAMP,NEW_STAMP)
+              if new!=text:
+                  p.write_text(new,encoding='utf-8')
+
+          p=Path('polar-intelligence-v222.js')
+          text=p.read_text(encoding='utf-8')
+
+          marker="  function buildReadiness(latest){\n"
+          helpers="""  function nexusWorkouts(){
+    try{return (typeof workouts!=='undefined' && Array.isArray(workouts))?workouts:[];}catch(_){return[]}
+  }
+
+  function workoutRirForSession(session){
+    const sid=typeof sessionId==='function'?sessionId(session):String(session?.identifier?.id||'');
+    const date=String(session?.startTime||'').slice(0,10);
+    const list=nexusWorkouts();
+    let w=sid?list.find(x=>String(x?.polar?.sessionId||'')===sid):null;
+    if(!w && date){
+      w=list.find(x=>String(x?.polar?.startTime||x?.startedAt||'').slice(0,10)===date && (x?.isComplete||x?.finishedAt));
+    }
+    if(!w)return null;
+    const vals=[];
+    (w.exercises||[]).forEach(e=>(e.sets||[]).forEach(s=>{
+      const v=Number(String(s?.rir??'').replace(',','.'));
+      if(Number.isFinite(v)&&v>=0&&v<=10)vals.push(v);
+    }));
+    return vals.length?vals.reduce((a,b)=>a+b,0)/vals.length:null;
+  }
+
+  function strengthLoadFactor(session){
+    const rir=workoutRirForSession(session);
+    if(!Number.isFinite(rir))return 0.35;
+    return Math.min(0.45,Math.max(0.25,0.35*(1+(2-rir)*0.10)));
+  }
+
+  function sessionLoadFactor(session){
+    const id=String(session?.sport?.id??'');
+    if(id==='15')return{factor:strengthLoadFactor(session),kind:'Fuerza'};
+    if(id==='65')return{factor:0.85,kind:'Pilates'};
+    if(id==='63')return{factor:0.85,kind:'Mixta'};
+    const benefit=String(session?.trainingBenefit||'').toUpperCase();
+    if(benefit.includes('RECOVERY'))return{factor:0.20,kind:'Regenerativa'};
+    if(['1','17','3','55','118'].includes(id))return{factor:1.00,kind:'Cardio'};
+    return{factor:0.85,kind:'Mixta'};
+  }
+
+  function weightedLoad(sessions){
+    const parts={Cardio:0,Pilates:0,Mixta:0,Fuerza:0,Regenerativa:0};
+    let weightedMs=0,rawMs=0;
+    (sessions||[]).forEach(s=>{
+      const ms=Math.max(0,Number(s?.durationMillis||0));
+      const meta=sessionLoadFactor(s);
+      const weighted=ms*meta.factor;
+      rawMs+=ms;
+      weightedMs+=weighted;
+      parts[meta.kind]=(parts[meta.kind]||0)+weighted;
+    });
+    return{weightedMs,rawMs,parts};
+  }
+
+  function loadPartsText(parts){
+    return Object.entries(parts||{}).filter(([,ms])=>ms>=60000).map(([k,ms])=>`${k} ${fmtDurationMs(ms)}`).join(' · ');
+  }
+
+  function inclusiveDays(a,b){
+    const x=Date.parse(a+'T00:00:00Z'),y=Date.parse(b+'T00:00:00Z');
+    if(!Number.isFinite(x)||!Number.isFinite(y)||y<x)return 0;
+    return Math.floor((y-x)/86400000)+1;
+  }
+
+"""
+          if marker not in text:
+              raise SystemExit('buildReadiness marker not found')
+          if 'function weightedLoad(sessions)' not in text:
+              text=text.replace(marker,helpers+marker,1)
+
+          old="""    const dur7=last7.reduce((a,s)=>a+Number(s?.durationMillis||0),0);
+    const prevWeekly=prev21.reduce((a,s)=>a+Number(s?.durationMillis||0),0)/3;
+    const loadRatio=prevWeekly>0?dur7/prevWeekly:null;
+    const loadText=`${last7.length} sesiones · ${fmtDurationMs(dur7)}`;
+"""
+          new="""    const load7=weightedLoad(last7);
+    const loadPrev=weightedLoad(prev21);
+    const baselineStart=start28>POLAR_IMPORT_FROM?start28:POLAR_IMPORT_FROM;
+    const coverageDays=baselineStart<=prevEnd?inclusiveDays(baselineStart,prevEnd):0;
+    const prevWeekly=coverageDays>=7?loadPrev.weightedMs*(7/coverageDays):null;
+    const loadRatio=prevWeekly>0?load7.weightedMs/prevWeekly:null;
+    const loadText=`${last7.length} sesiones · ${fmtDurationMs(load7.weightedMs)} equivalentes`;
+    const partsText=loadPartsText(load7.parts);
+    const provisional=coverageDays<21?`referencia provisional (${coverageDays} días previos)`:'referencia 21 días';
+    const loadDetail=[partsText,provisional].filter(Boolean).join(' · ');
+"""
+          if old not in text:
+              raise SystemExit('old load block not found')
+          text=text.replace(old,new,1)
+
+          old="""      </div>
+      <div class=\"nexus-readiness-detail\">${trend} La interpretación Nexus combina tendencia, carga y datos de Polar; no cambia el plan automáticamente.</div>
+"""
+          new="""      </div>
+      <div class=\"nexus-readiness-detail\"><strong>Carga ponderada:</strong> ${loadDetail}. Coeficientes: cardio ×1,00 · mixta/Step/Pilates ×0,85 · fuerza ×0,35 ajustada por RIR · regenerativa ×0,20.</div>
+      <div class=\"nexus-readiness-detail\">${trend} La interpretación Nexus combina tendencia, carga y datos de Polar; no cambia el plan automáticamente.</div>
+"""
+          if old not in text:
+              raise SystemExit('readiness detail block not found')
+          text=text.replace(old,new,1)
+          p.write_text(text,encoding='utf-8')
+          PY
+
+      - name: Commit release
+        run: |
+          git config user.name "Nexus Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html *.js
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git commit -m "Weight training load by activity type v2.65"
+          git push
