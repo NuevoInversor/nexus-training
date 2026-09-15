@@ -1,0 +1,71 @@
+name: Release Nexus v2.65 corrected
+
+on:
+  push:
+    paths:
+      - '.github/workflows/release-v265b.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Apply v2.65 release
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import base64
+
+          OLD_VERSION='v2.64'
+          NEW_VERSION='v2.65'
+          OLD_STAMP='14/09/2026 18:50:00'
+          NEW_STAMP='15/09/2026 15:57:00'
+
+          for p in [Path('index.html'), *Path('.').glob('*.js')]:
+              if not p.exists():
+                  continue
+              text=p.read_text(encoding='utf-8')
+              new=text.replace(OLD_VERSION,NEW_VERSION).replace('?v=2.64','?v=2.65').replace(OLD_STAMP,NEW_STAMP)
+              if new!=text:
+                  p.write_text(new,encoding='utf-8')
+
+          p=Path('polar-intelligence-v222.js')
+          text=p.read_text(encoding='utf-8')
+          marker="  function buildReadiness(latest){\n"
+          helpers=base64.b64decode('ICBmdW5jdGlvbiBuZXh1c1dvcmtvdXRzKCl7CiAgICB0cnl7cmV0dXJuICh0eXBlb2Ygd29ya291dHMhPT0ndW5kZWZpbmVkJyAmJiBBcnJheS5pc0FycmF5KHdvcmtvdXRzKSk/d29ya291dHM6W107fWNhdGNoKF8pe3JldHVybltdfQogIH0KCiAgZnVuY3Rpb24gd29ya291dFJpckZvclNlc3Npb24oc2Vzc2lvbil7CiAgICBjb25zdCBzaWQ9dHlwZW9mIHNlc3Npb25JZD09PSdmdW5jdGlvbic/c2Vzc2lvbklkKHNlc3Npb24pOlN0cmluZyhzZXNzaW9uPy5pZGVudGlmaWVyPy5pZHx8JycpOwogICAgY29uc3QgZGF0ZT1TdHJpbmcoc2Vzc2lvbj8uc3RhcnRUaW1lfHwnJykuc2xpY2UoMCwxMCk7CiAgICBjb25zdCBsaXN0PW5leHVzV29ya291dHMoKTsKICAgIGxldCB3PXNpZD9saXN0LmZpbmQoeD0+U3RyaW5nKHg/LnBvbGFyPy5zZXNzaW9uSWR8fCcnKT09PXNpZCk6bnVsbDsKICAgIGlmKCF3ICYmIGRhdGUpewogICAgICB3PWxpc3QuZmluZCh4PT5TdHJpbmcoeD8ucG9sYXI/LnN0YXJ0VGltZXx8eD8uc3RhcnRlZEF0fHwnJykuc2xpY2UoMCwxMCk9PT1kYXRlICYmICh4Py5pc0NvbXBsZXRlfHx4Py5maW5pc2hlZEF0KSk7CiAgICB9CiAgICBpZighdylyZXR1cm4gbnVsbDsKICAgIGNvbnN0IHZhbHM9W107CiAgICAody5leGVyY2lzZXN8fFtdKS5mb3JFYWNoKGU9PihlLnNldHN8fFtdKS5mb3JFYWNoKHM9PnsKICAgICAgY29uc3Qgdj1OdW1iZXIoU3RyaW5nKHM/LnJpcj8/JycpLnJlcGxhY2UoJywnLCcuJykpOwogICAgICBpZihOdW1iZXIuaXNGaW5pdGUodikmJnY+PTAmJnY8PTEwKXZhbHMucHVzaCh2KTsKICAgIH0pKTsKICAgIHJldHVybiB2YWxzLmxlbmd0aD92YWxzLnJlZHVjZSgoYSxiKT0+YStiLDApL3ZhbHMubGVuZ3RoOm51bGw7CiAgfQoKICBmdW5jdGlvbiBzdHJlbmd0aExvYWRGYWN0b3Ioc2Vzc2lvbil7CiAgICBjb25zdCByaXI9d29ya291dFJpckZvclNlc3Npb24oc2Vzc2lvbik7CiAgICBpZighTnVtYmVyLmlzRmluaXRlKHJpcikpcmV0dXJuIDAuMzU7CiAgICByZXR1cm4gTWF0aC5taW4oMC40NSxNYXRoLm1heCgwLjI1LDAuMzUqKDErKDItcmlyKSowLjEwKSkpOwogIH0KCiAgZnVuY3Rpb24gc2Vzc2lvbkxvYWRGYWN0b3Ioc2Vzc2lvbil7CiAgICBjb25zdCBpZD1TdHJpbmcoc2Vzc2lvbj8uc3BvcnQ/LmlkPz8nJyk7CiAgICBpZihpZD09PScxNScpcmV0dXJue2ZhY3RvcjpzdHJlbmd0aExvYWRGYWN0b3Ioc2Vzc2lvbiksa2luZDonRnVlcnphJ307CiAgICBpZihpZD09PSc2NScpcmV0dXJue2ZhY3RvcjowLjg1LGtpbmQ6J1BpbGF0ZXMnfTsKICAgIGlmKGlkPT09JzYzJylyZXR1cm57ZmFjdG9yOjAuODUsa2luZDonTWl4dGEnfTsKICAgIGNvbnN0IGJlbmVmaXQ9U3RyaW5nKHNlc3Npb24/LnRyYWluaW5nQmVuZWZpdHx8JycpLnRvVXBwZXJDYXNlKCk7CiAgICBpZihiZW5lZml0LmluY2x1ZGVzKCdSRUNPVkVSWScpKXJldHVybntmYWN0b3I6MC4yMCxraW5kOidSZWdlbmVyYXRpdmEnfTsKICAgIGlmKFsnMScsJzE3JywnMycsJzU1JywnMTE4J10uaW5jbHVkZXMoaWQpKXJldHVybntmYWN0b3I6MS4wMCxraW5kOidDYXJkaW8nfTsKICAgIHJldHVybntmYWN0b3I6MC44NSxraW5kOidNaXh0YSd9OwogIH0KCiAgZnVuY3Rpb24gd2VpZ2h0ZWRMb2FkKHNlc3Npb25zKXsKICAgIGNvbnN0IHBhcnRzPXtDYXJkaW86MCxQaWxhdGVzOjAsTWl4dGE6MCxGdWVyemE6MCxSZWdlbmVyYXRpdmE6MH07CiAgICBsZXQgd2VpZ2h0ZWRNcz0wLHJhd01zPTA7CiAgICAoc2Vzc2lvbnN8fFtdKS5mb3JFYWNoKHM9PnsKICAgICAgY29uc3QgbXM9TWF0aC5tYXgoMCxOdW1iZXIocz8uZHVyYXRpb25NaWxsaXN8fDApKTsKICAgICAgY29uc3QgbWV0YT1zZXNzaW9uTG9hZEZhY3RvcihzKTsKICAgICAgY29uc3Qgd2VpZ2h0ZWQ9bXMqbWV0YS5mYWN0b3I7CiAgICAgIHJhd01zKz1tczsKICAgICAgd2VpZ2h0ZWRNcys9d2VpZ2h0ZWQ7CiAgICAgIHBhcnRzW21ldGEua2luZF09KHBhcnRzW21ldGEua2luZF18fDApK3dlaWdodGVkOwogICAgfSk7CiAgICByZXR1cm57d2VpZ2h0ZWRNcyxyYXdNcyxwYXJ0c307CiAgfQoKICBmdW5jdGlvbiBsb2FkUGFydHNUZXh0KHBhcnRzKXsKICAgIHJldHVybiBPYmplY3QuZW50cmllcyhwYXJ0c3x8e30pLmZpbHRlcigoWyxtc10pPT5tcz49NjAwMDApLm1hcCgoW2ssbXNdKT0+YCR7a30gJHtmbXREdXJhdGlvbk1zKG1zKX1gKS5qb2luKCcgwrcgJyk7CiAgfQoKICBmdW5jdGlvbiBpbmNsdXNpdmVEYXlzKGEsYil7CiAgICBjb25zdCB4PURhdGUucGFyc2UoYSsnVDAwOjAwOjAwWicpLHk9RGF0ZS5wYXJzZShiKydUMDA6MDA6MDBaJyk7CiAgICBpZighTnVtYmVyLmlzRmluaXRlKHgpfHwhTnVtYmVyLmlzRmluaXRlKHkpfHx5PHgpcmV0dXJuIDA7CiAgICByZXR1cm4gTWF0aC5mbG9vcigoeS14KS84NjQwMDAwMCkrMTsKICB9Cgo=').decode('utf-8')
+          if marker not in text:
+              raise SystemExit('buildReadiness marker not found')
+          if 'function weightedLoad(sessions)' not in text:
+              text=text.replace(marker,helpers+marker,1)
+
+          old_load=base64.b64decode('ICAgIGNvbnN0IGR1cjc9bGFzdDcucmVkdWNlKChhLHMpPT5hK051bWJlcihzPy5kdXJhdGlvbk1pbGxpc3x8MCksMCk7CiAgICBjb25zdCBwcmV2V2Vla2x5PXByZXYyMS5yZWR1Y2UoKGEscyk9PmErTnVtYmVyKHM/LmR1cmF0aW9uTWlsbGlzfHwwKSwwKS8zOwogICAgY29uc3QgbG9hZFJhdGlvPXByZXZXZWVrbHk+MD9kdXI3L3ByZXZXZWVrbHk6bnVsbDsKICAgIGNvbnN0IGxvYWRUZXh0PWAke2xhc3Q3Lmxlbmd0aH0gc2VzaW9uZXMgwrcgJHtmbXREdXJhdGlvbk1zKGR1cjcpfWA7Cg==').decode('utf-8')
+          new_load=base64.b64decode('ICAgIGNvbnN0IGxvYWQ3PXdlaWdodGVkTG9hZChsYXN0Nyk7CiAgICBjb25zdCBsb2FkUHJldj13ZWlnaHRlZExvYWQocHJldjIxKTsKICAgIGNvbnN0IGJhc2VsaW5lU3RhcnQ9c3RhcnQyOD5QT0xBUl9JTVBPUlRfRlJPTT9zdGFydDI4OlBPTEFSX0lNUE9SVF9GUk9NOwogICAgY29uc3QgY292ZXJhZ2VEYXlzPWJhc2VsaW5lU3RhcnQ8PXByZXZFbmQ/aW5jbHVzaXZlRGF5cyhiYXNlbGluZVN0YXJ0LHByZXZFbmQpOjA7CiAgICBjb25zdCBwcmV2V2Vla2x5PWNvdmVyYWdlRGF5cz49Nz9sb2FkUHJldi53ZWlnaHRlZE1zKig3L2NvdmVyYWdlRGF5cyk6bnVsbDsKICAgIGNvbnN0IGxvYWRSYXRpbz1wcmV2V2Vla2x5PjA/bG9hZDcud2VpZ2h0ZWRNcy9wcmV2V2Vla2x5Om51bGw7CiAgICBjb25zdCBsb2FkVGV4dD1gJHtsYXN0Ny5sZW5ndGh9IHNlc2lvbmVzIMK3ICR7Zm10RHVyYXRpb25Ncyhsb2FkNy53ZWlnaHRlZE1zKX0gZXF1aXZhbGVudGVzYDsKICAgIGNvbnN0IHBhcnRzVGV4dD1sb2FkUGFydHNUZXh0KGxvYWQ3LnBhcnRzKTsKICAgIGNvbnN0IHByb3Zpc2lvbmFsPWNvdmVyYWdlRGF5czwyMT9gcmVmZXJlbmNpYSBwcm92aXNpb25hbCAoJHtjb3ZlcmFnZURheXN9IGTDrWFzIHByZXZpb3MpYDoncmVmZXJlbmNpYSAyMSBkw61hcyc7CiAgICBjb25zdCBsb2FkRGV0YWlsPVtwYXJ0c1RleHQscHJvdmlzaW9uYWxdLmZpbHRlcihCb29sZWFuKS5qb2luKCcgwrcgJyk7Cg==').decode('utf-8')
+          if old_load not in text:
+              raise SystemExit('old load block not found')
+          text=text.replace(old_load,new_load,1)
+
+          old_detail=base64.b64decode('ICAgICAgPC9kaXY+CiAgICAgIDxkaXYgY2xhc3M9XCJuZXh1cy1yZWFkaW5lc3MtZGV0YWlsXCI+JHt0cmVuZH0gTGEgaW50ZXJwcmV0YWNpw7NuIE5leHVzIGNvbWJpbmEgdGVuZGVuY2lhLCBjYXJnYSB5IGRhdG9zIGRlIFBvbGFyOyBubyBjYW1iaWEgZWwgcGxhbiBhdXRvbcOhdGljYW1lbnRlLjwvZGl2Pgo=').decode('utf-8')
+          new_detail=base64.b64decode('ICAgICAgPC9kaXY+CiAgICAgIDxkaXYgY2xhc3M9XCJuZXh1cy1yZWFkaW5lc3MtZGV0YWlsXCI+PHN0cm9uZz5DYXJnYSBwb25kZXJhZGE6PC9zdHJvbmc+ICR7bG9hZERldGFpbH0uIENvZWZpY2llbnRlczogY2FyZGlvIMOXMSwwMCDCtyBtaXh0YS9TdGVwL1BpbGF0ZXMgw5cwLDg1IMK3IGZ1ZXJ6YSDDlzAsMzUgYWp1c3RhZGEgcG9yIFJJUiDCtyByZWdlbmVyYXRpdmEgw5cwLDIwLjwvZGl2PgogICAgICA8ZGl2IGNsYXNzPVwibmV4dXMtcmVhZGluZXNzLWRldGFpbFwiPiR7dHJlbmR9IExhIGludGVycHJldGFjacOzbiBOZXh1cyBjb21iaW5hIHRlbmRlbmNpYSwgY2FyZ2EgeSBkYXRvcyBkZSBQb2xhcjsgbm8gY2FtYmlhIGVsIHBsYW4gYXV0b23DoXRpY2FtZW50ZS48L2Rpdj4K').decode('utf-8')
+          if old_detail not in text:
+              raise SystemExit('readiness detail block not found')
+          text=text.replace(old_detail,new_detail,1)
+          p.write_text(text,encoding='utf-8')
+          PY
+
+      - name: Commit release
+        run: |
+          git config user.name "Nexus Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html *.js
+          if git diff --cached --quiet; then
+            echo "No changes"
+            exit 0
+          fi
+          git commit -m "Weight training load by activity type v2.65"
+          git push
