@@ -3,6 +3,7 @@
   const STAMP='30/08/2026 19:14:00';
   const PLAN_ID='hipertrofia-general-2026-08-31';
   const START_DATE='2026-08-31';
+  const END_DATE='2026-09-27';
 
   const PLAN={
     id:PLAN_ID,
@@ -118,7 +119,7 @@
   }
 
   function activatePlan(){
-    if(!isDavidSelected() || currentISO()<START_DATE) return false;
+    if(!isDavidSelected() || currentISO()<START_DATE || currentISO()>END_DATE) return false;
     if(typeof plan==='undefined' || typeof routines==='undefined') return false;
 
     let changed=false;
