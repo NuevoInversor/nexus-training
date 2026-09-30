@@ -64,16 +64,51 @@
   }
   function activate(){
     if(!isDavid()||!activeDate()||typeof plan==='undefined'||typeof routines==='undefined')return;
-    if(plan?.id===ID)return;
-    if(typeof activeWorkout!=='undefined'&&activeWorkout&&activeWorkout.planId!==ID){
-      const used=(activeWorkout.exercises||[]).some(e=>(e.sets||[]).some(s=>s?.completed||s?.weight||s?.reps||s?.rir));
-      if(used)return;
-      activeWorkout=null; try{localStorage.removeItem(STORAGE.active)}catch(_){}
+    const expectedIds=ROUTINES.map(r=>r.id).join('|');
+    const currentIds=Array.isArray(routines)?routines.map(r=>r?.id).join('|'):'';
+    const planIsExtra=plan?.id===ID;
+
+    if(!planIsExtra){
+      if(typeof activeWorkout!=='undefined'&&activeWorkout&&activeWorkout.planId!==ID){
+        const used=(activeWorkout.exercises||[]).some(e=>(e.sets||[]).some(s=>s?.completed||s?.weight||s?.reps||s?.rir));
+        if(used)return;
+        activeWorkout=null; try{localStorage.removeItem(STORAGE.active)}catch(_){}
+      }
+      plan=JSON.parse(JSON.stringify(PLAN));
     }
-    plan=JSON.parse(JSON.stringify(PLAN));
-    routines=JSON.parse(JSON.stringify(ROUTINES));
-    persist();
-    try{renderAll()}catch(_){}
+
+    if(!planIsExtra || currentIds!==expectedIds){
+      routines=JSON.parse(JSON.stringify(ROUTINES));
+      persist();
+      try{renderAll()}catch(e){console.warn('Nexus EXTRA renderAll:',e)}
+    }
+  }
+
+  function ensureRoutineList(){
+    if(!isDavid()||!activeDate()||plan?.id!==ID)return;
+    const host=document.getElementById('routineList');
+    if(!host)return;
+
+    const expectedIds=ROUTINES.map(r=>r.id).join('|');
+    const currentIds=Array.isArray(routines)?routines.map(r=>r?.id).join('|'):'';
+    if(currentIds!==expectedIds){
+      routines=JSON.parse(JSON.stringify(ROUTINES));
+      persist();
+    }
+
+    if(host.children.length)return;
+    host.innerHTML=(routines||[]).map(r=>{
+      const sets=(r.exercises||[]).reduce((a,e)=>a+Number(e.sets||0),0);
+      return `<div class="routine-card">
+        <div class="row between">
+          <div>
+            <strong>${r.name}</strong>
+            <div class="small muted" style="margin-top:4px">${r.exercises.length} ejercicios · ${sets} series</div>
+          </div>
+          <button class="btn btn-primary" onclick="startWorkout('${r.id}')">Iniciar</button>
+        </div>
+      </div>`;
+    }).join('');
   }
   function patchPrevious(){
     if(typeof previousWeekExercise!=='function'||previousWeekExercise.__extra267)return;
@@ -104,7 +139,7 @@
     const p=document.getElementById('routineList')?.closest('.card')?.querySelector('.pill');
     if(active&&p)p.textContent='4 días';
   }
-  function tick(){patchPrevious();activate();card()}
+  function tick(){patchPrevious();activate();card();ensureRoutineList()}
   function boot(){tick();let n=0;const f=setInterval(()=>{tick();if(++n>=20)clearInterval(f)},500);setInterval(tick,30000);document.addEventListener('visibilitychange',()=>{if(document.visibilityState==='visible')setTimeout(tick,80)});window.addEventListener('focus',()=>setTimeout(tick,80))}
   if(document.readyState==='loading')document.addEventListener('DOMContentLoaded',boot,{once:true});else boot();
 })();
