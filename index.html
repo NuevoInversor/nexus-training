@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0f172a">
-<title>Nexus Training v2.71</title>
+<title>Nexus Training v2.72</title>
 <style>
 :root{--bg:#f6f7fb;--card:#fff;--ink:#111827;--muted:#64748b;--line:#e5e7eb;--brand:#111827;--good:#15803d;--radius:20px;--shadow:0 10px 30px rgba(15,23,42,.07)}
 *{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);padding-bottom:92px}
@@ -305,7 +305,7 @@ select{
 </head>
 <body>
 <div class="app">
-<header><div><div class="brand">NEXUS</div><div class="version">Training - v2.71 (30/09/2026 20:05:00)</div></div><span class="pill" id="todayPill"></span></header>
+<header><div><div class="brand">NEXUS</div><div class="version">Training - v2.72 (30/09/2026 20:12:00)</div></div><span class="pill" id="todayPill"></span></header>
 <main>
 <section id="homeView" class="view active">
   <div class="hero"><div class="eyebrow">Plan Nexus</div><h1 id="weekHero">Semana 3</h1><p id="cycleHero">Mesociclo actual</p></div>
@@ -628,6 +628,89 @@ function migrateRoutineNames(){
 function clone(v){return JSON.parse(JSON.stringify(v))}
 function load(k,f){try{const r=localStorage.getItem(k);return r?JSON.parse(r):clone(f)}catch(e){return clone(f)}}
 function save(k,v){localStorage.setItem(k,JSON.stringify(v))}
+
+const DAVID_EXTRA_BASE=(()=>{
+  const E=(key,name,unit,rest,sets,reps,rir,weight,note='')=>({
+    key,name,unit,rest,sets,reps,
+    weeklySets:{'1':sets},weeklyReps:{'1':reps},weeklyRir:{'1':rir},
+    weeklyWeight:{'1':weight},weeklyTargetNote:{'1':note},programNote:note
+  });
+  const plan={
+    id:'mesociclo-2-extra-2026-09-28',name:'Mesociclo 2 (EXTRA)',
+    startDate:'2026-09-28',endDate:'2026-10-04',
+    weekDates:{'1':'2026-09-28'},weeklyRir:{'1':'2-3'},exerciseRir:{},
+    progressionRule:'Semana puente: mantener fuerza, recuperar continuidad cardiovascular y evitar acumular fatiga. No buscar RIR 1 ni récords.',
+    deloadGuidelines:'Volumen moderado. Lower B no se realiza esta semana.'
+  };
+  const routines=[
+    {id:'dia-1',name:'Upper A',exercises:[
+      E('press-banca','Press banca con barra','kg/lado',120,3,'6-8','2-3','15'),
+      E('remo-maquina','Remo pecho apoyado / máquina','kg/lado',120,3,'8-10','2-3','27,5'),
+      E('press-inclinado','Press inclinado con mancuernas','kg manc.',120,2,'8-10','2-3','20'),
+      E('jalon-neutro','Jalón al pecho agarre neutro','kg',120,2,'10-12','2-3','40'),
+      E('elevaciones-laterales-polea','Elevaciones laterales en polea','kg',90,2,'15-20','2','2,5'),
+      E('curl-biceps','Curl bíceps en banco inclinado','kg manc.',90,2,'10-12','2-3','12'),
+      E('extension-triceps-polea','Extensión de tríceps en polea','kg',90,2,'10-12','2-3','20')
+    ]},
+    {id:'dia-2',name:'Lower A',exercises:[
+      E('sentadilla-trasera','Sentadilla trasera','kg/lado',120,3,'6-8','2-3','22,5'),
+      E('prensa-inclinada','Prensa inclinada','kg/lado',120,2,'10-12','2-3','27,5'),
+      E('extension-cuadriceps','Extensión de cuádriceps','kg',90,2,'12-15','2-3','25'),
+      E('curl-femoral-tumbado','Curl femoral tumbado','kg',90,2,'10-12','2-3','17,5'),
+      E('gemelos-sentado','Gemelos sentado','kg',90,2,'12-15','2-3','37,5','No forzar si aparecen sensaciones en el gemelo.'),
+      E('plancha','Plancha abdominal','',60,2,'45-60 s','técnico','Sin carga')
+    ]},
+    {id:'dia-3',name:'Upper B',exercises:[
+      E('dominadas-asistidas','Dominadas asistidas / peso corporal','kg ayuda',120,3,'6-8','2-3','14'),
+      E('press-militar','Press militar','kg/lado + barra',120,3,'6-7','2-3','6,25'),
+      E('remo-polea-baja','Remo en polea baja','kg',120,2,'8-10','2-3','40'),
+      E('aperturas-maquina','Aperturas en máquina','kg',90,2,'10-12','2-3','20'),
+      E('fondos-paralela','Fondos en paralelas','peso corporal',120,2,'8-10','2-3','Peso corporal'),
+      E('facepull','Face Pull','kg',90,2,'15-20','2-3','20')
+    ]},
+    {id:'dia-5',name:'Especialización',exercises:[
+      E('dominadas','Dominadas peso corporal','peso corporal',120,3,'4','2-3','Peso corporal','Sin lastre esta semana.'),
+      E('elevaciones-laterales-polea-dia5','Elevaciones laterales en polea','kg',90,2,'15-20','2-3','2,5'),
+      E('pajaros-peck-deck','Pájaros en Peck Deck','kg',90,2,'15-18','2-3','10'),
+      E('curl-biceps-polea','Curl de bíceps en polea','kg',90,1,'10-12','2-3','22,5'),
+      E('extension-triceps-overhead','Extensión de tríceps por encima de la cabeza','kg',90,1,'10-12','2-3','22,5'),
+      E('pallof-press','Pallof Press','kg',60,2,'12-15','técnico','10'),
+      E('abd-wheel','Ab Wheel','peso corporal',60,2,'8-10','técnico','Peso corporal')
+    ]}
+  ];
+  return {plan,routines};
+})();
+
+function nexusCurrentProfile(){
+  try{
+    const p=localStorage.getItem('nexus_local_profile_v29');
+    if(p==='david'||p==='ana')return p;
+  }catch(_){}
+  const t=document.getElementById('profileSwitchBtn')?.textContent?.trim()?.toLowerCase();
+  return (t==='david'||t==='ana')?t:null;
+}
+function nexusLocalISO(){
+  const d=new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function davidExtraBaseActive(){
+  const d=nexusLocalISO();
+  return nexusCurrentProfile()==='david' && d>='2026-09-28' && d<='2026-10-04';
+}
+function ensureDavidExtraBaseState(){
+  if(!davidExtraBaseActive())return false;
+  const expected=DAVID_EXTRA_BASE.routines;
+  const valid=plan?.id===DAVID_EXTRA_BASE.plan.id &&
+    Array.isArray(routines) && routines.length===expected.length &&
+    expected.every((r,i)=>routines[i]?.id===r.id && routines[i]?.exercises?.length===r.exercises.length);
+  if(!valid){
+    plan=clone(DAVID_EXTRA_BASE.plan);
+    routines=clone(expected);
+    try{save(STORAGE.plan,plan);save(STORAGE.routines,routines)}catch(_){}
+  }
+  return true;
+}
+
 function esc(s=''){return String(s).replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
 function uid(){return Math.random().toString(36).slice(2)+Date.now().toString(36)}
 function formatDate(v){return new Intl.DateTimeFormat('es-ES',{day:'2-digit',month:'short',year:'numeric'}).format(new Date(v))}
@@ -832,11 +915,14 @@ function setView(id){document.querySelectorAll('.view').forEach(v=>v.classList.t
 function renderAll(){renderHome();renderWorkout();renderHistory()}
 
 function renderHome(){
+  const davidExtra=ensureDavidExtraBaseState();
   const week=getWeek();
   document.getElementById('weekHero').textContent=`Semana ${week}`;
   document.getElementById('cycleHero').textContent=plan.name;
   const currentWeekDate=plan.weekDates?.[String(week)]||plan.startDate;
   document.getElementById('mesocycleSummary').innerHTML=`<strong>${esc(plan.name)}</strong> · Semana ${week}<br>Inicio semana: ${esc(formatISODate(currentWeekDate))} · RIR base: ${esc(getTargetRir('__base__',week))}<br>Mesociclo: ${esc(formatISODate(plan.startDate))} → ${esc(formatISODate(plan.endDate))}`;
+  const routinePill=document.getElementById('routineList')?.closest('.card')?.querySelector('.pill');
+  if(davidExtra&&routinePill)routinePill.textContent='4 días';
   document.getElementById('routineList').innerHTML=routines.map(r=>{
     const sets=r.exercises.reduce((a,e)=>a+Number(e.sets),0);
     const thisWeek=getCurrentWeekWorkout(r.id);
@@ -1662,7 +1748,7 @@ function savePlan(){
 init();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="nexus-config.js?v=2.71"></script>
-<script src="cloud-v27.js?v=2.71"></script>
+<script src="nexus-config.js?v=2.72"></script>
+<script src="cloud-v27.js?v=2.72"></script>
 </body>
 </html>
