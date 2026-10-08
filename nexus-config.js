@@ -5,8 +5,8 @@ window.NEXUS_CLOUD = {
 };
 
 (() => {
-  const VERSION='v2.76';
-  const STAMP='30/09/2026 20:49:00';
+  const VERSION='v2.77';
+  const STAMP='08/10/2026 15:54:00';
   const VERSION_TEXT=`Training - ${VERSION} (${STAMP})`;
 
   function setVersion(){
@@ -79,6 +79,7 @@ window.NEXUS_CLOUD = {
     ['plan-editor-v220.js?v=2.76','data-nexus-plan-editor'],
     ['home-mesocycle-v221.js?v=2.76','data-nexus-home-mesocycle'],
     ['polar-intelligence-v222.js?v=2.76','data-nexus-polar-intelligence'],
+    ['polar-padel-v277.js?v=2.77','data-nexus-polar-padel'],
     ['strength-polar-v253.js?v=2.76','data-nexus-strength-polar'],
     ['home-dashboard-v272.js?v=2.76','data-nexus-home-dashboard'],
     ['workout-completion-v244.js?v=2.76','data-nexus-workout-completion'],
