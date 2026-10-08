@@ -5,8 +5,8 @@ window.NEXUS_CLOUD = {
 };
 
 (() => {
-  const VERSION='v2.77';
-  const STAMP='08/10/2026 15:54:00';
+  const VERSION='v2.78';
+  const STAMP='08/10/2026 20:58:00';
   const VERSION_TEXT=`Training - ${VERSION} (${STAMP})`;
 
   function setVersion(){
@@ -31,7 +31,7 @@ window.NEXUS_CLOUD = {
     try{
       if(typeof renderAll==='function') renderAll();
       else if(typeof renderHome==='function') renderHome();
-    }catch(e){console.warn('Nexus v2.75 final render:',e)}
+    }catch(e){console.warn('Nexus v2.78 final render:',e)}
     setTimeout(()=>{
       try{
         if(typeof renderHome==='function') renderHome();
@@ -82,6 +82,7 @@ window.NEXUS_CLOUD = {
     ['polar-padel-v277.js?v=2.77','data-nexus-polar-padel'],
     ['strength-polar-v253.js?v=2.76','data-nexus-strength-polar'],
     ['home-dashboard-v272.js?v=2.76','data-nexus-home-dashboard'],
+    ['david-mesocycle3-v278.js?v=2.78','data-nexus-david-mesocycle3'],
     ['workout-completion-v244.js?v=2.76','data-nexus-workout-completion'],
     ['cardio-persistence-v245.js?v=2.76','data-nexus-cardio-persistence'],
     ['ui-final-v252.js?v=2.76','data-nexus-ui-final'],
