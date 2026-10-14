@@ -25,20 +25,39 @@
     }
   }
 
+  function currentMonthKey(){
+    const d=new Date();
+    return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}`;
+  }
+
+  function installHistoryCurrentMonth(){
+    const btn=document.querySelector('.nav button[data-view="historyView"]');
+    if(!btn || btn.__nexusHistoryCurrentMonth281) return;
+    btn.__nexusHistoryCurrentMonth281=true;
+    btn.addEventListener('click',()=>{
+      try{
+        historyMonthCursor=currentMonthKey();
+        setTimeout(()=>{ if(typeof renderHistory==='function') renderHistory(); },0);
+      }catch(_){}
+    },true);
+  }
+
   window.NEXUS_FIX_UPPER_A_20261013=fixWorkoutDate;
   fixWorkoutDate();
+  installHistoryCurrentMonth();
 
   let ticks=0;
   const fast=setInterval(()=>{
     fixWorkoutDate();
+    installHistoryCurrentMonth();
     if(++ticks>=30) clearInterval(fast);
   },500);
 
-  window.addEventListener('nexus:profile-selected',()=>setTimeout(fixWorkoutDate,80));
-  window.addEventListener('nexus:cloud-ready',()=>setTimeout(fixWorkoutDate,80));
-  window.addEventListener('nexus:boot-complete',()=>setTimeout(fixWorkoutDate,80));
-  window.addEventListener('focus',()=>setTimeout(fixWorkoutDate,80));
+  window.addEventListener('nexus:profile-selected',()=>setTimeout(()=>{fixWorkoutDate();installHistoryCurrentMonth();},80));
+  window.addEventListener('nexus:cloud-ready',()=>setTimeout(()=>{fixWorkoutDate();installHistoryCurrentMonth();},80));
+  window.addEventListener('nexus:boot-complete',()=>setTimeout(()=>{fixWorkoutDate();installHistoryCurrentMonth();},80));
+  window.addEventListener('focus',()=>setTimeout(()=>{fixWorkoutDate();installHistoryCurrentMonth();},80));
   document.addEventListener('visibilitychange',()=>{
-    if(document.visibilityState==='visible') setTimeout(fixWorkoutDate,80);
+    if(document.visibilityState==='visible') setTimeout(()=>{fixWorkoutDate();installHistoryCurrentMonth();},80);
   });
 })();
