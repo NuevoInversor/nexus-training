@@ -5,8 +5,8 @@ window.NEXUS_CLOUD = {
 };
 
 (() => {
-  const VERSION='v2.79';
-  const STAMP='08/10/2026 21:16:00';
+  const VERSION='v2.80';
+  const STAMP='14/10/2026 16:15:00';
   const VERSION_TEXT=`Training - ${VERSION} (${STAMP})`;
 
   function setVersion(){
@@ -31,7 +31,7 @@ window.NEXUS_CLOUD = {
     try{
       if(typeof renderAll==='function') renderAll();
       else if(typeof renderHome==='function') renderHome();
-    }catch(e){console.warn('Nexus v2.79 final render:',e)}
+    }catch(e){console.warn('Nexus v2.80 final render:',e)}
     setTimeout(()=>{
       try{
         if(typeof renderHome==='function') renderHome();
@@ -103,7 +103,7 @@ window.NEXUS_CLOUD = {
 
   function boot(){
     setVersion();
-    runStep(0);
+    load('workout-date-fix-v280.js?v=2.80','data-nexus-workout-date-fix',()=>runStep(0));
   }
 
   setVersion();
