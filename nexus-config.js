@@ -5,8 +5,8 @@ window.NEXUS_CLOUD = {
 };
 
 (() => {
-  const VERSION='v2.81';
-  const STAMP='14/10/2026 16:28:00';
+  const VERSION='v2.82';
+  const STAMP='15/10/2026 09:05:00';
   const VERSION_TEXT=`Training - ${VERSION} (${STAMP})`;
 
   function setVersion(){
@@ -31,7 +31,7 @@ window.NEXUS_CLOUD = {
     try{
       if(typeof renderAll==='function') renderAll();
       else if(typeof renderHome==='function') renderHome();
-    }catch(e){console.warn('Nexus v2.81 final render:',e)}
+    }catch(e){console.warn('Nexus v2.82 final render:',e)}
     setTimeout(()=>{
       try{
         if(typeof renderHome==='function') renderHome();
@@ -74,6 +74,7 @@ window.NEXUS_CLOUD = {
     ['cardio-report-v215.js?v=2.76','data-nexus-cardio-report'],
     ['ana-plan-v216.js?v=2.76','data-nexus-ana-plan'],
     ['ana-progression-v260.js?v=2.76','data-nexus-ana-progression'],
+    ['ana-return-v282.js?v=2.82','data-nexus-ana-return'],
     ['profile-cardio-access-v217.js?v=2.76','data-nexus-profile-cardio-access'],
     ['polar-v218.js?v=2.76','data-nexus-polar'],
     ['plan-editor-v220.js?v=2.76','data-nexus-plan-editor'],
