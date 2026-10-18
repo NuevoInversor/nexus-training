@@ -1,8 +1,9 @@
 (() => {
-  const VERSION='v2.78';
+  const VERSION='v2.83';
   const ID='mesociclo-3-2026-10-12';
   const CARDIO_ID='cardio-mesociclo-3-2026-10-12';
   const START='2026-10-12', END='2026-11-01';
+  const REVISION='m3-s2-2026-10-19-v2';
 
   const clone=x=>JSON.parse(JSON.stringify(x));
   const iso=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
@@ -33,40 +34,40 @@
 
   const MASTER=[
     {id:'dia-1',name:'Upper A',emphasis:'Torso · fuerza/hipertrofia + especialización integrada',exercises:[
-      E('press-banca','Press banca con barra','kg/lado',120,W(3,3,2),W('6-7','7-8','5-6'),W('3','2','4'),W('15','15','12,5')),
-      E('remo-maquina','Remo pecho apoyado / máquina','kg/lado',120,W(3,3,2),W('8-9','9-10','6-8'),W('3','2','4'),W('27,5','27,5','22,5')),
-      E('press-inclinado','Press inclinado con mancuernas','kg manc.',120,W(2,2,1),W('8-9','9-10','6-8'),W('3','2','4'),W('20','20','16-18 kg/mancuerna')),
+      E('press-banca','Press banca con barra','kg/lado',120,W(3,3,2),W('6-7','6','5-6'),W('3','2-3','4'),W('15','16,25','12,5'),{'2':'Si la primera serie cae claramente por debajo de RIR 2, volver a 15 kg/lado.'}),
+      E('remo-maquina','Remo pecho apoyado / máquina','kg/lado',120,W(3,3,2),W('8-9','8','6-8'),W('3','2-3','4'),W('27,5','30','22,5')),
+      E('press-inclinado','Press inclinado con mancuernas','kg manc.',120,W(2,2,1),W('8-9','8','6-8'),W('3','2-3','4'),W('20','22','16-18 kg/mancuerna')),
       E('jalon-neutro','Jalón al pecho agarre neutro','kg',120,W(2,2,1),W('10','11-12','8-10'),W('3','2','4'),W('40','40','35')),
       E('elevaciones-laterales-polea','Elevaciones laterales en polea','kg',90,W(2,2,1),W('16-18','18-20','12-15'),W('2-3','2','4'),W('2,5','2,5','2,5')),
       E('curl-biceps','Curl bíceps en banco inclinado','kg manc.',90,W(2,2,1),W('10','11-12','8-10'),W('2-3','2','4'),W('12','12','10')),
-      E('extension-triceps-polea','Extensión de tríceps en polea','kg',90,W(2,2,1),W('10-11','11-12','8-10'),W('2-3','2','4'),W('20','20','17,5'))
+      E('extension-triceps-polea','Extensión de tríceps en polea','kg',90,W(2,2,1),W('10-11','9-10','8-10'),W('2-3','2-3','4'),W('20','22,5','17,5'))
     ]},
     {id:'dia-2',name:'Lower A',emphasis:'Pierna · dominante de rodilla + core',exercises:[
       E('sentadilla-trasera','Sentadilla trasera','kg/lado',120,W(3,3,2),W('7','8','5'),W('3','2','4'),W('22,5','22,5','20')),
-      E('prensa-inclinada','Prensa inclinada','kg/lado',120,W(2,2,1),W('10-12','12','8-10'),W('3','2','4'),W('27,5','27,5','22,5-25 kg/lado')),
+      E('prensa-inclinada','Prensa inclinada','kg/lado',120,W(2,2,1),W('10-12','10','8-10'),W('3','2-3','4'),W('27,5','30','22,5-25 kg/lado')),
       E('extension-cuadriceps','Extensión de cuádriceps','kg',90,W(2,2,0),W('12-13','14-15','—'),W('2-3','2','—'),W('25','25','—'),{'3':'Omitir para reducir fatiga antes del 50 km.'}),
-      E('curl-femoral-tumbado','Curl femoral tumbado','kg',90,W(2,2,0),W('10-12','12','—'),W('3','2','—'),W('17,5','17,5','—'),{'3':'Omitir en taper.'}),
-      E('gemelos-sentado','Gemelos sentado','kg',90,W(2,2,0),W('12-15','12-15','—'),W('3','2','—'),W('37,5','37,5','—'),{'3':'Omitir para llegar fresco al 50 km.'},'No forzar ante sensaciones anormales en gemelo.'),
+      E('curl-femoral-tumbado','Curl femoral tumbado','kg',90,W(2,2,0),W('10-12','10','—'),W('3','2-3','—'),W('17,5','20','—'),{'3':'Omitir en taper.'}),
+      E('gemelos-sentado','Gemelos sentado','kg',90,W(2,2,0),W('12-15','12-15','—'),W('3','3','—'),W('37,5','37,5','—'),{'2':'No progresar carga esta semana. Vigilar la planta del pie.','3':'Omitir para llegar fresco al 50 km.'},'No forzar ante sensaciones anormales en gemelo.'),
       E('plancha','Plancha abdominal','',60,W(2,2,1),W('45-60 s','45-60 s','30-45 s'),W('técnico','técnico','técnico'),W('Sin carga','Sin carga','Sin carga')),
-      E('pallof-press','Pallof Press','kg',60,W(2,2,1),W('12-15/lado','12-15/lado','10-12/lado'),W('técnico','técnico','técnico'),W('10','10','7,5'))
+      E('pallof-press','Pallof Press','kg',60,W(2,2,1),W('12-15/lado','15/lado','10-12/lado'),W('técnico','técnico','técnico'),W('10','10','7,5'))
     ]},
     {id:'dia-3',name:'Upper B',emphasis:'Torso · vertical + especialización integrada',exercises:[
       E('dominadas','Dominadas peso corporal','peso corporal',120,W(4,4,2),W('4','4-5','3'),W('3','2','4'),W('Peso corporal','Peso corporal','Peso corporal'),{},'Sustituye a las dominadas asistidas. No añadir lastre durante este bloque.'),
-      E('press-militar','Press militar','kg/lado + barra',120,W(3,3,2),W('6','7','5'),W('3','2','4'),W('6,25','6,25','5')),
+      E('press-militar','Press militar','kg/lado + barra',120,W(3,3,2),W('6','6-7','5'),W('3','2','4'),W('6,25','6,25','5'),{'2':'Consolidar repeticiones; no subir carga todavía.'}),
       E('remo-polea-baja','Remo en polea baja','kg',120,W(2,2,2),W('9-10','10','6-8'),W('3','2','4'),W('40','40','35')),
-      E('aperturas-maquina','Aperturas en máquina','kg',90,W(2,2,1),W('10-12','12','8-10'),W('2-3','2','4'),W('20','20','17,5')),
-      E('fondos-paralela','Fondos en paralelas','peso corporal',120,W(2,2,1),W('8-10','10','6-8'),W('3','2','4'),W('Peso corporal','Peso corporal','Peso corporal')),
-      E('facepull','Face Pull','kg',90,W(2,2,1),W('15-17','17-20','12-15'),W('2-3','2','4'),W('20','20','15')),
+      E('aperturas-maquina','Aperturas en máquina','kg',90,W(2,2,1),W('10-12','10','8-10'),W('2-3','2-3','4'),W('20','22,5','17,5')),
+      E('fondos-paralela','Fondos en paralelas','peso corporal',120,W(2,2,1),W('8-10','10-11','6-8'),W('3','2','4'),W('Peso corporal','Peso corporal','Peso corporal')),
+      E('facepull','Face Pull','kg',90,W(2,2,1),W('15-17','18-20','12-15'),W('2-3','2','4'),W('20','20','15')),
       E('pajaros-peck-deck','Pájaros en Peck Deck','kg',90,W(2,2,1),W('15','16-18','12-15'),W('2-3','2','4'),W('10','10','7,5'))
     ]},
     {id:'dia-4',name:'Lower B',emphasis:'Pierna · cadena posterior + core',exercises:[
-      E('peso-muerto-rumano-dia4','Peso muerto rumano','kg/lado',120,W(3,3,0),W('7-8','8','—'),W('3','2','—'),W('15','15','—'),{'3':'No realizar.'}),
-      E('sentadilla-bulgara','Sentadilla búlgara','kg/lado',120,W(2,2,0),W('8-10','10','—'),W('3','2','—'),W('7,5','7,5','—'),{'3':'No realizar.'}),
-      E('hip-thrust','Hip Thrust','kg',120,W(2,2,0),W('8-10','10','—'),W('3','2','—'),W('23,65','23,65','—'),{'3':'No realizar.'}),
+      E('peso-muerto-rumano-dia4','Peso muerto rumano','kg/lado',120,W(3,3,0),W('7-8','7-8','—'),W('3','2-3','—'),W('15','16,25','—'),{'3':'No realizar.'}),
+      E('sentadilla-bulgara','Sentadilla búlgara','kg/lado',120,W(2,2,0),W('8-10','10-11','—'),W('3','2','—'),W('7,5','7,5','—'),{'2':'No subir carga esta semana por la molestia plantar reciente.','3':'No realizar.'}),
+      E('hip-thrust','Hip Thrust','kg',120,W(2,2,0),W('8-10','8-10','—'),W('3','2-3','—'),W('23,65','25','—'),{'3':'No realizar.'}),
       E('curl-femoral-sentado','Curl femoral sentado','kg',90,W(2,2,0),W('10','11-12','—'),W('3','2','—'),W('32,5','32,5','—'),{'3':'No realizar.'}),
-      E('gemelos-prensa','Gemelos en prensa / de pie','kg/lado',90,W(2,2,0),W('12-15','15','—'),W('3','2','—'),W('35','35','—'),{'3':'No realizar.'},'Mantener margen; no buscar RIR 1.'),
-      E('elevaciones-piernas','Elevaciones de piernas colgado','peso corporal',60,W(2,2,0),W('10-15','12-15','—'),W('técnico / 2-3','técnico / 2-3','—'),W('Peso corporal','Peso corporal','—')),
-      E('abd-wheel','Ab Wheel','peso corporal',60,W(2,2,0),W('8-10','10-12','—'),W('técnico / 2-3','técnico / 2-3','—'),W('Peso corporal','Peso corporal','—'),{},'Progresar mediante control y recorrido, no añadiendo carga.')
+      E('gemelos-prensa','Gemelos en prensa / de pie','kg/lado',90,W(2,2,0),W('12-15','12-15','—'),W('3','3','—'),W('35','35','—'),{'2':'No progresar carga esta semana. Vigilar la planta del pie.','3':'No realizar.'},'Mantener margen; no buscar RIR 1.'),
+      E('elevaciones-piernas','Elevaciones de piernas colgado','peso corporal',60,W(2,2,0),W('10-15','15','—'),W('técnico / 2-3','2-3','—'),W('Peso corporal','Peso corporal','—')),
+      E('abd-wheel','Ab Wheel','peso corporal',60,W(2,2,0),W('8-10','12','—'),W('técnico / 2-3','2-3','—'),W('Peso corporal','Peso corporal','—'),{},'Progresar mediante control y recorrido, no añadiendo carga.')
     ]}
   ];
 
@@ -75,7 +76,8 @@
     weekDates:{'1':'2026-10-12','2':'2026-10-19','3':'2026-10-26'},
     weeklyRir:{'1':'3','2':'2','3':'4'},
     exerciseRir:{},
-    progressionRule:'Mantener/progresar fuerza e hipertrofia minimizando interferencia con la preparación específica para la marcha de 50 km del 01/11. Semana 1 reintroducción; Semana 2 principal de carga sin fallo; Semana 3 taper.',
+    revision:REVISION,
+    progressionRule:'Mantener/progresar fuerza e hipertrofia minimizando interferencia con la preparación específica para la marcha de 50 km del 01/11. Semana 2: pequeños aumentos de carga cuando la Semana 1 terminó en rango alto con margen; el peso nuevo no es obligatorio si altera el RIR previsto. No buscar RIR 1 ni fallo. Sentadilla, dominadas y press militar consolidan repeticiones antes de subir carga. Si reaparece la molestia plantar, reducir impacto y eliminar primero gemelos, búlgaras o carrera de calidad según síntomas. Semana 3: taper.',
     deloadGuidelines:'Semana 3: RIR 4, reducción importante del volumen, sin agujetas ni fatiga residual. Lower B no se realiza.'
   };
   MASTER.forEach(r=>r.exercises.forEach(e=>{PLAN.exerciseRir[e.key]=clone(e.weeklyRir)}));
@@ -86,8 +88,8 @@
       ['Vie 16/10','Upper B + C1 · separar varias horas'],['Sáb 17/10','Descanso'],['Dom 18/10','Lower B']
     ],
     '2':[
-      ['Lun 19/10','Upper A + C1 · separar varias horas'],['Mar 20/10','Lower A'],['Mié 21/10','Descanso'],['Jue 22/10','Upper B'],
-      ['Vie 23/10','C2'],['Sáb 24/10','Lower B'],['Dom 25/10','C3']
+      ['Lun 19/10','Upper A'],['Mar 20/10','C1 + Lower A · separar varias horas'],['Mié 21/10','Upper B'],['Jue 22/10','C2 + Lower B · separar varias horas'],
+      ['Vie 23/10','Descanso'],['Sáb 24/10','Descanso'],['Dom 25/10','C3 · 12-14 km']
     ],
     '3':[
       ['Lun 26/10','Upper A · volumen de taper'],['Mar 27/10','Lower A · volumen muy reducido'],['Mié 28/10','C2 muy suave'],
@@ -103,9 +105,9 @@
       C3:{session:'C3',type:'Senderismo / marcha específica',visual:'cardio-c3',icon:'mountain',training:'20 km · Z1-Z2',duration:'20 km',objective:'RPE 4-5 · ritmo sostenible. No correr ni buscar tiempo.',notes:'Usar calzado previsto para los 50 km; practicar hidratación, alimentación y mochila/material. Si la recuperación tras la boda es mala, reducir a 14-16 km.',preferredDay:'Lunes 12/10'}
     },
     2:{
-      C1:{session:'C1',type:'Calidad controlada',visual:'cardio-c1',icon:'speed',training:`12' suave + 4 × 5' rápidos (rec. 2' trote suave) + 10' suave`,duration:'Aprox. 50 min',objective:'Ritmo orientativo 4:45-4:55 min/km · RPE 7-7,5.',notes:'Sesión controlada. No acabar al límite. Preferiblemente separar de Upper A varias horas.',preferredDay:'Lunes 19/10'},
-      C2:{session:'C2',type:'Base aeróbica',visual:'cardio-c2',icon:'endurance',training:`55-60' en Z2`,duration:'55-60 min',objective:'Z2 · RPE 4 · ritmo libre según frecuencia cardiaca.',notes:'Sin progresivos.',preferredDay:'Viernes 23/10'},
-      C3:{session:'C3',type:'Senderismo / resistencia específica',visual:'cardio-c3',icon:'mountain',training:'12-14 km · Z1-Z2',duration:'12-14 km',objective:'RPE 4 · última exposición específica antes del reto.',notes:'No convertirla en tirada larga exigente. Acabar con sensación de poder continuar.',preferredDay:'Domingo 25/10'}
+      C1:{session:'C1',type:'Calidad controlada',visual:'cardio-c1',icon:'speed',training:`15' suave + 3 × 4' rápidos (rec. 2' trote suave) + 10' suave`,duration:'Aprox. 41 min',objective:'Ritmo orientativo 4:45-4:55 min/km · RPE 7.',notes:'Reintroducción progresiva de calidad tras la molestia plantar. No compensar el C1 no realizado en Semana 1. Pie: 0-1/10 y estable, continuar; 2/10 y sin aumento, probar con cautela; si aumenta, modifica la pisada o llega a 3/10, finalizar la calidad. Preferiblemente separar de Lower A varias horas.',preferredDay:'Martes 20/10'},
+      C2:{session:'C2',type:'Base aeróbica',visual:'cardio-c2',icon:'endurance',training:`50-55' en Z2`,duration:'50-55 min',objective:'Z2 · RPE 4 · ritmo libre según frecuencia cardiaca.',notes:'Sin progresivos. Preferiblemente separar de Lower B varias horas.',preferredDay:'Jueves 22/10'},
+      C3:{session:'C3',type:'Senderismo / marcha específica',visual:'cardio-c3',icon:'mountain',training:'12-14 km · Z1-Z2',duration:'12-14 km',objective:'RPE 4 · última exposición específica antes del reto.',notes:'Usar el material previsto para el reto. Acabar con sensación de poder continuar. No alargar aunque las sensaciones sean muy buenas.',preferredDay:'Domingo 25/10'}
     },
     3:{
       C2:{session:'C2',type:'Activación aeróbica',visual:'cardio-c2',icon:'endurance',training:`30-35' muy suave en Z1-Z2`,duration:'30-35 min',objective:'RPE 3 · mover piernas y mantener activación aeróbica.',notes:'Muy fácil. Sin progresivos.',preferredDay:'Miércoles 28/10'},
@@ -120,6 +122,7 @@
     const w=String(week);
     return MASTER.map(r=>{
       const x=clone(r);
+      x._nexusM3Revision=REVISION;
       x.exercises=x.exercises.filter(e=>Number(e.weeklySets?.[w]||0)>0).map(e=>{e.sets=Number(e.weeklySets[w]||0);e.reps=String(e.weeklyReps[w]??'');e.targetReps=e.reps;return e;});
       return x;
     }).filter(r=>r.exercises.length>0);
@@ -133,10 +136,10 @@
   }
 
   function validState(){
-    if(typeof plan==='undefined'||typeof routines==='undefined'||plan?.id!==ID||!Array.isArray(routines))return false;
+    if(typeof plan==='undefined'||typeof routines==='undefined'||plan?.id!==ID||plan?.revision!==REVISION||!Array.isArray(routines))return false;
     const expected=buildRoutines(weekNow());
     if(routines.length!==expected.length)return false;
-    return expected.every((r,i)=>routines[i]?.id===r.id&&Array.isArray(routines[i]?.exercises)&&routines[i].exercises.length===r.exercises.length&&r.exercises.every((e,j)=>routines[i].exercises[j]?.key===e.key&&Number(routines[i].exercises[j]?.sets)===Number(e.sets)));
+    return expected.every((r,i)=>routines[i]?.id===r.id&&routines[i]?._nexusM3Revision===REVISION&&Array.isArray(routines[i]?.exercises)&&routines[i].exercises.length===r.exercises.length&&r.exercises.every((e,j)=>routines[i].exercises[j]?.key===e.key&&Number(routines[i].exercises[j]?.sets)===Number(e.sets)));
   }
 
   function forceState(){if(typeof plan==='undefined'||typeof routines==='undefined')return;plan=clone(PLAN);routines=buildRoutines(weekNow());persist();}
