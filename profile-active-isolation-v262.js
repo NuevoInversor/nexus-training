@@ -1,5 +1,5 @@
 (() => {
-  const VERSION='v2.66';
+  const VERSION='v2.84';
   const PREFIX='nx_active_profile_v262_';
   let finishing=false;
 
@@ -33,19 +33,38 @@
     try{return (Array.isArray(workouts)?workouts:[]).some(w=>String(w?.id)===String(aw.id) && !!w?.finishedAt);}catch(_){return false;}
   }
 
+  function recordedProgress(aw){
+    try{
+      return (aw?.exercises||[]).reduce((total,e)=>total+(e.sets||[]).filter(s=>{
+        if(s?.completed || s?.completedAt)return true;
+        const reps=String(s?.reps??'').trim()!=='';
+        const rir=String(s?.rir??'').trim()!=='';
+        const weight=e?.unit==='peso corporal' || String(s?.weight??'').trim()!=='';
+        return reps && rir && weight;
+      }).length,0);
+    }catch(_){return 0;}
+  }
+
+  function staleEmpty(aw){
+    if(!aw || recordedProgress(aw)>0)return false;
+    const ms=new Date(aw.startedAt||'').getTime();
+    return Number.isFinite(ms) && (Date.now()-ms)>24*60*60*1000;
+  }
+
   function validForCurrentProfile(aw,pid=profileId()){
     if(!aw || !pid)return false;
     if(aw.nexusProfileId && aw.nexusProfileId!==pid)return false;
     try{
       if(aw.planId && typeof plan!=='undefined' && plan?.id && String(aw.planId)!==String(plan.id))return false;
     }catch(_){}
-    return !finished(aw);
+    if(finished(aw) || staleEmpty(aw))return false;
+    return true;
   }
 
   function writeBackup(aw,pid=profileId()){
     const k=key(pid); if(!k)return;
     try{
-      if(!aw || finished(aw)){
+      if(!aw || finished(aw) || staleEmpty(aw)){
         localStorage.removeItem(k);
         return;
       }
