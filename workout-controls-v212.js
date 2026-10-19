@@ -1,5 +1,5 @@
 (() => {
-  const VERSION='v2.12';
+  const VERSION='v2.84';
   const STAMP='24/08/2026 20:00:00';
   let chronoInterval=null;
 
@@ -14,9 +14,13 @@
     );
   }
 
-  function clearEmptyActiveWorkout(){
+  function clearEmptyActiveWorkout(forceStaleOnly=false){
     if(!activeWorkout) return false;
     if(hasExecutedSeries(activeWorkout)) return false;
+    if(forceStaleOnly){
+      const ms=new Date(activeWorkout.startedAt||'').getTime();
+      if(!Number.isFinite(ms) || (Date.now()-ms)<=24*60*60*1000) return false;
+    }
     try { localStorage.removeItem(STORAGE.active); } catch(e) {}
     activeWorkout=null;
     return true;
@@ -86,6 +90,7 @@
     if(typeof renderWorkout!=='function' || renderWorkout.__nexusV212) return;
     const original=renderWorkout;
     const wrapped=function(){
+      clearEmptyActiveWorkout(true);
       const result=original.apply(this,arguments);
       injectChrono();
       return result;
