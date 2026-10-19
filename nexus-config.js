@@ -5,8 +5,8 @@ window.NEXUS_CLOUD = {
 };
 
 (() => {
-  const VERSION='v2.83';
-  const STAMP='18/10/2026 21:02:00';
+  const VERSION='v2.84';
+  const STAMP='19/10/2026 14:15:00';
   const VERSION_TEXT=`Training - ${VERSION} (${STAMP})`;
 
   function setVersion(){
@@ -31,7 +31,7 @@ window.NEXUS_CLOUD = {
     try{
       if(typeof renderAll==='function') renderAll();
       else if(typeof renderHome==='function') renderHome();
-    }catch(e){console.warn('Nexus v2.83 final render:',e)}
+    }catch(e){console.warn('Nexus v2.84 final render:',e)}
     setTimeout(()=>{
       try{
         if(typeof renderHome==='function') renderHome();
@@ -62,9 +62,9 @@ window.NEXUS_CLOUD = {
   }
 
   const steps=[
-    ['cloud-v276.js?v=2.76','data-nexus-cloud'],
+    ['cloud-v276.js?v=2.84','data-nexus-cloud'],
     [null,'__profile_ui__'],
-    ['workout-controls-v212.js?v=2.76','data-nexus-workout-controls'],
+    ['workout-controls-v212.js?v=2.84','data-nexus-workout-controls'],
     ['mesocycle-david-v213.js?v=2.76','data-nexus-david-mesocycle'],
     ['david-progression-v263.js?v=2.76','data-nexus-david-progression'],
     ['david-deload-v266.js?v=2.76','data-nexus-david-deload'],
@@ -89,7 +89,7 @@ window.NEXUS_CLOUD = {
     ['cardio-persistence-v245.js?v=2.76','data-nexus-cardio-persistence'],
     ['ui-final-v252.js?v=2.76','data-nexus-ui-final'],
     ['ui-hotfix-v250.js?v=2.76','data-nexus-ui-hotfix'],
-    ['profile-active-isolation-v262.js?v=2.76','data-nexus-profile-active-isolation']
+    ['profile-active-isolation-v262.js?v=2.84','data-nexus-profile-active-isolation']
   ];
 
   function runStep(i=0){
