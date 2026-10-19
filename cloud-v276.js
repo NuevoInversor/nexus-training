@@ -78,7 +78,7 @@
   function snapshot(){
     return {
       schemaVersion:2,
-      appVersion:'2.9',
+      appVersion:'2.84',
       profileId,
       routines:clone(routines),
       workouts:clone(workouts),
@@ -113,11 +113,31 @@
     renderAll();
   }
 
+  function setRecordedForCloud(s,e){
+    if(!s)return false;
+    if(s.completed || s.completedAt)return true;
+    const reps=String(s.reps??'').trim()!=='';
+    const rir=String(s.rir??'').trim()!=='';
+    const weight=e?.unit==='peso corporal' || String(s.weight??'').trim()!=='';
+    return reps && rir && weight;
+  }
+
   function activeWorkoutProgress(w){
     if(!w || typeof w!=='object') return 0;
     try{
-      return (w.exercises||[]).reduce((total,e)=>total+(e.sets||[]).filter(s=>s?.completed || s?.weight || s?.reps || s?.rir).length,0);
+      return (w.exercises||[]).reduce((total,e)=>total+(e.sets||[]).filter(s=>setRecordedForCloud(s,e)).length,0);
     }catch(_){return 0}
+  }
+
+  function activeStartedMs(w){
+    const ms=new Date(w?.startedAt||'').getTime();
+    return Number.isFinite(ms)?ms:0;
+  }
+
+  function staleEmptyActive(w){
+    if(!w || activeWorkoutProgress(w)>0)return false;
+    const ms=activeStartedMs(w);
+    return !!ms && (Date.now()-ms)>24*60*60*1000;
   }
 
   function samePlan(active,planData){
@@ -132,13 +152,20 @@
   }
 
   function chooseActiveWorkout(remoteActive,localActive,planData,finishedWorkouts=[]){
-    if(remoteActive && (!samePlan(remoteActive,planData) || isFinishedActive(remoteActive,finishedWorkouts))) remoteActive=null;
-    if(localActive && (!samePlan(localActive,planData) || isFinishedActive(localActive,finishedWorkouts))) localActive=null;
+    if(remoteActive && (!samePlan(remoteActive,planData) || isFinishedActive(remoteActive,finishedWorkouts) || staleEmptyActive(remoteActive))) remoteActive=null;
+    if(localActive && (!samePlan(localActive,planData) || isFinishedActive(localActive,finishedWorkouts) || staleEmptyActive(localActive))) localActive=null;
     const rp=activeWorkoutProgress(remoteActive), lp=activeWorkoutProgress(localActive);
     if(lp>rp) return localActive;
     if(rp>lp) return remoteActive;
     if(localActive && !remoteActive) return localActive;
-    return remoteActive||localActive||null;
+    if(remoteActive && !localActive) return remoteActive;
+    if(localActive && remoteActive){
+      if(String(localActive.id||'')===String(remoteActive.id||'')) return localActive;
+      const lt=activeStartedMs(localActive), rt=activeStartedMs(remoteActive);
+      if(lt!==rt) return lt>rt ? localActive : remoteActive;
+      return localActive;
+    }
+    return null;
   }
 
   function applyRemote(data){
