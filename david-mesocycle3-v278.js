@@ -1,9 +1,9 @@
 (() => {
-  const VERSION='v2.83';
+  const VERSION='v2.88';
   const ID='mesociclo-3-2026-10-12';
   const CARDIO_ID='cardio-mesociclo-3-2026-10-12';
   const START='2026-10-12', END='2026-11-01';
-  const REVISION='m3-s2-2026-10-19-v2';
+  const REVISION='m3-s3-2026-10-26-v1';
 
   const clone=x=>JSON.parse(JSON.stringify(x));
   const iso=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`};
@@ -34,13 +34,13 @@
 
   const MASTER=[
     {id:'dia-1',name:'Upper A',emphasis:'Torso · fuerza/hipertrofia + especialización integrada',exercises:[
-      E('press-banca','Press banca con barra','kg/lado',120,W(3,3,2),W('6-7','6','5-6'),W('3','2-3','4'),W('15','16,25','12,5'),{'2':'Si la primera serie cae claramente por debajo de RIR 2, volver a 15 kg/lado.'}),
-      E('remo-maquina','Remo pecho apoyado / máquina','kg/lado',120,W(3,3,2),W('8-9','8','6-8'),W('3','2-3','4'),W('27,5','30','22,5')),
-      E('press-inclinado','Press inclinado con mancuernas','kg manc.',120,W(2,2,1),W('8-9','8','6-8'),W('3','2-3','4'),W('20','22','16-18 kg/mancuerna')),
-      E('jalon-neutro','Jalón al pecho agarre neutro','kg',120,W(2,2,1),W('10','11-12','8-10'),W('3','2','4'),W('40','40','35')),
-      E('elevaciones-laterales-polea','Elevaciones laterales en polea','kg',90,W(2,2,1),W('16-18','18-20','12-15'),W('2-3','2','4'),W('2,5','2,5','2,5')),
-      E('curl-biceps','Curl bíceps en banco inclinado','kg manc.',90,W(2,2,1),W('10','11-12','8-10'),W('2-3','2','4'),W('12','12','10')),
-      E('extension-triceps-polea','Extensión de tríceps en polea','kg',90,W(2,2,1),W('10-11','9-10','8-10'),W('2-3','2-3','4'),W('20','22,5','17,5'))
+      E('press-banca','Press banca con barra','kg/lado',120,W(3,3,3),W('6-7','6','6'),W('3','2-3','2'),W('15','16,25','16,25'),{'2':'Si la primera serie cae claramente por debajo de RIR 2, volver a 15 kg/lado.','3':'Mantener la carga consolidada de Semana 2. No buscar progresión adicional.'}),
+      E('remo-maquina','Remo pecho apoyado / máquina','kg/lado',120,W(3,3,3),W('8-9','8','8'),W('3','2-3','2'),W('27,5','30','30'),{'3':'Mantener la carga consolidada de Semana 2. No buscar progresión adicional.'}),
+      E('press-inclinado','Press inclinado con mancuernas','kg manc.',120,W(2,2,2),W('8-9','8','8'),W('3','2-3','2'),W('20','22','22'),{'3':'Mantener la carga consolidada de Semana 2. No buscar progresión adicional.'}),
+      E('jalon-neutro','Jalón al pecho agarre neutro','kg',120,W(2,2,2),W('10','11-12','10-11'),W('3','2','2-3'),W('40','40','40'),{'3':'No repetir 12 repeticiones si obliga a llegar a RIR 1. Priorizar ejecución y reducir participación excesiva del bíceps.'}),
+      E('elevaciones-laterales-polea','Elevaciones laterales en polea','kg',90,W(2,2,2),W('16-18','18-20','19-20'),W('2-3','2','2'),W('2,5','2,5','2,5'),{'3':'Mantener la carga consolidada de Semana 2. No buscar progresión adicional.'}),
+      E('curl-biceps','Curl bíceps en banco inclinado','kg manc.',90,W(2,2,2),W('10','11-12','11-12'),W('2-3','2','2'),W('12','12','12'),{'3':'Mantener la carga consolidada de Semana 2. No buscar progresión adicional.'}),
+      E('extension-triceps-polea','Extensión de tríceps en polea','kg',90,W(2,2,2),W('10-11','9-10','10'),W('2-3','2-3','2'),W('20','22,5','22,5'),{'3':'Mantener la carga consolidada de Semana 2. No buscar progresión adicional.'})
     ]},
     {id:'dia-2',name:'Lower A',emphasis:'Pierna · dominante de rodilla + core',exercises:[
       E('sentadilla-trasera','Sentadilla trasera','kg/lado',120,W(3,3,2),W('7','8','5'),W('3','2','4'),W('22,5','22,5','20')),
@@ -52,13 +52,13 @@
       E('pallof-press','Pallof Press','kg',60,W(2,2,1),W('12-15/lado','15/lado','10-12/lado'),W('técnico','técnico','técnico'),W('10','10','7,5'))
     ]},
     {id:'dia-3',name:'Upper B',emphasis:'Torso · vertical + especialización integrada',exercises:[
-      E('dominadas','Dominadas peso corporal','peso corporal',120,W(4,4,2),W('4','4-5','3'),W('3','2','4'),W('Peso corporal','Peso corporal','Peso corporal'),{},'Sustituye a las dominadas asistidas. No añadir lastre durante este bloque.'),
-      E('press-militar','Press militar','kg/lado + barra',120,W(3,3,2),W('6','6-7','5'),W('3','2','4'),W('6,25','6,25','5'),{'2':'Consolidar repeticiones; no subir carga todavía.'}),
-      E('remo-polea-baja','Remo en polea baja','kg',120,W(2,2,2),W('9-10','10','6-8'),W('3','2','4'),W('40','40','35')),
-      E('aperturas-maquina','Aperturas en máquina','kg',90,W(2,2,1),W('10-12','10','8-10'),W('2-3','2-3','4'),W('20','22,5','17,5')),
-      E('fondos-paralela','Fondos en paralelas','peso corporal',120,W(2,2,1),W('8-10','10-11','6-8'),W('3','2','4'),W('Peso corporal','Peso corporal','Peso corporal')),
-      E('facepull','Face Pull','kg',90,W(2,2,1),W('15-17','18-20','12-15'),W('2-3','2','4'),W('20','20','15')),
-      E('pajaros-peck-deck','Pájaros en Peck Deck','kg',90,W(2,2,1),W('15','16-18','12-15'),W('2-3','2','4'),W('10','10','7,5'))
+      E('dominadas','Dominadas peso corporal','peso corporal',120,W(4,4,4),W('4','4-5','4-5'),W('3','2','2-3'),W('Peso corporal','Peso corporal','Peso corporal'),{'3':'Mantener el objetivo de Semana 2. Sin lastre y sin buscar progresión adicional.'},'Sustituye a las dominadas asistidas. No añadir lastre durante este bloque.'),
+      E('press-militar','Press militar','kg/lado + barra',120,W(3,3,3),W('6','6-7','6-7'),W('3','2','2-3'),W('6,25','6,25','6,25'),{'2':'Consolidar repeticiones; no subir carga todavía.','3':'Mantener carga y repeticiones de Semana 2; no progresar.'}),
+      E('remo-polea-baja','Remo en polea baja','kg',120,W(2,2,2),W('9-10','10','10'),W('3','2','2-3'),W('40','40','40'),{'3':'Mantener carga de Semana 2; no progresar.'}),
+      E('aperturas-maquina','Aperturas en máquina','kg',90,W(2,2,2),W('10-12','10','10'),W('2-3','2-3','2-3'),W('20','22,5','22,5'),{'3':'Mantener carga de Semana 2; no progresar.'}),
+      E('fondos-paralela','Fondos en paralelas','peso corporal',120,W(2,2,2),W('8-10','10-11','10-11'),W('3','2','2-3'),W('Peso corporal','Peso corporal','Peso corporal'),{'3':'Mantener el objetivo de Semana 2; no acercarse al fallo.'}),
+      E('facepull','Face Pull','kg',90,W(2,2,2),W('15-17','18-20','18-20'),W('2-3','2','2-3'),W('20','20','20'),{'3':'Mantener carga de Semana 2; no progresar.'}),
+      E('pajaros-peck-deck','Pájaros en Peck Deck','kg',90,W(2,2,2),W('15','16-18','16-18'),W('2-3','2','2-3'),W('10','10','10'),{'3':'Mantener carga de Semana 2; no progresar.'})
     ]},
     {id:'dia-4',name:'Lower B',emphasis:'Pierna · cadena posterior + core',exercises:[
       E('peso-muerto-rumano-dia4','Peso muerto rumano','kg/lado',120,W(3,3,0),W('7-8','7-8','—'),W('3','2-3','—'),W('15','16,25','—'),{'3':'No realizar.'}),
@@ -74,11 +74,11 @@
   const PLAN={
     id:ID,name:'Mesociclo 3',startDate:START,endDate:END,
     weekDates:{'1':'2026-10-12','2':'2026-10-19','3':'2026-10-26'},
-    weeklyRir:{'1':'3','2':'2','3':'4'},
+    weeklyRir:{'1':'3','2':'2','3':'Upper 2-3 · Lower 4'},
     exerciseRir:{},
     revision:REVISION,
-    progressionRule:'Mantener/progresar fuerza e hipertrofia minimizando interferencia con la preparación específica para la marcha de 50 km del 01/11. Semana 2: pequeños aumentos de carga cuando la Semana 1 terminó en rango alto con margen; el peso nuevo no es obligatorio si altera el RIR previsto. No buscar RIR 1 ni fallo. Sentadilla, dominadas y press militar consolidan repeticiones antes de subir carga. Si reaparece la molestia plantar, reducir impacto y eliminar primero gemelos, búlgaras o carrera de calidad según síntomas. Semana 3: taper.',
-    deloadGuidelines:'Semana 3: RIR 4, reducción importante del volumen, sin agujetas ni fatiga residual. Lower B no se realiza.'
+    progressionRule:'Semana 3 de puesta a punto para la ruta de 50 km del sábado 31/10. Mantener entrenamiento normal de tren superior con cargas consolidadas, sin nuevas progresiones ni fallo. Reducir de forma marcada el tren inferior para eliminar fatiga residual. No realizar C1 ni Lower B. La ruta de 50 km sustituye al C3.',
+    deloadGuidelines:'Semana 3: Upper A y Upper B normales, sin progresión adicional y manteniendo RIR 2-3. Lower A en taper con volumen muy reducido y RIR 4. Lower B no se realiza. C2 regenerativo el miércoles; C3 es la ruta de 50 km del sábado 31/10.'
   };
   MASTER.forEach(r=>r.exercises.forEach(e=>{PLAN.exerciseRir[e.key]=clone(e.weeklyRir)}));
 
@@ -92,9 +92,9 @@
       ['Vie 23/10','Descanso'],['Sáb 24/10','Descanso'],['Dom 25/10','C3 · 12-14 km']
     ],
     '3':[
-      ['Lun 26/10','Upper A · volumen de taper'],['Mar 27/10','Lower A · volumen muy reducido'],['Mié 28/10','C2 muy suave'],
-      ['Jue 29/10','Upper B · volumen de taper'],['Vie 30/10','Descanso total'],['Sáb 31/10','Paseo opcional 20-30 min muy suave · preparar material/hidratación/alimentación'],
-      ['Dom 01/11','RETO 50 KM']
+      ['Lun 26/10','Upper A'],['Mar 27/10','Lower A · taper'],['Mié 28/10','C2 · regenerativo'],
+      ['Jue 29/10','Upper B'],['Vie 30/10','Descanso total'],['Sáb 31/10','C3 · RUTA 50 KM'],
+      ['Dom 01/11','Recuperación']
     ]
   };
 
@@ -111,7 +111,7 @@
     },
     3:{
       C2:{session:'C2',type:'Activación aeróbica',visual:'cardio-c2',icon:'endurance',training:`30-35' muy suave en Z1-Z2`,duration:'30-35 min',objective:'RPE 3 · mover piernas y mantener activación aeróbica.',notes:'Muy fácil. Sin progresivos.',preferredDay:'Miércoles 28/10'},
-      C3:{session:'C3',type:'RETO 50 KM',visual:'cardio-c3',icon:'mountain',training:'50 km · marcha / senderismo',duration:'50 km',objective:'Completar de forma sostenible.',notes:'Gestionar el esfuerzo desde el inicio; alimentación e hidratación planificadas; no dejarse llevar por un ritmo excesivo en los primeros kilómetros; ajustar ritmo a desnivel, terreno y sensaciones.',preferredDay:'Domingo 01/11'}
+      C3:{session:'C3',type:'RUTA 50 KM',visual:'cardio-c3',icon:'mountain',training:'50 km · marcha / senderismo',duration:'50 km',objective:'Completar de forma sostenible.',notes:'Sustituye al C3 semanal. Gestionar el esfuerzo desde el inicio; alimentación e hidratación planificadas; no dejarse llevar por un ritmo excesivo en los primeros kilómetros; ajustar ritmo a desnivel, terreno y sensaciones.',preferredDay:'Sábado 31/10'}
     }
   };
   window.NEXUS_MESOCYCLE3_CARDIO=CARDIO;
@@ -240,7 +240,7 @@
     const base=document.getElementById('mesocycleSummary')?.closest('.card');if(!base)return;
     let c=document.getElementById('nexusDavidMeso3Card');if(!c){c=document.createElement('div');c.id='nexusDavidMeso3Card';c.className='card';base.insertAdjacentElement('afterend',c)}
     const active=activeDate(),week=weekNow();const schedule=SCHEDULE[String(week)]||SCHEDULE['1'];const weekLabel=week===1?'Reintroducción':week===2?'Semana principal de carga':'Taper 50 km';
-    c.innerHTML=`<div class="eyebrow" style="color:#2563eb">${active?`Mesociclo 3 · Semana ${week} activa`:'Próximo bloque · cargado'}</div><h3 style="margin:5px 0 7px">Mesociclo 3</h3><div class="muted small">12 oct – 1 nov · 4 sesiones de fuerza · preparación específica 50 km</div><div class="small" style="margin-top:9px"><strong>Objetivo:</strong> mantener/progresar fuerza e hipertrofia minimizando interferencia con la marcha de 50 km.</div><div class="small" style="margin-top:8px"><strong>${active?'Semana actual':'Semana 1'}:</strong> ${weekLabel}. ${week===3?'RIR 4 · volumen muy reducido · sin Lower B.':week===2?'Compuestos y accesorios RIR 2 · sin fallo.':'Compuestos RIR 3 · accesorios RIR 2-3.'}</div><div class="small" style="margin-top:10px">${schedule.map(([d,x])=>`<div style="margin-top:4px"><strong>${d}:</strong> ${esc2(x)}</div>`).join('')}</div>`;
+    c.innerHTML=`<div class="eyebrow" style="color:#2563eb">${active?`Mesociclo 3 · Semana ${week} activa`:'Próximo bloque · cargado'}</div><h3 style="margin:5px 0 7px">Mesociclo 3</h3><div class="muted small">12 oct – 1 nov · 4 sesiones de fuerza · preparación específica 50 km</div><div class="small" style="margin-top:9px"><strong>Objetivo:</strong> mantener/progresar fuerza e hipertrofia minimizando interferencia con la marcha de 50 km.</div><div class="small" style="margin-top:8px"><strong>${active?'Semana actual':'Semana 1'}:</strong> ${weekLabel}. ${week===3?'Upper normal RIR 2-3 · Lower A en taper RIR 4 · sin Lower B ni C1.':week===2?'Compuestos y accesorios RIR 2 · sin fallo.':'Compuestos RIR 3 · accesorios RIR 2-3.'}</div><div class="small" style="margin-top:10px">${schedule.map(([d,x])=>`<div style="margin-top:4px"><strong>${d}:</strong> ${esc2(x)}</div>`).join('')}</div>`;
     if(active){const pill=document.getElementById('routineList')?.closest('.card')?.querySelector('.pill');if(pill)pill.textContent=`${buildRoutines(week).length} días`;}
   }
 
