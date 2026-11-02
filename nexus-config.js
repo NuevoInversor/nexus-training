@@ -5,8 +5,8 @@ window.NEXUS_CLOUD = {
 };
 
 (() => {
-  const VERSION='v2.89';
-  const STAMP='01/11/2026 16:42:00';
+  const VERSION='v2.90';
+  const STAMP='02/11/2026 10:14:00';
   const VERSION_TEXT=`Training - ${VERSION} (${STAMP})`;
 
   function setVersion(){
@@ -31,7 +31,7 @@ window.NEXUS_CLOUD = {
     try{
       if(typeof renderAll==='function') renderAll();
       else if(typeof renderHome==='function') renderHome();
-    }catch(e){console.warn('Nexus v2.89 final render:',e)}
+    }catch(e){console.warn('Nexus v2.90 final render:',e)}
     setTimeout(()=>{
       try{
         if(typeof renderHome==='function') renderHome();
@@ -88,6 +88,7 @@ window.NEXUS_CLOUD = {
     ['david-mesocycle3-v278.js?v=2.88','data-nexus-david-mesocycle3'],
     ['david-cardio-correction-v287.js?v=2.87','data-nexus-david-cardio-correction'],
     ['david-workout-date-fix-v289.js?v=2.89','data-nexus-david-workout-date-fix'],
+    ['david-recovery-week-v290.js?v=2.90','data-nexus-david-recovery-week'],
     ['mesocycle3-history-v279.js?v=2.79','data-nexus-mesocycle3-history'],
     ['workout-completion-v244.js?v=2.76','data-nexus-workout-completion'],
     ['cardio-persistence-v245.js?v=2.76','data-nexus-cardio-persistence'],
