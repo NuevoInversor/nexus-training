@@ -1,77 +1,1874 @@
 (() => {
-  const VERSION='v2.16';
-  const STAMP='30/08/2026 19:14:00';
-  const PLAN_ID='ana-fuerza-definicion-8s-2026-08-31';
+  // Mesociclo Ana actualizado el 08/11/2026. Historial anterior se conserva en Cloud.
+  const VERSION='v2.91';
+  const STAMP='08/11/2026';
+  const PLAN_ID='ana-fuerza-dinamica-8s-2026-11-09';
 
   const PLAN={
-    id:PLAN_ID,
-    name:'Mesociclo Ana · Fuerza + Definición · 8 semanas',
-    startDate:'2026-08-31',
-    endDate:'2026-10-25',
-    weekDates:{
-      '1':'2026-08-31','2':'2026-09-07','3':'2026-09-14','4':'2026-09-21',
-      '5':'2026-09-28','6':'2026-10-05','7':'2026-10-12','8':'2026-10-19'
+    "id": "ana-fuerza-dinamica-8s-2026-11-09",
+    "name": "Mesociclo Ana · Fuerza dinámica · 8 semanas",
+    "startDate": "2026-11-09",
+    "endDate": "2027-01-03",
+    "weekDates": {
+      "1": "2026-11-09",
+      "2": "2026-11-16",
+      "3": "2026-11-23",
+      "4": "2026-11-30",
+      "5": "2026-12-07",
+      "6": "2026-12-14",
+      "7": "2026-12-21",
+      "8": "2026-12-28"
     },
-    weeklyRir:{'1':'3','2':'2-3','3':'2','4':'2','5':'4','6':'3','7':'2-3','8':'2'},
-    exerciseRir:{},
-    deloadWeek:5,
-    deloadGuidelines:'Semana 5: reducir aproximadamente 30-40% del número de series. Mantener descansos máximos de 60 s.',
-    progressionRule:'Si se completa el rango alto con el RIR objetivo, aumentar carga aproximadamente 2,5-5%. Si una sesión acumula demasiada fatiga, reducir antes una serie accesoria que alargar los descansos.'
+    "weeklyRir": {
+      "1": "3",
+      "2": "2-3",
+      "3": "2",
+      "4": "2",
+      "5": "4",
+      "6": "3",
+      "7": "2-3",
+      "8": "2"
+    },
+    "exerciseRir": {},
+    "deloadWeek": 5,
+    "deloadGuidelines": "Semana 5 (7–13 dic): reducir 30–40% de series, RIR 4, sin drop sets ni fallo. Todas las máquinas se usan una sola vez por sesión.",
+    "progressionRule": "4 sesiones: lunes Lower A, martes Upper A, jueves Lower B, sábado Upper B/Full Body. Una sola visita por máquina o estación: terminar todas las series, soltar y pasar a la siguiente. Sin circuitos ni superseries entre estaciones; Pilates y cardio independientes. Descansos máximos 60 s, accesorios 45 s. Progresar primero repeticiones; luego la carga mínima disponible si se alcanza rango alto y RIR objetivo. Técnica y recuperación por encima de aumentar pulsaciones. Drop set opcional de un solo accesorio en S4/S8."
   };
 
-  const W=(base,deload)=>({'1':base,'2':base,'3':base,'4':base,'5':deload,'6':base,'7':base,'8':base});
-  const E=(key,name,sets,reps,rest,unit,deloadSets)=>({
-    key,name,sets,reps,rest,unit,
-    weeklySets:W(sets,deloadSets),
-    weeklyReps:{'1':reps,'2':reps,'3':reps,'4':reps,'5':reps,'6':reps,'7':reps,'8':reps}
-  });
-
   const ROUTINES=[
-    {id:'dia-1',name:'Lower A',estimatedDuration:'45-50 min',exercises:[
-      E('prensa-inclinada','Prensa inclinada',3,'6-8',60,'kg',2),
-      E('peso-muerto-rumano-mancuernas','Peso muerto rumano con mancuernas',3,'8-10',60,'kg manc.',2),
-      E('extension-cuadriceps','Extensión de cuádriceps',3,'10-12',60,'kg',2),
-      E('curl-femoral-sentado','Curl femoral sentado',3,'10-12',60,'kg',2),
-      E('aductores-maquina','Aductores en máquina',3,'12-15',60,'kg',2),
-      E('gemelo-maquina','Gemelo en máquina',3,'10-15',60,'kg',2),
-      E('abduccion-cadera-maquina','Abducción de cadera en máquina',2,'15-20',45,'kg',1),
-      E('pallof-press-lower-a','Pallof press',2,'10-12/lado',45,'kg',1)
-    ]},
-    {id:'dia-2',name:'Upper A',estimatedDuration:'45-50 min',exercises:[
-      E('jalon-pecho','Jalón al pecho',3,'8-10',60,'kg',2),
-      E('remo-polea-baja','Remo en polea baja',3,'8-10',60,'kg',2),
-      E('press-hombro-sentado','Press de hombro sentado / máquina',3,'8-10',60,'kg',2),
-      E('elevacion-lateral-unilateral-polea','Elevación lateral unilateral en polea',3,'12-15',60,'kg',2),
-      E('pullover-polea','Pullover en polea',3,'10-12',60,'kg',2),
-      E('face-pull','Face pull',2,'12-15',45,'kg',1),
-      E('pajaros-peck-deck','Pájaros en peck deck',2,'12-15',45,'kg',1),
-      E('curl-biceps-polea','Curl de bíceps en polea',2,'10-12',60,'kg',1),
-      E('extension-triceps-polea','Extensión de tríceps en polea',2,'10-12',60,'kg',1),
-      E('farmer-walk','Farmer walk',3,'30-40 s',45,'kg manc.',2)
-    ]},
-    {id:'dia-3',name:'Lower B',estimatedDuration:'45-50 min',exercises:[
-      E('step-up-alto','Step-up alto',3,'8/lado',60,'kg manc.',2),
-      E('prensa-unilateral','Prensa unilateral',3,'10/lado',60,'kg',2),
-      E('pull-through-polea','Pull-through en polea',3,'10-12',60,'kg',2),
-      E('patada-gluteo-polea','Patada de glúteo en polea',2,'12-15/lado',60,'kg',1),
-      E('curl-femoral-sentado-lower-b','Curl femoral sentado',3,'10-12',60,'kg',2),
-      E('abduccion-maquina-lower-b','Abducción en máquina',2,'15-20',45,'kg',1),
-      E('gemelo-pie-prensa','Gemelo de pie o en prensa',3,'12-15',60,'kg',2),
-      E('suitcase-carry','Suitcase carry',3,'30 s/lado',45,'kg manc.',2),
-      E('woodchop-polea','Woodchop en polea',2,'10/lado',45,'kg',1)
-    ]},
-    {id:'dia-4',name:'Upper B / Full Body',estimatedDuration:'45-50 min',exercises:[
-      E('remo-maquina-apoyo','Remo en máquina con apoyo',3,'8-10',60,'kg',2),
-      E('press-pecho-maquina-inclinada','Press de pecho en máquina inclinada',3,'8-10',60,'kg',2),
-      E('goblet-squat','Goblet squat',3,'10-12',60,'kg manc.',2),
-      E('jalon-unilateral-polea','Jalón unilateral en polea',3,'10-12/lado',60,'kg',2),
-      E('elevaciones-laterales-upper-b','Elevaciones laterales',2,'12-15',45,'kg',1),
-      E('remo-alto-cuerda','Remo alto con cuerda / face pull alto',2,'12-15',45,'kg',1),
-      E('aperturas-pecho-maquina','Aperturas de pecho en máquina',2,'12-15',60,'kg',1),
-      E('curl-martillo','Curl martillo',2,'10-12',45,'kg manc.',1),
-      E('extension-triceps-cuerda','Extensión de tríceps con cuerda',2,'10-12',45,'kg',1),
-      E('pallof-press-pie','Pallof press de pie',2,'10-12/lado',45,'kg',2)
-    ]}
+    {
+      "id": "dia-1",
+      "name": "Lower A",
+      "estimatedDuration": "45-50 min",
+      "exercises": [
+        {
+          "key": "prensa-inclinada",
+          "name": "Prensa inclinada",
+          "sets": 3,
+          "reps": "8-12",
+          "rest": 60,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 3,
+            "7": 3,
+            "8": 3
+          },
+          "weeklyReps": {
+            "1": "8-12",
+            "2": "8-12",
+            "3": "8-12",
+            "4": "8-12",
+            "5": "8-12",
+            "6": "8-12",
+            "7": "8-12",
+            "8": "8-12"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "40"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Series en onda 12-10-8; aumentar carga entre series solo si se mantiene RIR. Dos series de aproximación no computan. Referencia anterior: 40 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Series en onda 12-10-8; aumentar carga entre series solo si se mantiene RIR. Dos series de aproximación no computan.",
+            "3": "Doble progresión: reps y luego peso. Series en onda 12-10-8; aumentar carga entre series solo si se mantiene RIR. Dos series de aproximación no computan.",
+            "4": "Consolidación sin fallo. Series en onda 12-10-8; aumentar carga entre series solo si se mantiene RIR. Dos series de aproximación no computan.",
+            "5": "Descarga: menos series, RIR 4. Series en onda 12-10-8; aumentar carga entre series solo si se mantiene RIR. Dos series de aproximación no computan.",
+            "6": "Reinicio técnico: RIR 3. Series en onda 12-10-8; aumentar carga entre series solo si se mantiene RIR. Dos series de aproximación no computan.",
+            "7": "Progresar repeticiones o carga moderada. Series en onda 12-10-8; aumentar carga entre series solo si se mantiene RIR. Dos series de aproximación no computan.",
+            "8": "Consolidar y registrar comparación con S1. Series en onda 12-10-8; aumentar carga entre series solo si se mantiene RIR. Dos series de aproximación no computan."
+          },
+          "programNote": "Series en onda 12-10-8; aumentar carga entre series solo si se mantiene RIR. Dos series de aproximación no computan. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "peso-muerto-rumano-mancuernas",
+          "name": "Peso muerto rumano con mancuernas",
+          "sets": 3,
+          "reps": "8-10",
+          "rest": 60,
+          "unit": "kg manc.",
+          "weeklySets": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 3,
+            "7": 3,
+            "8": 3
+          },
+          "weeklyReps": {
+            "1": "8-10",
+            "2": "8-10",
+            "3": "8-10",
+            "4": "8-10",
+            "5": "8-10",
+            "6": "8-10",
+            "7": "8-10",
+            "8": "8-10"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "20"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Descenso controlado 3 segundos, subida fluida; espalda neutra. Referencia anterior: 20 kg manc.; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Descenso controlado 3 segundos, subida fluida; espalda neutra.",
+            "3": "Doble progresión: reps y luego peso. Descenso controlado 3 segundos, subida fluida; espalda neutra.",
+            "4": "Consolidación sin fallo. Descenso controlado 3 segundos, subida fluida; espalda neutra.",
+            "5": "Descarga: menos series, RIR 4. Descenso controlado 3 segundos, subida fluida; espalda neutra.",
+            "6": "Reinicio técnico: RIR 3. Descenso controlado 3 segundos, subida fluida; espalda neutra.",
+            "7": "Progresar repeticiones o carga moderada. Descenso controlado 3 segundos, subida fluida; espalda neutra.",
+            "8": "Consolidar y registrar comparación con S1. Descenso controlado 3 segundos, subida fluida; espalda neutra."
+          },
+          "programNote": "Descenso controlado 3 segundos, subida fluida; espalda neutra. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "extension-cuadriceps",
+          "name": "Extensión de cuádriceps",
+          "sets": 3,
+          "reps": "10-12",
+          "rest": 60,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 3,
+            "7": 3,
+            "8": 3
+          },
+          "weeklyReps": {
+            "1": "10-12",
+            "2": "10-12",
+            "3": "10-12",
+            "4": "10-12",
+            "5": "10-12",
+            "6": "10-12",
+            "7": "10-12",
+            "8": "10-12"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "25"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Recorrido completo, pausa 1 s arriba. Sin volver a la máquina. Referencia anterior: 25 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Recorrido completo, pausa 1 s arriba. Sin volver a la máquina.",
+            "3": "Doble progresión: reps y luego peso. Recorrido completo, pausa 1 s arriba. Sin volver a la máquina.",
+            "4": "Consolidación sin fallo. Recorrido completo, pausa 1 s arriba. Sin volver a la máquina. Opcional: UNA reducción de carga 20–25% tras la última serie, 5–8 reps controladas, solo si hay buena recuperación.",
+            "5": "Descarga: menos series, RIR 4. Recorrido completo, pausa 1 s arriba. Sin volver a la máquina.",
+            "6": "Reinicio técnico: RIR 3. Recorrido completo, pausa 1 s arriba. Sin volver a la máquina.",
+            "7": "Progresar repeticiones o carga moderada. Recorrido completo, pausa 1 s arriba. Sin volver a la máquina.",
+            "8": "Consolidar y registrar comparación con S1. Recorrido completo, pausa 1 s arriba. Sin volver a la máquina. Opcional: UNA reducción de carga 20–25% tras la última serie, 5–8 reps controladas, solo si hay buena recuperación."
+          },
+          "programNote": "Recorrido completo, pausa 1 s arriba. Sin volver a la máquina. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "curl-femoral-sentado",
+          "name": "Curl femoral sentado",
+          "sets": 3,
+          "reps": "10-12",
+          "rest": 60,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 3,
+            "7": 3,
+            "8": 3
+          },
+          "weeklyReps": {
+            "1": "10-12",
+            "2": "10-12",
+            "3": "10-12",
+            "4": "10-12",
+            "5": "10-12",
+            "6": "10-12",
+            "7": "10-12",
+            "8": "10-12"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "15"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Pausa 1 s al flexionar. Controlar la fase excéntrica. Referencia anterior: 15 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Pausa 1 s al flexionar. Controlar la fase excéntrica.",
+            "3": "Doble progresión: reps y luego peso. Pausa 1 s al flexionar. Controlar la fase excéntrica.",
+            "4": "Consolidación sin fallo. Pausa 1 s al flexionar. Controlar la fase excéntrica.",
+            "5": "Descarga: menos series, RIR 4. Pausa 1 s al flexionar. Controlar la fase excéntrica.",
+            "6": "Reinicio técnico: RIR 3. Pausa 1 s al flexionar. Controlar la fase excéntrica.",
+            "7": "Progresar repeticiones o carga moderada. Pausa 1 s al flexionar. Controlar la fase excéntrica.",
+            "8": "Consolidar y registrar comparación con S1. Pausa 1 s al flexionar. Controlar la fase excéntrica."
+          },
+          "programNote": "Pausa 1 s al flexionar. Controlar la fase excéntrica. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "aductores-maquina",
+          "name": "Aductores en máquina",
+          "sets": 2,
+          "reps": "12-15",
+          "rest": 45,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "12-15",
+            "2": "12-15",
+            "3": "12-15",
+            "4": "12-15",
+            "5": "12-15",
+            "6": "12-15",
+            "7": "12-15",
+            "8": "12-15"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "35"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Ritmo continuo y técnico; sin balanceos. Referencia anterior: 35 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Ritmo continuo y técnico; sin balanceos.",
+            "3": "Doble progresión: reps y luego peso. Ritmo continuo y técnico; sin balanceos.",
+            "4": "Consolidación sin fallo. Ritmo continuo y técnico; sin balanceos.",
+            "5": "Descarga: menos series, RIR 4. Ritmo continuo y técnico; sin balanceos.",
+            "6": "Reinicio técnico: RIR 3. Ritmo continuo y técnico; sin balanceos.",
+            "7": "Progresar repeticiones o carga moderada. Ritmo continuo y técnico; sin balanceos.",
+            "8": "Consolidar y registrar comparación con S1. Ritmo continuo y técnico; sin balanceos."
+          },
+          "programNote": "Ritmo continuo y técnico; sin balanceos. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "abduccion-cadera-maquina",
+          "name": "Abducción de cadera en máquina",
+          "sets": 2,
+          "reps": "15-20",
+          "rest": 45,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "15-20",
+            "2": "15-20",
+            "3": "15-20",
+            "4": "15-20",
+            "5": "15-20",
+            "6": "15-20",
+            "7": "15-20",
+            "8": "15-20"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "35"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Repeticiones controladas, pequeña pausa en apertura. Referencia anterior: 35 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Repeticiones controladas, pequeña pausa en apertura.",
+            "3": "Doble progresión: reps y luego peso. Repeticiones controladas, pequeña pausa en apertura.",
+            "4": "Consolidación sin fallo. Repeticiones controladas, pequeña pausa en apertura.",
+            "5": "Descarga: menos series, RIR 4. Repeticiones controladas, pequeña pausa en apertura.",
+            "6": "Reinicio técnico: RIR 3. Repeticiones controladas, pequeña pausa en apertura.",
+            "7": "Progresar repeticiones o carga moderada. Repeticiones controladas, pequeña pausa en apertura.",
+            "8": "Consolidar y registrar comparación con S1. Repeticiones controladas, pequeña pausa en apertura."
+          },
+          "programNote": "Repeticiones controladas, pequeña pausa en apertura. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "gemelo-maquina",
+          "name": "Gemelos en máquina",
+          "sets": 2,
+          "reps": "12-15",
+          "rest": 45,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "12-15",
+            "2": "12-15",
+            "3": "12-15",
+            "4": "12-15",
+            "5": "12-15",
+            "6": "12-15",
+            "7": "12-15",
+            "8": "12-15"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "20"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Pausa arriba y estiramiento abajo; sin rebotes. Referencia anterior: 20 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Pausa arriba y estiramiento abajo; sin rebotes.",
+            "3": "Doble progresión: reps y luego peso. Pausa arriba y estiramiento abajo; sin rebotes.",
+            "4": "Consolidación sin fallo. Pausa arriba y estiramiento abajo; sin rebotes.",
+            "5": "Descarga: menos series, RIR 4. Pausa arriba y estiramiento abajo; sin rebotes.",
+            "6": "Reinicio técnico: RIR 3. Pausa arriba y estiramiento abajo; sin rebotes.",
+            "7": "Progresar repeticiones o carga moderada. Pausa arriba y estiramiento abajo; sin rebotes.",
+            "8": "Consolidar y registrar comparación con S1. Pausa arriba y estiramiento abajo; sin rebotes."
+          },
+          "programNote": "Pausa arriba y estiramiento abajo; sin rebotes. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "dead-bug-ana",
+          "name": "Dead bug en colchoneta",
+          "sets": 2,
+          "reps": "10/lado",
+          "rest": 45,
+          "unit": "peso corporal",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "10/lado",
+            "2": "10/lado",
+            "3": "10/lado",
+            "4": "10/lado",
+            "5": "10/lado",
+            "6": "10/lado",
+            "7": "10/lado",
+            "8": "10/lado"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Alternar lados sin abandonar la colchoneta; zona lumbar estable.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Alternar lados sin abandonar la colchoneta; zona lumbar estable.",
+            "3": "Doble progresión: reps y luego peso. Alternar lados sin abandonar la colchoneta; zona lumbar estable.",
+            "4": "Consolidación sin fallo. Alternar lados sin abandonar la colchoneta; zona lumbar estable.",
+            "5": "Descarga: menos series, RIR 4. Alternar lados sin abandonar la colchoneta; zona lumbar estable.",
+            "6": "Reinicio técnico: RIR 3. Alternar lados sin abandonar la colchoneta; zona lumbar estable.",
+            "7": "Progresar repeticiones o carga moderada. Alternar lados sin abandonar la colchoneta; zona lumbar estable.",
+            "8": "Consolidar y registrar comparación con S1. Alternar lados sin abandonar la colchoneta; zona lumbar estable."
+          },
+          "programNote": "Alternar lados sin abandonar la colchoneta; zona lumbar estable. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        }
+      ]
+    },
+    {
+      "id": "dia-2",
+      "name": "Upper A",
+      "estimatedDuration": "45-50 min",
+      "exercises": [
+        {
+          "key": "jalon-pecho",
+          "name": "Jalón al pecho",
+          "sets": 3,
+          "reps": "8-10",
+          "rest": 60,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 3,
+            "7": 3,
+            "8": 3
+          },
+          "weeklyReps": {
+            "1": "8-10",
+            "2": "8-10",
+            "3": "8-10",
+            "4": "8-10",
+            "5": "8-10",
+            "6": "8-10",
+            "7": "8-10",
+            "8": "8-10"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "20"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Alternar amplitud de agarre solo entre semanas; misma estación durante las 3 series. Referencia anterior: 20 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Alternar amplitud de agarre solo entre semanas; misma estación durante las 3 series.",
+            "3": "Doble progresión: reps y luego peso. Alternar amplitud de agarre solo entre semanas; misma estación durante las 3 series.",
+            "4": "Consolidación sin fallo. Alternar amplitud de agarre solo entre semanas; misma estación durante las 3 series.",
+            "5": "Descarga: menos series, RIR 4. Alternar amplitud de agarre solo entre semanas; misma estación durante las 3 series.",
+            "6": "Reinicio técnico: RIR 3. Alternar amplitud de agarre solo entre semanas; misma estación durante las 3 series.",
+            "7": "Progresar repeticiones o carga moderada. Alternar amplitud de agarre solo entre semanas; misma estación durante las 3 series.",
+            "8": "Consolidar y registrar comparación con S1. Alternar amplitud de agarre solo entre semanas; misma estación durante las 3 series."
+          },
+          "programNote": "Alternar amplitud de agarre solo entre semanas; misma estación durante las 3 series. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "press-pecho-inclinado-ana",
+          "name": "Press de pecho inclinado en máquina",
+          "sets": 3,
+          "reps": "8-10",
+          "rest": 60,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 3,
+            "7": 3,
+            "8": 3
+          },
+          "weeklyReps": {
+            "1": "8-10",
+            "2": "8-10",
+            "3": "8-10",
+            "4": "8-10",
+            "5": "8-10",
+            "6": "8-10",
+            "7": "8-10",
+            "8": "8-10"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "5"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Empuje controlado, hombros estables. Comprobar si esta máquina usa kg totales. Referencia anterior: 5 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Empuje controlado, hombros estables. Comprobar si esta máquina usa kg totales.",
+            "3": "Doble progresión: reps y luego peso. Empuje controlado, hombros estables. Comprobar si esta máquina usa kg totales.",
+            "4": "Consolidación sin fallo. Empuje controlado, hombros estables. Comprobar si esta máquina usa kg totales.",
+            "5": "Descarga: menos series, RIR 4. Empuje controlado, hombros estables. Comprobar si esta máquina usa kg totales.",
+            "6": "Reinicio técnico: RIR 3. Empuje controlado, hombros estables. Comprobar si esta máquina usa kg totales.",
+            "7": "Progresar repeticiones o carga moderada. Empuje controlado, hombros estables. Comprobar si esta máquina usa kg totales.",
+            "8": "Consolidar y registrar comparación con S1. Empuje controlado, hombros estables. Comprobar si esta máquina usa kg totales."
+          },
+          "programNote": "Empuje controlado, hombros estables. Comprobar si esta máquina usa kg totales. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "remo-polea-baja",
+          "name": "Remo en polea baja",
+          "sets": 3,
+          "reps": "10-12",
+          "rest": 60,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 3,
+            "7": 3,
+            "8": 3
+          },
+          "weeklyReps": {
+            "1": "10-12",
+            "2": "10-12",
+            "3": "10-12",
+            "4": "10-12",
+            "5": "10-12",
+            "6": "10-12",
+            "7": "10-12",
+            "8": "10-12"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "20"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Pausa 1 s con escápulas atrás; no balancear tronco. Referencia anterior: 20 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Pausa 1 s con escápulas atrás; no balancear tronco.",
+            "3": "Doble progresión: reps y luego peso. Pausa 1 s con escápulas atrás; no balancear tronco.",
+            "4": "Consolidación sin fallo. Pausa 1 s con escápulas atrás; no balancear tronco.",
+            "5": "Descarga: menos series, RIR 4. Pausa 1 s con escápulas atrás; no balancear tronco.",
+            "6": "Reinicio técnico: RIR 3. Pausa 1 s con escápulas atrás; no balancear tronco.",
+            "7": "Progresar repeticiones o carga moderada. Pausa 1 s con escápulas atrás; no balancear tronco.",
+            "8": "Consolidar y registrar comparación con S1. Pausa 1 s con escápulas atrás; no balancear tronco."
+          },
+          "programNote": "Pausa 1 s con escápulas atrás; no balancear tronco. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "press-hombro-sentado",
+          "name": "Press de hombros sentado",
+          "sets": 2,
+          "reps": "8-10",
+          "rest": 60,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "8-10",
+            "2": "8-10",
+            "3": "8-10",
+            "4": "8-10",
+            "5": "8-10",
+            "6": "8-10",
+            "7": "8-10",
+            "8": "8-10"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "5"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Mantener control escapular; parar antes de compensar con espalda. Referencia anterior: 5 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Mantener control escapular; parar antes de compensar con espalda.",
+            "3": "Doble progresión: reps y luego peso. Mantener control escapular; parar antes de compensar con espalda.",
+            "4": "Consolidación sin fallo. Mantener control escapular; parar antes de compensar con espalda.",
+            "5": "Descarga: menos series, RIR 4. Mantener control escapular; parar antes de compensar con espalda.",
+            "6": "Reinicio técnico: RIR 3. Mantener control escapular; parar antes de compensar con espalda.",
+            "7": "Progresar repeticiones o carga moderada. Mantener control escapular; parar antes de compensar con espalda.",
+            "8": "Consolidar y registrar comparación con S1. Mantener control escapular; parar antes de compensar con espalda."
+          },
+          "programNote": "Mantener control escapular; parar antes de compensar con espalda. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "elevaciones-laterales-ana",
+          "name": "Elevaciones laterales con mancuernas",
+          "sets": 2,
+          "reps": "12-15",
+          "rest": 45,
+          "unit": "kg manc.",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "12-15",
+            "2": "12-15",
+            "3": "12-15",
+            "4": "12-15",
+            "5": "12-15",
+            "6": "12-15",
+            "7": "12-15",
+            "8": "12-15"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "3"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Subida progresiva y bajada de 2 segundos. Referencia anterior: 3 kg manc.; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Subida progresiva y bajada de 2 segundos.",
+            "3": "Doble progresión: reps y luego peso. Subida progresiva y bajada de 2 segundos.",
+            "4": "Consolidación sin fallo. Subida progresiva y bajada de 2 segundos.",
+            "5": "Descarga: menos series, RIR 4. Subida progresiva y bajada de 2 segundos.",
+            "6": "Reinicio técnico: RIR 3. Subida progresiva y bajada de 2 segundos.",
+            "7": "Progresar repeticiones o carga moderada. Subida progresiva y bajada de 2 segundos.",
+            "8": "Consolidar y registrar comparación con S1. Subida progresiva y bajada de 2 segundos."
+          },
+          "programNote": "Subida progresiva y bajada de 2 segundos. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "pajaros-peck-deck",
+          "name": "Pájaros en peck deck",
+          "sets": 2,
+          "reps": "12-15",
+          "rest": 45,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "12-15",
+            "2": "12-15",
+            "3": "12-15",
+            "4": "12-15",
+            "5": "12-15",
+            "6": "12-15",
+            "7": "12-15",
+            "8": "12-15"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "2.5"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Activar deltoides posterior; una sola visita a la máquina. Referencia anterior: 2.5 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Activar deltoides posterior; una sola visita a la máquina.",
+            "3": "Doble progresión: reps y luego peso. Activar deltoides posterior; una sola visita a la máquina.",
+            "4": "Consolidación sin fallo. Activar deltoides posterior; una sola visita a la máquina.",
+            "5": "Descarga: menos series, RIR 4. Activar deltoides posterior; una sola visita a la máquina.",
+            "6": "Reinicio técnico: RIR 3. Activar deltoides posterior; una sola visita a la máquina.",
+            "7": "Progresar repeticiones o carga moderada. Activar deltoides posterior; una sola visita a la máquina.",
+            "8": "Consolidar y registrar comparación con S1. Activar deltoides posterior; una sola visita a la máquina."
+          },
+          "programNote": "Activar deltoides posterior; una sola visita a la máquina. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "curl-biceps-mancuernas-ana",
+          "name": "Curl de bíceps con mancuernas",
+          "sets": 2,
+          "reps": "10-12",
+          "rest": 45,
+          "unit": "kg manc.",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "10-12",
+            "2": "10-12",
+            "3": "10-12",
+            "4": "10-12",
+            "5": "10-12",
+            "6": "10-12",
+            "7": "10-12",
+            "8": "10-12"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Brazos alternos sin desplazarse; elegir carga inicial por RIR.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Brazos alternos sin desplazarse; elegir carga inicial por RIR.",
+            "3": "Doble progresión: reps y luego peso. Brazos alternos sin desplazarse; elegir carga inicial por RIR.",
+            "4": "Consolidación sin fallo. Brazos alternos sin desplazarse; elegir carga inicial por RIR.",
+            "5": "Descarga: menos series, RIR 4. Brazos alternos sin desplazarse; elegir carga inicial por RIR.",
+            "6": "Reinicio técnico: RIR 3. Brazos alternos sin desplazarse; elegir carga inicial por RIR.",
+            "7": "Progresar repeticiones o carga moderada. Brazos alternos sin desplazarse; elegir carga inicial por RIR.",
+            "8": "Consolidar y registrar comparación con S1. Brazos alternos sin desplazarse; elegir carga inicial por RIR."
+          },
+          "programNote": "Brazos alternos sin desplazarse; elegir carga inicial por RIR. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "extension-triceps-polea",
+          "name": "Extensión de tríceps en polea",
+          "sets": 2,
+          "reps": "10-12",
+          "rest": 45,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "10-12",
+            "2": "10-12",
+            "3": "10-12",
+            "4": "10-12",
+            "5": "10-12",
+            "6": "10-12",
+            "7": "10-12",
+            "8": "10-12"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "7.5"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Codos estables, un solo bloque de trabajo en polea. Referencia anterior: 7.5 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Codos estables, un solo bloque de trabajo en polea.",
+            "3": "Doble progresión: reps y luego peso. Codos estables, un solo bloque de trabajo en polea.",
+            "4": "Consolidación sin fallo. Codos estables, un solo bloque de trabajo en polea. Opcional: UNA reducción de carga 20–25% tras la última serie, 5–8 reps controladas, solo si hay buena recuperación.",
+            "5": "Descarga: menos series, RIR 4. Codos estables, un solo bloque de trabajo en polea.",
+            "6": "Reinicio técnico: RIR 3. Codos estables, un solo bloque de trabajo en polea.",
+            "7": "Progresar repeticiones o carga moderada. Codos estables, un solo bloque de trabajo en polea.",
+            "8": "Consolidar y registrar comparación con S1. Codos estables, un solo bloque de trabajo en polea. Opcional: UNA reducción de carga 20–25% tras la última serie, 5–8 reps controladas, solo si hay buena recuperación."
+          },
+          "programNote": "Codos estables, un solo bloque de trabajo en polea. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "farmer-walk",
+          "name": "Farmer walk",
+          "sets": 2,
+          "reps": "30-40 s",
+          "rest": 45,
+          "unit": "kg manc.",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "30-40 s",
+            "2": "30-40 s",
+            "3": "30-40 s",
+            "4": "30-40 s",
+            "5": "30-40 s",
+            "6": "30-40 s",
+            "7": "30-40 s",
+            "8": "30-40 s"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "20"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Caminar erguida, respiración continua; terminar tras completar ambas pasadas. Referencia anterior: 20 kg manc.; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Caminar erguida, respiración continua; terminar tras completar ambas pasadas.",
+            "3": "Doble progresión: reps y luego peso. Caminar erguida, respiración continua; terminar tras completar ambas pasadas.",
+            "4": "Consolidación sin fallo. Caminar erguida, respiración continua; terminar tras completar ambas pasadas.",
+            "5": "Descarga: menos series, RIR 4. Caminar erguida, respiración continua; terminar tras completar ambas pasadas.",
+            "6": "Reinicio técnico: RIR 3. Caminar erguida, respiración continua; terminar tras completar ambas pasadas.",
+            "7": "Progresar repeticiones o carga moderada. Caminar erguida, respiración continua; terminar tras completar ambas pasadas.",
+            "8": "Consolidar y registrar comparación con S1. Caminar erguida, respiración continua; terminar tras completar ambas pasadas."
+          },
+          "programNote": "Caminar erguida, respiración continua; terminar tras completar ambas pasadas. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        }
+      ]
+    },
+    {
+      "id": "dia-3",
+      "name": "Lower B",
+      "estimatedDuration": "45-50 min",
+      "exercises": [
+        {
+          "key": "step-up-alto",
+          "name": "Step-up con mancuernas",
+          "sets": 2,
+          "reps": "8/lado",
+          "rest": 60,
+          "unit": "kg manc.",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "8/lado",
+            "2": "8/lado",
+            "3": "8/lado",
+            "4": "8/lado",
+            "5": "8/lado",
+            "6": "8/lado",
+            "7": "8/lado",
+            "8": "8/lado"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "8"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Comenzar con pierna izquierda, controlar el descenso. Reducido a 2 series por fatiga previa; si falla control, bajar altura. Referencia anterior: 8 kg manc.; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Comenzar con pierna izquierda, controlar el descenso. Reducido a 2 series por fatiga previa; si falla control, bajar altura.",
+            "3": "Doble progresión: reps y luego peso. Comenzar con pierna izquierda, controlar el descenso. Reducido a 2 series por fatiga previa; si falla control, bajar altura.",
+            "4": "Consolidación sin fallo. Comenzar con pierna izquierda, controlar el descenso. Reducido a 2 series por fatiga previa; si falla control, bajar altura.",
+            "5": "Descarga: menos series, RIR 4. Comenzar con pierna izquierda, controlar el descenso. Reducido a 2 series por fatiga previa; si falla control, bajar altura.",
+            "6": "Reinicio técnico: RIR 3. Comenzar con pierna izquierda, controlar el descenso. Reducido a 2 series por fatiga previa; si falla control, bajar altura.",
+            "7": "Progresar repeticiones o carga moderada. Comenzar con pierna izquierda, controlar el descenso. Reducido a 2 series por fatiga previa; si falla control, bajar altura.",
+            "8": "Consolidar y registrar comparación con S1. Comenzar con pierna izquierda, controlar el descenso. Reducido a 2 series por fatiga previa; si falla control, bajar altura."
+          },
+          "programNote": "Comenzar con pierna izquierda, controlar el descenso. Reducido a 2 series por fatiga previa; si falla control, bajar altura. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "hip-thrust-ana-2026-11",
+          "name": "Hip thrust",
+          "sets": 3,
+          "reps": "8-12",
+          "rest": 60,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 3,
+            "7": 3,
+            "8": 3
+          },
+          "weeklyReps": {
+            "1": "8-12",
+            "2": "8-12",
+            "3": "8-12",
+            "4": "8-12",
+            "5": "8-12",
+            "6": "8-12",
+            "7": "8-12",
+            "8": "8-12"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Pausa 1–2 s en extensión. Elegir carga inicial por RIR 3; no extrapolar del pull-through.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Pausa 1–2 s en extensión. Elegir carga inicial por RIR 3; no extrapolar del pull-through.",
+            "3": "Doble progresión: reps y luego peso. Pausa 1–2 s en extensión. Elegir carga inicial por RIR 3; no extrapolar del pull-through.",
+            "4": "Consolidación sin fallo. Pausa 1–2 s en extensión. Elegir carga inicial por RIR 3; no extrapolar del pull-through.",
+            "5": "Descarga: menos series, RIR 4. Pausa 1–2 s en extensión. Elegir carga inicial por RIR 3; no extrapolar del pull-through.",
+            "6": "Reinicio técnico: RIR 3. Pausa 1–2 s en extensión. Elegir carga inicial por RIR 3; no extrapolar del pull-through.",
+            "7": "Progresar repeticiones o carga moderada. Pausa 1–2 s en extensión. Elegir carga inicial por RIR 3; no extrapolar del pull-through.",
+            "8": "Consolidar y registrar comparación con S1. Pausa 1–2 s en extensión. Elegir carga inicial por RIR 3; no extrapolar del pull-through."
+          },
+          "programNote": "Pausa 1–2 s en extensión. Elegir carga inicial por RIR 3; no extrapolar del pull-through. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "prensa-unilateral",
+          "name": "Prensa unilateral",
+          "sets": 2,
+          "reps": "10-12/lado",
+          "rest": 60,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "10-12/lado",
+            "2": "10-12/lado",
+            "3": "10-12/lado",
+            "4": "10-12/lado",
+            "5": "10-12/lado",
+            "6": "10-12/lado",
+            "7": "10-12/lado",
+            "8": "10-12/lado"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "20"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Completar ambas piernas durante la misma serie; no despegar pelvis. Referencia anterior: 20 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Completar ambas piernas durante la misma serie; no despegar pelvis.",
+            "3": "Doble progresión: reps y luego peso. Completar ambas piernas durante la misma serie; no despegar pelvis.",
+            "4": "Consolidación sin fallo. Completar ambas piernas durante la misma serie; no despegar pelvis.",
+            "5": "Descarga: menos series, RIR 4. Completar ambas piernas durante la misma serie; no despegar pelvis.",
+            "6": "Reinicio técnico: RIR 3. Completar ambas piernas durante la misma serie; no despegar pelvis.",
+            "7": "Progresar repeticiones o carga moderada. Completar ambas piernas durante la misma serie; no despegar pelvis.",
+            "8": "Consolidar y registrar comparación con S1. Completar ambas piernas durante la misma serie; no despegar pelvis."
+          },
+          "programNote": "Completar ambas piernas durante la misma serie; no despegar pelvis. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "curl-femoral-sentado-lower-b",
+          "name": "Curl femoral sentado",
+          "sets": 3,
+          "reps": "10-12",
+          "rest": 60,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 3,
+            "7": 3,
+            "8": 3
+          },
+          "weeklyReps": {
+            "1": "10-12",
+            "2": "10-12",
+            "3": "10-12",
+            "4": "10-12",
+            "5": "10-12",
+            "6": "10-12",
+            "7": "10-12",
+            "8": "10-12"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "15"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Subir repeticiones antes de peso; carga conservadora tras variabilidad previa. Referencia anterior: 15 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Subir repeticiones antes de peso; carga conservadora tras variabilidad previa.",
+            "3": "Doble progresión: reps y luego peso. Subir repeticiones antes de peso; carga conservadora tras variabilidad previa.",
+            "4": "Consolidación sin fallo. Subir repeticiones antes de peso; carga conservadora tras variabilidad previa.",
+            "5": "Descarga: menos series, RIR 4. Subir repeticiones antes de peso; carga conservadora tras variabilidad previa.",
+            "6": "Reinicio técnico: RIR 3. Subir repeticiones antes de peso; carga conservadora tras variabilidad previa.",
+            "7": "Progresar repeticiones o carga moderada. Subir repeticiones antes de peso; carga conservadora tras variabilidad previa.",
+            "8": "Consolidar y registrar comparación con S1. Subir repeticiones antes de peso; carga conservadora tras variabilidad previa."
+          },
+          "programNote": "Subir repeticiones antes de peso; carga conservadora tras variabilidad previa. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "patada-gluteo-polea",
+          "name": "Patada de glúteo en polea",
+          "sets": 2,
+          "reps": "12-15/lado",
+          "rest": 45,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "12-15/lado",
+            "2": "12-15/lado",
+            "3": "12-15/lado",
+            "4": "12-15/lado",
+            "5": "12-15/lado",
+            "6": "12-15/lado",
+            "7": "12-15/lado",
+            "8": "12-15/lado"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "7.5"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Una sola ocupación de la polea para ambas piernas y todas las series. Referencia anterior: 7.5 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Una sola ocupación de la polea para ambas piernas y todas las series.",
+            "3": "Doble progresión: reps y luego peso. Una sola ocupación de la polea para ambas piernas y todas las series.",
+            "4": "Consolidación sin fallo. Una sola ocupación de la polea para ambas piernas y todas las series.",
+            "5": "Descarga: menos series, RIR 4. Una sola ocupación de la polea para ambas piernas y todas las series.",
+            "6": "Reinicio técnico: RIR 3. Una sola ocupación de la polea para ambas piernas y todas las series.",
+            "7": "Progresar repeticiones o carga moderada. Una sola ocupación de la polea para ambas piernas y todas las series.",
+            "8": "Consolidar y registrar comparación con S1. Una sola ocupación de la polea para ambas piernas y todas las series."
+          },
+          "programNote": "Una sola ocupación de la polea para ambas piernas y todas las series. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "abduccion-maquina-lower-b",
+          "name": "Abducción en máquina",
+          "sets": 2,
+          "reps": "15-20",
+          "rest": 45,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "15-20",
+            "2": "15-20",
+            "3": "15-20",
+            "4": "15-20",
+            "5": "15-20",
+            "6": "15-20",
+            "7": "15-20",
+            "8": "15-20"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "35"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Pausa 1 s en la apertura, sin usar impulso. Referencia anterior: 35 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Pausa 1 s en la apertura, sin usar impulso.",
+            "3": "Doble progresión: reps y luego peso. Pausa 1 s en la apertura, sin usar impulso.",
+            "4": "Consolidación sin fallo. Pausa 1 s en la apertura, sin usar impulso. Opcional: UNA reducción de carga 20–25% tras la última serie, 5–8 reps controladas, solo si hay buena recuperación.",
+            "5": "Descarga: menos series, RIR 4. Pausa 1 s en la apertura, sin usar impulso.",
+            "6": "Reinicio técnico: RIR 3. Pausa 1 s en la apertura, sin usar impulso.",
+            "7": "Progresar repeticiones o carga moderada. Pausa 1 s en la apertura, sin usar impulso.",
+            "8": "Consolidar y registrar comparación con S1. Pausa 1 s en la apertura, sin usar impulso. Opcional: UNA reducción de carga 20–25% tras la última serie, 5–8 reps controladas, solo si hay buena recuperación."
+          },
+          "programNote": "Pausa 1 s en la apertura, sin usar impulso. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "gemelo-pie-prensa",
+          "name": "Gemelo de pie",
+          "sets": 2,
+          "reps": "12-15",
+          "rest": 45,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "12-15",
+            "2": "12-15",
+            "3": "12-15",
+            "4": "12-15",
+            "5": "12-15",
+            "6": "12-15",
+            "7": "12-15",
+            "8": "12-15"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "20"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Usar máquina de gemelos o mancuernas, NO volver a prensa ya liberada. Referencia anterior: 20 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Usar máquina de gemelos o mancuernas, NO volver a prensa ya liberada.",
+            "3": "Doble progresión: reps y luego peso. Usar máquina de gemelos o mancuernas, NO volver a prensa ya liberada.",
+            "4": "Consolidación sin fallo. Usar máquina de gemelos o mancuernas, NO volver a prensa ya liberada.",
+            "5": "Descarga: menos series, RIR 4. Usar máquina de gemelos o mancuernas, NO volver a prensa ya liberada.",
+            "6": "Reinicio técnico: RIR 3. Usar máquina de gemelos o mancuernas, NO volver a prensa ya liberada.",
+            "7": "Progresar repeticiones o carga moderada. Usar máquina de gemelos o mancuernas, NO volver a prensa ya liberada.",
+            "8": "Consolidar y registrar comparación con S1. Usar máquina de gemelos o mancuernas, NO volver a prensa ya liberada."
+          },
+          "programNote": "Usar máquina de gemelos o mancuernas, NO volver a prensa ya liberada. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "suitcase-carry",
+          "name": "Suitcase carry",
+          "sets": 2,
+          "reps": "30-40 s/lado",
+          "rest": 45,
+          "unit": "kg manc.",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "30-40 s/lado",
+            "2": "30-40 s/lado",
+            "3": "30-40 s/lado",
+            "4": "30-40 s/lado",
+            "5": "30-40 s/lado",
+            "6": "30-40 s/lado",
+            "7": "30-40 s/lado",
+            "8": "30-40 s/lado"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "12"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Caminar erguida evitando inclinación lateral. Referencia anterior: 12 kg manc.; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Caminar erguida evitando inclinación lateral.",
+            "3": "Doble progresión: reps y luego peso. Caminar erguida evitando inclinación lateral.",
+            "4": "Consolidación sin fallo. Caminar erguida evitando inclinación lateral.",
+            "5": "Descarga: menos series, RIR 4. Caminar erguida evitando inclinación lateral.",
+            "6": "Reinicio técnico: RIR 3. Caminar erguida evitando inclinación lateral.",
+            "7": "Progresar repeticiones o carga moderada. Caminar erguida evitando inclinación lateral.",
+            "8": "Consolidar y registrar comparación con S1. Caminar erguida evitando inclinación lateral."
+          },
+          "programNote": "Caminar erguida evitando inclinación lateral. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "plancha-lateral-ana",
+          "name": "Plancha lateral",
+          "sets": 2,
+          "reps": "25-35 s/lado",
+          "rest": 45,
+          "unit": "peso corporal",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "25-35 s/lado",
+            "2": "25-35 s/lado",
+            "3": "25-35 s/lado",
+            "4": "25-35 s/lado",
+            "5": "25-35 s/lado",
+            "6": "25-35 s/lado",
+            "7": "25-35 s/lado",
+            "8": "25-35 s/lado"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Mantener pelvis alineada; sustituye woodchop para no regresar a polea.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Mantener pelvis alineada; sustituye woodchop para no regresar a polea.",
+            "3": "Doble progresión: reps y luego peso. Mantener pelvis alineada; sustituye woodchop para no regresar a polea.",
+            "4": "Consolidación sin fallo. Mantener pelvis alineada; sustituye woodchop para no regresar a polea.",
+            "5": "Descarga: menos series, RIR 4. Mantener pelvis alineada; sustituye woodchop para no regresar a polea.",
+            "6": "Reinicio técnico: RIR 3. Mantener pelvis alineada; sustituye woodchop para no regresar a polea.",
+            "7": "Progresar repeticiones o carga moderada. Mantener pelvis alineada; sustituye woodchop para no regresar a polea.",
+            "8": "Consolidar y registrar comparación con S1. Mantener pelvis alineada; sustituye woodchop para no regresar a polea."
+          },
+          "programNote": "Mantener pelvis alineada; sustituye woodchop para no regresar a polea. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        }
+      ]
+    },
+    {
+      "id": "dia-4",
+      "name": "Upper B / Full Body",
+      "estimatedDuration": "45-50 min",
+      "exercises": [
+        {
+          "key": "goblet-squat",
+          "name": "Goblet squat",
+          "sets": 3,
+          "reps": "10-12",
+          "rest": 60,
+          "unit": "kg manc.",
+          "weeklySets": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 3,
+            "7": 3,
+            "8": 3
+          },
+          "weeklyReps": {
+            "1": "10-12",
+            "2": "10-12",
+            "3": "10-12",
+            "4": "10-12",
+            "5": "10-12",
+            "6": "10-12",
+            "7": "10-12",
+            "8": "10-12"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "10"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Descenso 2 s, subida fluida; controlar profundidad. Referencia anterior: 10 kg manc.; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Descenso 2 s, subida fluida; controlar profundidad.",
+            "3": "Doble progresión: reps y luego peso. Descenso 2 s, subida fluida; controlar profundidad.",
+            "4": "Consolidación sin fallo. Descenso 2 s, subida fluida; controlar profundidad.",
+            "5": "Descarga: menos series, RIR 4. Descenso 2 s, subida fluida; controlar profundidad.",
+            "6": "Reinicio técnico: RIR 3. Descenso 2 s, subida fluida; controlar profundidad.",
+            "7": "Progresar repeticiones o carga moderada. Descenso 2 s, subida fluida; controlar profundidad.",
+            "8": "Consolidar y registrar comparación con S1. Descenso 2 s, subida fluida; controlar profundidad."
+          },
+          "programNote": "Descenso 2 s, subida fluida; controlar profundidad. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "remo-maquina-apoyo",
+          "name": "Remo en máquina con apoyo",
+          "sets": 3,
+          "reps": "8-12",
+          "rest": 60,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 3,
+            "7": 3,
+            "8": 3
+          },
+          "weeklyReps": {
+            "1": "8-12",
+            "2": "8-12",
+            "3": "8-12",
+            "4": "8-12",
+            "5": "8-12",
+            "6": "8-12",
+            "7": "8-12",
+            "8": "8-12"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "15"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Progresar de 8 a 12 reps antes de subir peso. Referencia anterior: 15 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Progresar de 8 a 12 reps antes de subir peso.",
+            "3": "Doble progresión: reps y luego peso. Progresar de 8 a 12 reps antes de subir peso.",
+            "4": "Consolidación sin fallo. Progresar de 8 a 12 reps antes de subir peso.",
+            "5": "Descarga: menos series, RIR 4. Progresar de 8 a 12 reps antes de subir peso.",
+            "6": "Reinicio técnico: RIR 3. Progresar de 8 a 12 reps antes de subir peso.",
+            "7": "Progresar repeticiones o carga moderada. Progresar de 8 a 12 reps antes de subir peso.",
+            "8": "Consolidar y registrar comparación con S1. Progresar de 8 a 12 reps antes de subir peso."
+          },
+          "programNote": "Progresar de 8 a 12 reps antes de subir peso. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "press-pecho-maquina-inclinada",
+          "name": "Press de pecho en máquina inclinada",
+          "sets": 3,
+          "reps": "10-12",
+          "rest": 60,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 3,
+            "2": 3,
+            "3": 3,
+            "4": 3,
+            "5": 2,
+            "6": 3,
+            "7": 3,
+            "8": 3
+          },
+          "weeklyReps": {
+            "1": "10-12",
+            "2": "10-12",
+            "3": "10-12",
+            "4": "10-12",
+            "5": "10-12",
+            "6": "10-12",
+            "7": "10-12",
+            "8": "10-12"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "5"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Última serie técnica sin fallo; kg orientativos según máquina. Referencia anterior: 5 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Última serie técnica sin fallo; kg orientativos según máquina.",
+            "3": "Doble progresión: reps y luego peso. Última serie técnica sin fallo; kg orientativos según máquina.",
+            "4": "Consolidación sin fallo. Última serie técnica sin fallo; kg orientativos según máquina.",
+            "5": "Descarga: menos series, RIR 4. Última serie técnica sin fallo; kg orientativos según máquina.",
+            "6": "Reinicio técnico: RIR 3. Última serie técnica sin fallo; kg orientativos según máquina.",
+            "7": "Progresar repeticiones o carga moderada. Última serie técnica sin fallo; kg orientativos según máquina.",
+            "8": "Consolidar y registrar comparación con S1. Última serie técnica sin fallo; kg orientativos según máquina."
+          },
+          "programNote": "Última serie técnica sin fallo; kg orientativos según máquina. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "jalon-unilateral-polea",
+          "name": "Jalón unilateral en máquina/polea",
+          "sets": 2,
+          "reps": "10-12/lado",
+          "rest": 60,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "10-12/lado",
+            "2": "10-12/lado",
+            "3": "10-12/lado",
+            "4": "10-12/lado",
+            "5": "10-12/lado",
+            "6": "10-12/lado",
+            "7": "10-12/lado",
+            "8": "10-12/lado"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "10"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Completar ambos lados y liberar la máquina. No regresar después. Referencia anterior: 10 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Completar ambos lados y liberar la máquina. No regresar después.",
+            "3": "Doble progresión: reps y luego peso. Completar ambos lados y liberar la máquina. No regresar después.",
+            "4": "Consolidación sin fallo. Completar ambos lados y liberar la máquina. No regresar después.",
+            "5": "Descarga: menos series, RIR 4. Completar ambos lados y liberar la máquina. No regresar después.",
+            "6": "Reinicio técnico: RIR 3. Completar ambos lados y liberar la máquina. No regresar después.",
+            "7": "Progresar repeticiones o carga moderada. Completar ambos lados y liberar la máquina. No regresar después.",
+            "8": "Consolidar y registrar comparación con S1. Completar ambos lados y liberar la máquina. No regresar después."
+          },
+          "programNote": "Completar ambos lados y liberar la máquina. No regresar después. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "elevaciones-laterales-upper-b",
+          "name": "Elevaciones laterales con mancuernas",
+          "sets": 2,
+          "reps": "12-15",
+          "rest": 45,
+          "unit": "kg manc.",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "12-15",
+            "2": "12-15",
+            "3": "12-15",
+            "4": "12-15",
+            "5": "12-15",
+            "6": "12-15",
+            "7": "12-15",
+            "8": "12-15"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "3"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Subir y bajar de forma controlada; sin compensaciones. Referencia anterior: 3 kg manc.; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Subir y bajar de forma controlada; sin compensaciones.",
+            "3": "Doble progresión: reps y luego peso. Subir y bajar de forma controlada; sin compensaciones.",
+            "4": "Consolidación sin fallo. Subir y bajar de forma controlada; sin compensaciones.",
+            "5": "Descarga: menos series, RIR 4. Subir y bajar de forma controlada; sin compensaciones.",
+            "6": "Reinicio técnico: RIR 3. Subir y bajar de forma controlada; sin compensaciones.",
+            "7": "Progresar repeticiones o carga moderada. Subir y bajar de forma controlada; sin compensaciones.",
+            "8": "Consolidar y registrar comparación con S1. Subir y bajar de forma controlada; sin compensaciones."
+          },
+          "programNote": "Subir y bajar de forma controlada; sin compensaciones. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "pajaros-peck-deck-upper-b",
+          "name": "Pájaros en peck deck",
+          "sets": 2,
+          "reps": "12-15",
+          "rest": 45,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "12-15",
+            "2": "12-15",
+            "3": "12-15",
+            "4": "12-15",
+            "5": "12-15",
+            "6": "12-15",
+            "7": "12-15",
+            "8": "12-15"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "2.5"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Pausa arriba. Solo una visita a la estación. Referencia anterior: 2.5 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Pausa arriba. Solo una visita a la estación.",
+            "3": "Doble progresión: reps y luego peso. Pausa arriba. Solo una visita a la estación.",
+            "4": "Consolidación sin fallo. Pausa arriba. Solo una visita a la estación.",
+            "5": "Descarga: menos series, RIR 4. Pausa arriba. Solo una visita a la estación.",
+            "6": "Reinicio técnico: RIR 3. Pausa arriba. Solo una visita a la estación.",
+            "7": "Progresar repeticiones o carga moderada. Pausa arriba. Solo una visita a la estación.",
+            "8": "Consolidar y registrar comparación con S1. Pausa arriba. Solo una visita a la estación."
+          },
+          "programNote": "Pausa arriba. Solo una visita a la estación. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "curl-martillo",
+          "name": "Curl martillo",
+          "sets": 2,
+          "reps": "10-12",
+          "rest": 45,
+          "unit": "kg manc.",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "10-12",
+            "2": "10-12",
+            "3": "10-12",
+            "4": "10-12",
+            "5": "10-12",
+            "6": "10-12",
+            "7": "10-12",
+            "8": "10-12"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "7.5"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Alternar brazos; sin balanceos. Referencia anterior: 7.5 kg manc.; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Alternar brazos; sin balanceos.",
+            "3": "Doble progresión: reps y luego peso. Alternar brazos; sin balanceos.",
+            "4": "Consolidación sin fallo. Alternar brazos; sin balanceos.",
+            "5": "Descarga: menos series, RIR 4. Alternar brazos; sin balanceos.",
+            "6": "Reinicio técnico: RIR 3. Alternar brazos; sin balanceos.",
+            "7": "Progresar repeticiones o carga moderada. Alternar brazos; sin balanceos.",
+            "8": "Consolidar y registrar comparación con S1. Alternar brazos; sin balanceos."
+          },
+          "programNote": "Alternar brazos; sin balanceos. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "extension-triceps-cuerda",
+          "name": "Extensión de tríceps con cuerda",
+          "sets": 2,
+          "reps": "10-12",
+          "rest": 45,
+          "unit": "kg",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "10-12",
+            "2": "10-12",
+            "3": "10-12",
+            "4": "10-12",
+            "5": "10-12",
+            "6": "10-12",
+            "7": "10-12",
+            "8": "10-12"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyWeight": {
+            "1": "7.5"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Todas las series seguidas en una sola visita a polea. Referencia anterior: 7.5 kg; ajustar a RIR 3.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Todas las series seguidas en una sola visita a polea.",
+            "3": "Doble progresión: reps y luego peso. Todas las series seguidas en una sola visita a polea.",
+            "4": "Consolidación sin fallo. Todas las series seguidas en una sola visita a polea. Opcional: UNA reducción de carga 20–25% tras la última serie, 5–8 reps controladas, solo si hay buena recuperación.",
+            "5": "Descarga: menos series, RIR 4. Todas las series seguidas en una sola visita a polea.",
+            "6": "Reinicio técnico: RIR 3. Todas las series seguidas en una sola visita a polea.",
+            "7": "Progresar repeticiones o carga moderada. Todas las series seguidas en una sola visita a polea.",
+            "8": "Consolidar y registrar comparación con S1. Todas las series seguidas en una sola visita a polea. Opcional: UNA reducción de carga 20–25% tras la última serie, 5–8 reps controladas, solo si hay buena recuperación."
+          },
+          "programNote": "Todas las series seguidas en una sola visita a polea. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        },
+        {
+          "key": "sentadilla-elevacion-brazos",
+          "name": "Sentadilla sin carga + elevación de brazos",
+          "sets": 2,
+          "reps": "40 s",
+          "rest": 45,
+          "unit": "peso corporal",
+          "weeklySets": {
+            "1": 2,
+            "2": 2,
+            "3": 2,
+            "4": 2,
+            "5": 1,
+            "6": 2,
+            "7": 2,
+            "8": 2
+          },
+          "weeklyReps": {
+            "1": "40 s",
+            "2": "40 s",
+            "3": "40 s",
+            "4": "40 s",
+            "5": "40 s",
+            "6": "40 s",
+            "7": "40 s",
+            "8": "40 s"
+          },
+          "weeklyRir": {
+            "1": "3",
+            "2": "2-3",
+            "3": "2",
+            "4": "2",
+            "5": "4",
+            "6": "3",
+            "7": "2-3",
+            "8": "2"
+          },
+          "weeklyTargetNote": {
+            "1": "Adaptación; comprobar técnica y referencia inicial. Final dinámico moderado, sin saltos ni HIIT; omitir si hay fatiga de piernas.",
+            "2": "Aumentar 1 repetición si se conserva el RIR. Final dinámico moderado, sin saltos ni HIIT; omitir si hay fatiga de piernas.",
+            "3": "Doble progresión: reps y luego peso. Final dinámico moderado, sin saltos ni HIIT; omitir si hay fatiga de piernas.",
+            "4": "Consolidación sin fallo. Final dinámico moderado, sin saltos ni HIIT; omitir si hay fatiga de piernas.",
+            "5": "Descarga: menos series, RIR 4. Final dinámico moderado, sin saltos ni HIIT; omitir si hay fatiga de piernas.",
+            "6": "Reinicio técnico: RIR 3. Final dinámico moderado, sin saltos ni HIIT; omitir si hay fatiga de piernas.",
+            "7": "Progresar repeticiones o carga moderada. Final dinámico moderado, sin saltos ni HIIT; omitir si hay fatiga de piernas.",
+            "8": "Consolidar y registrar comparación con S1. Final dinámico moderado, sin saltos ni HIIT; omitir si hay fatiga de piernas."
+          },
+          "programNote": "Final dinámico moderado, sin saltos ni HIIT; omitir si hay fatiga de piernas. Una sola ocupación de máquina; completar todas las series antes de cambiar."
+        }
+      ]
+    }
   ];
 
   const VISUALS={
@@ -129,6 +1926,20 @@
       }catch(e){}
       try{renderAll();}catch(e){}
     }
+  }
+
+  function patchHistoryByPlan(){
+    if(typeof getCurrentWeekWorkout!=='function' || getCurrentWeekWorkout.__nexusAnaNewCycleV291) return;
+    const original=getCurrentWeekWorkout;
+    const wrapped=function(routineId){
+      if(isAna() && plan?.id===PLAN_ID){
+        const week=typeof getWeek==='function'?Number(getWeek()):1;
+        return (workouts||[]).find(w=>w?.routineId===routineId && Number(w?.mesocycleWeek)===week && w?.planId===PLAN_ID && !!w?.finishedAt) || null;
+      }
+      return original(routineId);
+    };
+    wrapped.__nexusAnaNewCycleV291=true;
+    getCurrentWeekWorkout=wrapped;
   }
 
   function patchRepRanges(){
@@ -202,6 +2013,7 @@
 
   function tick(){
     patchRepRanges();
+    patchHistoryByPlan();
     patchVisuals();
     patchActivityVisual();
     ensurePilatesOption();
