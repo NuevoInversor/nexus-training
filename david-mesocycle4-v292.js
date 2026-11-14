@@ -1,9 +1,9 @@
 (() => {
-  const VERSION='v2.92';
+  const VERSION='v2.93';
   const ID='mesociclo-4-2026-11-09';
   const CARDIO_ID='cardio-mesociclo-4-2026-11-09';
   const START='2026-11-09', END='2026-12-13';
-  const REVISION='m4-definitivo-v1';
+  const REVISION='m4-especializacion-v2';
 
   const clone=x=>JSON.parse(JSON.stringify(x));
   const iso=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
@@ -43,16 +43,17 @@
         W5(4,4,4,4,2),W5('8','9','10','10','6'),W5('3','2-3','2','1','4'),W5('30','30','30','30','30'),
         {'4':'Semana 4: última serie RIR 1; no forzar fallo.'}),
       E('press-inclinado','Press inclinado con mancuernas','kg manc.',120,
-        W5(3,3,3,3,1),W5('7','8','9','9','6'),W5('3','2-3','2','1','4'),W5('22','22','22','22','20-22')),
+        W5(2,2,2,2,1),W5('7','8','9','9','6'),W5('3','2-3','2','1-2','4'),W5('22','22','22','22','20-22')),
       E('jalon-neutro','Jalón al pecho agarre neutro','kg',120,
-        W5(3,3,3,3,1),W5('10','11','12','12','8'),W5('3','2-3','2','1','4'),W5('40','40','40','40','40'),
+        W5(2,2,2,2,1),W5('10','11','12','12','8'),W5('3','2-3','2','1-2','4'),W5('40','40','40','40','40'),
         {},'Si el bíceps domina el movimiento, mantener técnica y no buscar repeticiones extra.'),
       E('elevaciones-laterales-polea','Elevaciones laterales en polea','kg',90,
-        W5(3,3,3,3,1),W5('17','18','20','20','12-15'),W5('3','2-3','2','1-2','4'),W5('2,5','2,5','2,5','2,5','2,5')),
+        W5(1,1,1,1,0),W5('17','18','20','20','—'),W5('3','2-3','2','1-2','—'),W5('2,5','2,5','2,5','2,5','—'),
+        {'5':'OMITIR en taper.'}),
       E('curl-biceps','Curl bíceps en banco inclinado','kg manc.',90,
-        W5(3,3,3,3,1),W5('10','11','12','12','8'),W5('3','2-3','2','1-2','4'),W5('12','12','12','12','12')),
+        W5(2,2,2,2,1),W5('10','11','12','12','8'),W5('3','2-3','2','1-2','4'),W5('12','12','12','12','12')),
       E('extension-triceps-polea','Extensión de tríceps en polea','kg',90,
-        W5(3,3,3,3,1),W5('9','10','11','11','8'),W5('3','2-3','2','1-2','4'),W5('22,5','22,5','22,5','22,5','22,5'))
+        W5(2,2,2,2,1),W5('9','10','11','11','8'),W5('3','2-3','2','1-2','4'),W5('22,5','22,5','22,5','22,5','22,5'))
     ]},
 
     {id:'dia-2',name:'Lower A',emphasis:'Pierna · dominante de rodilla + core · conservador para carrera/pádel',exercises:[
@@ -83,15 +84,17 @@
         W5(4,4,4,4,2),W5('6','6-7','7','7','4'),W5('3','2-3','2','1','4'),W5('6,25','6,25','6,25','6,25','6,25'),
         {'4':'Semana 4: última serie puede llegar a RIR 1; no alcanzar fallo.'}),
       E('remo-polea-baja','Remo en polea baja','kg',120,
-        W5(3,3,3,3,1),W5('9','10','11','11','6-8'),W5('3','2-3','2','1','4'),W5('40','40','40','40','40')),
+        W5(2,2,2,2,1),W5('9','10','11','11','6-8'),W5('3','2-3','2','1-2','4'),W5('40','40','40','40','40')),
       E('aperturas-maquina','Aperturas en máquina','kg',90,
-        W5(3,3,3,3,1),W5('9','10','11','11','6-8'),W5('3','2-3','2','1-2','4'),W5('22,5','22,5','22,5','22,5','22,5')),
+        W5(2,2,2,2,1),W5('9','10','11','11','6-8'),W5('3','2-3','2','1-2','4'),W5('22,5','22,5','22,5','22,5','22,5')),
       E('fondos-paralela','Fondos en paralelas','peso corporal',120,
-        W5(3,3,3,3,1),W5('10','11','12','12','6'),W5('3','2-3','2','1-2','4'),W5('Peso corporal','Peso corporal','Peso corporal','Peso corporal','Peso corporal')),
+        W5(2,2,2,2,1),W5('10','11','12','12','6'),W5('3','2-3','2','1-2','4'),W5('Peso corporal','Peso corporal','Peso corporal','Peso corporal','Peso corporal')),
       E('facepull','Face Pull','kg',90,
-        W5(3,3,3,3,1),W5('16','18','20','20','12'),W5('3','2-3','2','1-2','4'),W5('20','20','20','20','20')),
+        W5(1,1,1,1,0),W5('16','18','20','20','—'),W5('3','2-3','2','1-2','—'),W5('20','20','20','20','—'),
+        {'5':'OMITIR en taper.'}),
       E('pajaros-peck-deck','Pájaros en Peck Deck','kg',90,
-        W5(3,3,3,3,1),W5('16','17','18','18','12'),W5('3','2-3','2','1-2','4'),W5('10','10','10','10','10'))
+        W5(1,1,1,1,0),W5('16','17','18','18','—'),W5('3','2-3','2','1-2','—'),W5('10','10','10','10','—'),
+        {'5':'OMITIR en taper.'})
     ]},
 
     {id:'dia-4',name:'Lower B',emphasis:'Pierna · cadena posterior + core · conservador para carrera/pádel',exercises:[
@@ -116,6 +119,30 @@
       E('abd-wheel','Ab Wheel','peso corporal',60,
         W5(2,2,2,1,0),W5('10-12','10-12','10-12','8-10','—'),W5('técnico','técnico','técnico','técnico','—'),W5('Peso corporal','Peso corporal','Peso corporal','Peso corporal','—'),
         {'5':'OMITIR en taper.'})
+    ]},
+
+    {id:'dia-5',name:'Especialización',emphasis:'Tercer estímulo Upper · hombro, brazos, espalda y core · miércoles',exercises:[
+      E('dominadas-especializacion','Dominadas peso corporal','peso corporal',120,
+        W5(2,2,2,2,0),W5('4','5','5','5','—'),W5('3','2-3','2','1-2','—'),W5('Peso corporal','Peso corporal','Peso corporal','Peso corporal','—'),
+        {'5':'OMITIR por taper.'}),
+      E('elevaciones-laterales-especializacion','Elevaciones laterales en polea','kg',90,
+        W5(3,3,3,3,0),W5('17','18','20','20','—'),W5('3','2-3','2','1','—'),W5('2,5','2,5','2,5','2,5','—'),
+        {'5':'OMITIR por taper.'}),
+      E('pajaros-peck-deck-especializacion','Pájaros en Peck Deck','kg',90,
+        W5(2,2,2,2,0),W5('16','17','18','18','—'),W5('3','2-3','2','1-2','—'),W5('10','10','10','10','—'),
+        {'5':'OMITIR por taper.'}),
+      E('curl-biceps-polea','Curl de bíceps en polea','kg',90,
+        W5(2,2,2,2,0),W5('10','11','12','12','—'),W5('3','2-3','2','1','—'),W5('22,5','22,5','22,5','22,5','—'),
+        {'5':'OMITIR por taper.'}),
+      E('extension-triceps-overhead','Extensión de tríceps overhead','kg',90,
+        W5(2,2,2,2,0),W5('10','11','12','12','—'),W5('3','2-3','2','1','—'),W5('22,5','22,5','22,5','22,5','—'),
+        {'5':'OMITIR por taper.'}),
+      E('pallof-press-especializacion','Pallof Press','kg',60,
+        W5(1,1,1,1,0),W5('12/lado','12/lado','12/lado','12/lado','—'),W5('técnico','técnico','técnico','técnico','—'),W5('10','10','10','10','—'),
+        {'5':'OMITIR por taper.'}),
+      E('abd-wheel-especializacion','Ab Wheel','peso corporal',60,
+        W5(1,1,1,1,0),W5('8-10','10','10-12','10','—'),W5('3','2-3','2','2','—'),W5('Peso corporal','Peso corporal','Peso corporal','Peso corporal','—'),
+        {'5':'OMITIR por taper.'})
     ]}
   ];
 
@@ -131,30 +158,30 @@
     },
     exerciseRir:{},
     revision:REVISION,
-    progressionRule:'Mantener/progresar fuerza e hipertrofia mientras se prepara la media maratón del 13/12/2026. Mantener 4 sesiones de fuerza cuando no exista interferencia con pádel; 3 sesiones de carrera C1/C2/C3; pico de tirada larga de 17 km el 29/11; referencia específica central C3 ~5:15/km; taper específico en Semana 5.',
-    deloadGuidelines:'Semana 4: pico de esfuerzo Upper sin fallo + reducción progresiva de Lower. Semana 5: taper completo. No progresar Lower si interfiere con carrera o pádel.'
+    progressionRule:'Mantener/progresar fuerza e hipertrofia mientras se prepara la media maratón del 13/12/2026. Semanas 1-4: 4 sesiones base de fuerza + Especialización como tercer estímulo Upper, redistribuyendo volumen sin aumentar de forma significativa el volumen semanal total. Si hay pádel el miércoles, sustituye Especialización y no se recupera otro día. Semana 5: eliminar Especialización por taper. Mantener 3 sesiones de carrera C1/C2/C3; pico de tirada larga de 17 km el 29/11; referencia específica central C3 ~5:15/km.',
+    deloadGuidelines:'Semana 4: pico de esfuerzo Upper sin fallo + reducción progresiva de Lower. Accesorios de Upper/Especialización pueden llegar a RIR 1 sin fallo muscular. Semana 5: taper completo y Especialización eliminada. No progresar Lower si interfiere con carrera o pádel.'
   };
   MASTER.forEach(r=>r.exercises.forEach(e=>{PLAN.exerciseRir[e.key]=clone(e.weeklyRir);}));
 
   const SCHEDULE={
     '1':[
-      ['Lun 09/11','Upper A + C2'],['Mar 10/11','Lower A'],['Mié 11/11','Descanso / pádel si corresponde'],['Jue 12/11','Lower B'],
+      ['Lun 09/11','Upper A + C2'],['Mar 10/11','Lower A'],['Mié 11/11','Especialización · si hay pádel, el pádel la sustituye'],['Jue 12/11','Lower B'],
       ['Vie 13/11','C1 + Upper B'],['Sáb 14/11','Descanso'],['Dom 15/11','C3 · 12 km']
     ],
     '2':[
-      ['Lun 16/11','Upper A + C2'],['Mar 17/11','Lower A'],['Mié 18/11','Descanso / pádel si corresponde'],['Jue 19/11','Lower B'],
+      ['Lun 16/11','Upper A + C2'],['Mar 17/11','Lower A'],['Mié 18/11','Especialización · si hay pádel, el pádel la sustituye'],['Jue 19/11','Lower B'],
       ['Vie 20/11','C1 + Upper B'],['Sáb 21/11','Descanso'],['Dom 22/11','C3 · 14 km']
     ],
     '3':[
-      ['Lun 23/11','Upper A + C2'],['Mar 24/11','Lower A'],['Mié 25/11','Descanso / pádel si corresponde'],['Jue 26/11','Lower B'],
+      ['Lun 23/11','Upper A + C2'],['Mar 24/11','Lower A'],['Mié 25/11','Especialización · si hay pádel, el pádel la sustituye'],['Jue 26/11','Lower B'],
       ['Vie 27/11','C1 + Upper B'],['Sáb 28/11','Descanso'],['Dom 29/11','C3 · 17 km · tirada pico']
     ],
     '4':[
-      ['Lun 30/11','Upper A + C2'],['Mar 01/12','Lower A reducido'],['Mié 02/12','Descanso / pádel si corresponde'],['Jue 03/12','Lower B reducido'],
+      ['Lun 30/11','Upper A + C2'],['Mar 01/12','Lower A reducido'],['Mié 02/12','Especialización · si hay pádel, el pádel la sustituye'],['Jue 03/12','Lower B reducido'],
       ['Vie 04/12','C1 + Upper B'],['Sáb 05/12','Descanso'],['Dom 06/12','C3 · 10-12 km']
     ],
     '5':[
-      ['Lun 07/12','Upper A taper + C2'],['Mar 08/12','Lower A taper'],['Mié 09/12','Descanso'],['Jue 10/12','Lower B omitido'],
+      ['Lun 07/12','Upper A taper + C2'],['Mar 08/12','Lower A taper'],['Mié 09/12','Descanso · Especialización eliminada por taper'],['Jue 10/12','Lower B omitido'],
       ['Vie 11/12','C1 activación + Upper B taper'],['Sáb 12/12','Descanso total'],['Dom 13/12','C3 · MEDIA MARATÓN 21,1 km']
     ]
   };
@@ -190,6 +217,7 @@
 
   const PADEL_RULES=[
     'Ubicación preferente: miércoles.',
+    'Si hay pádel el miércoles, sustituye Especialización; no recuperar Especialización otro día.',
     'Si el pádel cae a menos de 48 h del C1: eliminar C1 esa semana.',
     'Si cae a 72 h o más del C1 y las piernas están normales: mantener C1 reduciendo ~25-30% el volumen.',
     'Evitar pádel viernes o sábado antes de la tirada larga.',
@@ -479,9 +507,9 @@
     c.innerHTML=`
       <div class="eyebrow" style="color:#2563eb">${active?`Mesociclo 4 · Semana ${week} activa`:'Próximo bloque · cargado'}</div>
       <h3 style="margin:5px 0 7px">Mesociclo 4 · Media maratón</h3>
-      <div class="muted small">09 nov – 13 dic · fuerza + C1/C2/C3 · media maratón 13/12</div>
+      <div class="muted small">09 nov – 13 dic · 4 días base + Especialización S1-S4 · C1/C2/C3 · media maratón 13/12</div>
       <div class="small" style="margin-top:9px"><strong>Objetivo:</strong> mantener/progresar fuerza e hipertrofia mientras se prepara la media maratón.</div>
-      <div class="small" style="margin-top:8px"><strong>${active?'Semana actual':'Semana 1'}:</strong> ${weekLabel}. Tirada prioritaria: ${week===3?'17 km el 29/11':week===5?'media maratón 21,1 km':'domingo C3'}.</div>
+      <div class="small" style="margin-top:8px"><strong>${active?'Semana actual':'Semana 1'}:</strong> ${weekLabel}. ${week<5?'Especialización miércoles; si hay pádel, se sustituye y no se recupera.':'Especialización eliminada por taper.'} Tirada prioritaria: ${week===3?'17 km el 29/11':week===5?'media maratón 21,1 km':'domingo C3'}.</div>
       <div class="small" style="margin-top:10px">${schedule.map(([d,x])=>`<div style="margin-top:4px"><strong>${esc2(d)}:</strong> ${esc2(x)}</div>`).join('')}</div>
       <details style="margin-top:12px"><summary class="small" style="font-weight:900;cursor:pointer">Reglas de pádel</summary>
         <div class="small muted" style="margin-top:7px">${PADEL_RULES.map(x=>`<div style="margin-top:4px">• ${esc2(x)}</div>`).join('')}</div>
