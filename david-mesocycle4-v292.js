@@ -245,6 +245,10 @@
           e.sets=Number(e.weeklySets[w]||0);
           e.reps=String(e.weeklyReps[w]??'');
           e.targetReps=e.reps;
+          if(w==='1'&&e.key==='dominadas'){
+            e.name='Dominadas peso corporal';
+            e.unit='peso corporal';
+          }
           return e;
         });
       return x;
