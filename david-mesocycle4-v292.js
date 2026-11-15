@@ -1,9 +1,9 @@
 (() => {
-  const VERSION='v2.93';
+  const VERSION='v2.94';
   const ID='mesociclo-4-2026-11-09';
   const CARDIO_ID='cardio-mesociclo-4-2026-11-09';
   const START='2026-11-09', END='2026-12-13';
-  const REVISION='m4-especializacion-v2';
+  const REVISION='m4-especializacion-diferenciada-v3';
 
   const clone=x=>JSON.parse(JSON.stringify(x));
   const iso=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
@@ -48,8 +48,8 @@
         W5(2,2,2,2,1),W5('10','11','12','12','8'),W5('3','2-3','2','1-2','4'),W5('40','40','40','40','40'),
         {},'Si el bíceps domina el movimiento, mantener técnica y no buscar repeticiones extra.'),
       E('elevaciones-laterales-polea','Elevaciones laterales en polea','kg',90,
-        W5(1,1,1,1,0),W5('17','18','20','20','—'),W5('3','2-3','2','1-2','—'),W5('2,5','2,5','2,5','2,5','—'),
-        {'5':'OMITIR en taper.'}),
+        W5(1,0,0,0,0),W5('17','—','—','—','—'),W5('3','—','—','—','—'),W5('2,5','—','—','—','—'),
+        {'2':'Movido a Especialización desde Semana 2.','3':'Movido a Especialización.','4':'Movido a Especialización.','5':'OMITIR en taper.'}),
       E('curl-biceps','Curl bíceps en banco inclinado','kg manc.',90,
         W5(2,2,2,2,1),W5('10','11','12','12','8'),W5('3','2-3','2','1-2','4'),W5('12','12','12','12','12')),
       E('extension-triceps-polea','Extensión de tríceps en polea','kg',90,
@@ -76,25 +76,24 @@
         W5(2,2,2,1,1),W5('12-15/lado','12-15/lado','12-15/lado','12/lado','10/lado'),W5('técnico','técnico','técnico','técnico','técnico'),W5('10','10','10','10','10'))
     ]},
 
-    {id:'dia-3',name:'Upper B',emphasis:'Torso · vertical + espalda · 50-60 min',exercises:[
-      E('dominadas','Dominadas peso corporal','peso corporal',120,
-        W5(4,4,4,4,2),W5('4','5','5','5','3'),W5('3','2-3','2','1','4'),W5('Peso corporal','Peso corporal','Peso corporal','Peso corporal','Peso corporal'),
-        {'4':'Semana 4: no forzar repeticiones si la técnica se degrada.'}),
+    {id:'dia-3',name:'Upper B',emphasis:'Espalda, hombro y pecho · dominadas asistidas a mayor rango de repeticiones · 50-60 min',exercises:[
+      E('dominadas','Dominadas asistidas','kg ayuda',120,
+        W5(4,4,4,4,2),W5('4','8-10','9-10','10','6-8'),W5('3','2-3','2','1-2','4'),W5('Peso corporal','Asistencia necesaria','Asistencia necesaria','Asistencia necesaria','Asistencia necesaria'),
+        {'2':'Usar la asistencia necesaria para mantener técnica limpia y que todas las series queden dentro de 8-10 repeticiones.','3':'Usar la asistencia necesaria para mantener técnica limpia y que todas las series queden dentro de 9-10 repeticiones.','4':'Usar la asistencia necesaria para mantener técnica limpia. No alcanzar fallo.','5':'Taper: asistencia suficiente para mantener RIR 4.'}),
       E('press-militar','Press militar','kg/lado + barra',120,
         W5(4,4,4,4,2),W5('6','6-7','7','7','4'),W5('3','2-3','2','1','4'),W5('6,25','6,25','6,25','6,25','6,25'),
         {'4':'Semana 4: última serie puede llegar a RIR 1; no alcanzar fallo.'}),
       E('remo-polea-baja','Remo en polea baja','kg',120,
-        W5(2,2,2,2,1),W5('9','10','11','11','6-8'),W5('3','2-3','2','1-2','4'),W5('40','40','40','40','40')),
+        W5(2,3,3,3,1),W5('9','10','11','11','6-8'),W5('3','2-3','2','1-2','4'),W5('40','40','40','40','40')),
       E('aperturas-maquina','Aperturas en máquina','kg',90,
-        W5(2,2,2,2,1),W5('9','10','11','11','6-8'),W5('3','2-3','2','1-2','4'),W5('22,5','22,5','22,5','22,5','22,5')),
+        W5(2,3,3,3,1),W5('9','10','11','11','6-8'),W5('3','2-3','2','1-2','4'),W5('22,5','22,5','22,5','22,5','22,5')),
       E('fondos-paralela','Fondos en paralelas','peso corporal',120,
-        W5(2,2,2,2,1),W5('10','11','12','12','6'),W5('3','2-3','2','1-2','4'),W5('Peso corporal','Peso corporal','Peso corporal','Peso corporal','Peso corporal')),
+        W5(2,3,3,3,1),W5('10','11','12','12','6'),W5('3','2-3','2','1-2','4'),W5('Peso corporal','Peso corporal','Peso corporal','Peso corporal','Peso corporal')),
       E('facepull','Face Pull','kg',90,
-        W5(1,1,1,1,0),W5('16','18','20','20','—'),W5('3','2-3','2','1-2','—'),W5('20','20','20','20','—'),
-        {'5':'OMITIR en taper.'}),
+        W5(1,2,2,2,1),W5('16','18','20','20','12'),W5('3','2-3','2','1-2','4'),W5('20','20','20','20','20')),
       E('pajaros-peck-deck','Pájaros en Peck Deck','kg',90,
-        W5(1,1,1,1,0),W5('16','17','18','18','—'),W5('3','2-3','2','1-2','—'),W5('10','10','10','10','—'),
-        {'5':'OMITIR en taper.'})
+        W5(1,0,0,0,0),W5('16','—','—','—','—'),W5('3','—','—','—','—'),W5('10','—','—','—','—'),
+        {'2':'Eliminado de Upper B desde Semana 2; trabajo concentrado en Especialización.','3':'Eliminado de Upper B.','4':'Eliminado de Upper B.','5':'OMITIR.'})
     ]},
 
     {id:'dia-4',name:'Lower B',emphasis:'Pierna · cadena posterior + core · conservador para carrera/pádel',exercises:[
@@ -121,7 +120,7 @@
         {'5':'OMITIR en taper.'})
     ]},
 
-    {id:'dia-5',name:'Especialización',emphasis:'Tercer estímulo Upper · hombro, brazos, espalda y core · miércoles',exercises:[
+    {id:'dia-5',name:'Especialización',emphasis:'Dominadas libres · deltoides posterior/lateral · brazos + core · miércoles',exercises:[
       E('dominadas-especializacion','Dominadas peso corporal','peso corporal',120,
         W5(2,2,2,2,0),W5('4','5','5','5','—'),W5('3','2-3','2','1-2','—'),W5('Peso corporal','Peso corporal','Peso corporal','Peso corporal','—'),
         {'5':'OMITIR por taper.'}),
@@ -129,7 +128,7 @@
         W5(3,3,3,3,0),W5('17','18','20','20','—'),W5('3','2-3','2','1','—'),W5('2,5','2,5','2,5','2,5','—'),
         {'5':'OMITIR por taper.'}),
       E('pajaros-peck-deck-especializacion','Pájaros en Peck Deck','kg',90,
-        W5(2,2,2,2,0),W5('16','17','18','18','—'),W5('3','2-3','2','1-2','—'),W5('10','10','10','10','—'),
+        W5(2,3,3,3,0),W5('16','17','18','18','—'),W5('3','2-3','2','1-2','—'),W5('10','10','10','10','—'),
         {'5':'OMITIR por taper.'}),
       E('curl-biceps-polea','Curl de bíceps en polea','kg',90,
         W5(2,2,2,2,0),W5('10','11','12','12','—'),W5('3','2-3','2','1','—'),W5('22,5','22,5','22,5','22,5','—'),
@@ -140,9 +139,9 @@
       E('pallof-press-especializacion','Pallof Press','kg',60,
         W5(1,1,1,1,0),W5('12/lado','12/lado','12/lado','12/lado','—'),W5('técnico','técnico','técnico','técnico','—'),W5('10','10','10','10','—'),
         {'5':'OMITIR por taper.'}),
-      E('abd-wheel-especializacion','Ab Wheel','peso corporal',60,
-        W5(1,1,1,1,0),W5('8-10','10','10-12','10','—'),W5('3','2-3','2','2','—'),W5('Peso corporal','Peso corporal','Peso corporal','Peso corporal','—'),
-        {'5':'OMITIR por taper.'})
+      E('abd-wheel-especializacion','Ab Wheel','peso corporal',75,
+        W5(1,3,3,3,0),W5('8-10','10','10-12','10-12','—'),W5('3','2-3','2','1-2','—'),W5('Peso corporal','Peso corporal','Peso corporal','Peso corporal','—'),
+        {'2':'Descanso 60-90 s.','3':'Descanso 60-90 s.','4':'Descanso 60-90 s; no alcanzar fallo.','5':'OMITIR por taper.'})
     ]}
   ];
 
@@ -158,7 +157,7 @@
     },
     exerciseRir:{},
     revision:REVISION,
-    progressionRule:'Mantener/progresar fuerza e hipertrofia mientras se prepara la media maratón del 13/12/2026. Semanas 1-4: 4 sesiones base de fuerza + Especialización como tercer estímulo Upper, redistribuyendo volumen sin aumentar de forma significativa el volumen semanal total. Si hay pádel el miércoles, sustituye Especialización y no se recupera otro día. Semana 5: eliminar Especialización por taper. Mantener 3 sesiones de carrera C1/C2/C3; pico de tirada larga de 17 km el 29/11; referencia específica central C3 ~5:15/km.',
+    progressionRule:'Desde Semana 2, diferenciar Especialización respecto a Upper B: Especialización concentra dominadas libres, deltoides lateral/posterior, brazos y core; Upper B utiliza dominadas asistidas a mayor rango de repeticiones y trabajo de espalda, hombro y pecho. Pájaros Peck Deck no se duplica en Upper B. Si hay pádel el miércoles, sustituye Especialización y no se recupera otro día. Semana 5: eliminar Especialización por taper. Mantener el bloque de carrera C1/C2/C3 sin cambios.',
     deloadGuidelines:'Semana 4: pico de esfuerzo Upper sin fallo + reducción progresiva de Lower. Accesorios de Upper/Especialización pueden llegar a RIR 1 sin fallo muscular. Semana 5: taper completo y Especialización eliminada. No progresar Lower si interfiere con carrera o pádel.'
   };
   MASTER.forEach(r=>r.exercises.forEach(e=>{PLAN.exerciseRir[e.key]=clone(e.weeklyRir);}));
@@ -509,7 +508,7 @@
       <h3 style="margin:5px 0 7px">Mesociclo 4 · Media maratón</h3>
       <div class="muted small">09 nov – 13 dic · 4 días base + Especialización S1-S4 · C1/C2/C3 · media maratón 13/12</div>
       <div class="small" style="margin-top:9px"><strong>Objetivo:</strong> mantener/progresar fuerza e hipertrofia mientras se prepara la media maratón.</div>
-      <div class="small" style="margin-top:8px"><strong>${active?'Semana actual':'Semana 1'}:</strong> ${weekLabel}. ${week<5?'Especialización miércoles; si hay pádel, se sustituye y no se recupera.':'Especialización eliminada por taper.'} Tirada prioritaria: ${week===3?'17 km el 29/11':week===5?'media maratón 21,1 km':'domingo C3'}.</div>
+      <div class="small" style="margin-top:8px"><strong>${active?'Semana actual':'Semana 1'}:</strong> ${weekLabel}. ${week<5?'Especialización: dominadas libres + deltoides + brazos + core; Upper B: dominadas asistidas. Si hay pádel, Especialización se sustituye y no se recupera.':'Especialización eliminada por taper.'} Tirada prioritaria: ${week===3?'17 km el 29/11':week===5?'media maratón 21,1 km':'domingo C3'}.</div>
       <div class="small" style="margin-top:10px">${schedule.map(([d,x])=>`<div style="margin-top:4px"><strong>${esc2(d)}:</strong> ${esc2(x)}</div>`).join('')}</div>
       <details style="margin-top:12px"><summary class="small" style="font-weight:900;cursor:pointer">Reglas de pádel</summary>
         <div class="small muted" style="margin-top:7px">${PADEL_RULES.map(x=>`<div style="margin-top:4px">• ${esc2(x)}</div>`).join('')}</div>
