@@ -949,6 +949,75 @@ function renderHome(){
   document.getElementById('lastWorkoutHome').innerHTML=last?`<strong>${esc(last.routineName)}</strong><br><span class="small">${formatDate(last.finishedAt)} · Semana ${last.mesocycleWeek} · Fatiga ${last.fatigue??'—'}/10 · Sensaciones ${last.sensations??'—'}/10</span>`:'Sin sesiones.';
 }
 
+function numericTrainingValue(v){
+  if(v===null||v===undefined)return null;
+  const m=String(v).replace(',','.').match(/-?\d+(?:\.\d+)?/);
+  return m?Number(m[0]):null;
+}
+function lastSessionExercise(routineId,key){
+  try{
+    const list=(workouts||[])
+      .filter(w=>w?.id!==activeWorkout?.id&&w?.routineId===routineId&&w?.finishedAt&&w?.exercises?.some(e=>e.key===key))
+      .slice()
+      .sort((a,b)=>new Date(b.finishedAt||b.startedAt||0)-new Date(a.finishedAt||a.startedAt||0));
+    const workout=list[0];
+    if(!workout)return null;
+    const exercise=workout.exercises.find(e=>e.key===key);
+    return exercise?{workout,exercise}:null;
+  }catch(_){return null;}
+}
+function bestSetFromLastSession(routineId,key,currentExercise){
+  const last=lastSessionExercise(routineId,key);
+  if(!last)return null;
+  const unit=String(currentExercise?.unit||last.exercise?.unit||'').toLowerCase();
+  const assisted=unit.includes('ayuda')||String(currentExercise?.name||'').toLowerCase().includes('asistid');
+  const bodyweight=unit==='peso corporal';
+  const valid=(last.exercise.sets||[]).filter(set=>{
+    const reps=numericTrainingValue(set?.reps);
+    if(reps===null)return false;
+    if(bodyweight)return true;
+    return numericTrainingValue(set?.weight)!==null;
+  });
+  if(!valid.length)return null;
+  const sorted=valid.slice().sort((a,b)=>{
+    const aw=bodyweight?0:numericTrainingValue(a.weight);
+    const bw=bodyweight?0:numericTrainingValue(b.weight);
+    if(aw!==bw){
+      if(aw===null)return 1;
+      if(bw===null)return -1;
+      return assisted ? aw-bw : bw-aw;
+    }
+    const ar=numericTrainingValue(a.reps)??-Infinity;
+    const br=numericTrainingValue(b.reps)??-Infinity;
+    if(ar!==br)return br-ar;
+    const ai=numericTrainingValue(a.rir)??-Infinity;
+    const bi=numericTrainingValue(b.rir)??-Infinity;
+    return bi-ai;
+  });
+  return {set:sorted[0],workout:last.workout,exercise:last.exercise,assisted,bodyweight};
+}
+function bestSetSummaryHtml(routineId,key,currentExercise){
+  const best=bestSetFromLastSession(routineId,key,currentExercise);
+  if(!best)return '<div class="previous-inline"><div class="previous-inline-label">Mejor serie · última sesión</div><div class="small muted">Sin registro anterior comparable.</div></div>';
+  const set=best.set;
+  let load='—';
+  if(best.bodyweight)load='Peso corporal';
+  else if(set?.weight!==undefined&&String(set.weight).trim()!=='')load=weightDisplay(set.weight,currentExercise?.unit||best.exercise?.unit||'');
+  const reps=set?.reps?String(set.reps)+' reps':'—';
+  const rir=set?.rir!==undefined&&String(set.rir).trim()!==''?'RIR '+String(set.rir):'RIR —';
+  const date=best.workout?.finishedAt||best.workout?.startedAt;
+  const dateText=date?formatDate(date):'';
+  const assistNote=best.assisted?'<div class="small muted" style="margin-top:5px">En dominadas asistidas, menos kg de asistencia = mayor carga efectiva.</div>':'';
+  return '<div class="previous-inline" style="margin-bottom:14px">'+
+    '<div class="previous-inline-label">Mejor serie · última sesión'+(dateText?' · '+esc(dateText):'')+'</div>'+
+    '<div class="previous-inline-grid">'+
+      '<div class="previous-mini"><strong>'+esc(load)+'</strong></div>'+
+      '<div class="previous-mini"><strong>'+esc(reps)+'</strong></div>'+
+      '<div class="previous-mini"><strong>'+esc(rir)+'</strong></div>'+
+    '</div>'+assistNote+
+  '</div>';
+}
+
 function startWorkout(routineId){
   const completedThisWeek=getCurrentWeekWorkout(routineId);
   if(completedThisWeek && completedThisWeek.isComplete!==false){
@@ -995,8 +1064,7 @@ function renderWorkout(){
     return;
   }
 
-  const idx=Number(activeWorkout.currentExercise),e=activeWorkout.exercises[idx],week=activeWorkout.mesocycleWeek,targetRir=getTargetRir(e.key,week),prev=previousWeekExercise(activeWorkout.routineId,e.key,week);
-  const prevMap=prev?Object.fromEntries(prev.sets.map(s=>[Number(s.number),s])):{};
+  const idx=Number(activeWorkout.currentExercise),e=activeWorkout.exercises[idx],week=activeWorkout.mesocycleWeek,targetRir=getTargetRir(e.key,week);
   syncRecordedSets(e);
   const done=recordedSetCount(e);
   const firstRecorded=isSetRecorded(e.sets[0],e);
@@ -1006,9 +1074,9 @@ function renderWorkout(){
     <div class="target">Objetivo: ${e.sets.length} x ${esc(getTargetRepRange(e.key,week,e.targetReps))} · RIR ${esc(targetRir)} · Carga ${esc(targetWeightDisplay(e,week))} · Descanso ${formatTime(e.rest)}</div>
     ${getTargetNote(e,week)?`<div class="target-note">Ajuste Nexus: ${esc(getTargetNote(e,week))}</div>`:''}
     <div class="progress"><div style="width:${Math.round(done/e.sets.length*100)}%"></div></div>
+    ${bestSetSummaryHtml(activeWorkout.routineId,e.key,e)}
     <div style="margin-bottom:16px"><label>Notas del mesociclo</label><textarea id="exerciseNote" placeholder="Técnica, colocación, ajustes de máquina, molestias, recordatorios...">${esc(getNote(e.key))}</textarea></div>
     <div>${e.sets.map((s,i)=>{
-      const p=prevMap[i+1];
       const recorded=isSetRecorded(s,e);
       const restDisplay=s.restActual!=null?formatTime(s.restActual):formatTime(e.rest);
       return `<div class="set-block ${recorded?'set-completed':''}">
@@ -1020,15 +1088,6 @@ function renderWorkout(){
           <div><label>Reps</label><input data-field="reps" data-set="${i}" value="${esc(s.reps)}"></div>
           <div><label>RIR</label><input data-field="rir" data-set="${i}" value="${esc(s.rir)}"></div>
           <div><label>Descanso</label><input data-field="restActual" data-set="${i}" inputmode="numeric" value="${esc(restDisplay)}" placeholder="mm:ss"></div>
-        </div>
-        <div class="previous-inline">
-          <div class="previous-inline-label">Semana pasada</div>
-          <div class="previous-inline-grid">
-            <div class="previous-mini">${p?esc(weightDisplay(p.weight,e.unit)):'—'}</div>
-            <div class="previous-mini">${p?esc(p.reps)+' reps':'—'}</div>
-            <div class="previous-mini">RIR ${p&&p.rir?esc(p.rir):'—'}</div>
-            <div class="previous-mini">${p&&p.restActual!=null?formatTime(p.restActual):'—'}</div>
-          </div>
         </div>
         
       </div>`;
