@@ -1,9 +1,9 @@
 (() => {
-  const VERSION='v2.94';
+  const VERSION='v2.95';
   const ID='mesociclo-4-2026-11-09';
   const CARDIO_ID='cardio-mesociclo-4-2026-11-09';
   const START='2026-11-09', END='2026-12-13';
-  const REVISION='m4-especializacion-diferenciada-v3';
+  const REVISION='m4-semana3-ajustada-v4';
 
   const clone=x=>JSON.parse(JSON.stringify(x));
   const iso=()=>{const d=new Date();return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;};
@@ -38,14 +38,15 @@
     {id:'dia-1',name:'Upper A',emphasis:'Torso · fuerza/hipertrofia · 50-60 min',exercises:[
       E('press-banca','Press banca con barra','kg/lado',120,
         W5(4,4,4,4,2),W5('6','7','8','8','5'),W5('3','2-3','2','1','4'),W5('16,25','16,25','16,25','16,25','16,25'),
-        {'4':'Semana 4: primeras series RIR 2-1; última serie RIR 1. No alcanzar fallo muscular.'}),
+        {'3':'Si 4x8 obliga a bajar de RIR 2, mantener 4x7.','4':'Semana 4: primeras series RIR 2-1; última serie RIR 1. No alcanzar fallo muscular.'}),
       E('remo-maquina','Remo pecho apoyado / máquina','kg/lado',120,
         W5(4,4,4,4,2),W5('8','9','10','10','6'),W5('3','2-3','2','1','4'),W5('30','30','30','30','30'),
         {'4':'Semana 4: última serie RIR 1; no forzar fallo.'}),
       E('press-inclinado','Press inclinado con mancuernas','kg manc.',120,
-        W5(2,2,2,2,1),W5('7','8','9','9','6'),W5('3','2-3','2','1-2','4'),W5('22','22','22','22','20-22')),
+        W5(2,2,3,2,1),W5('7','8','8-9','9','6'),W5('3','2-3','2','1-2','4'),W5('22','22','22','22','20-22'),
+        {'3':'Priorizar 3x8 limpios; no forzar 9 si vuelve a resultar muy exigente.'}),
       E('jalon-neutro','Jalón al pecho agarre neutro','kg',120,
-        W5(2,2,2,2,1),W5('10','11','12','12','8'),W5('3','2-3','2','1-2','4'),W5('40','40','40','40','40'),
+        W5(2,2,3,2,1),W5('10','11','12','12','8'),W5('3','2-3','2','1-2','4'),W5('40','40','40','40','40'),
         {},'Si el bíceps domina el movimiento, mantener técnica y no buscar repeticiones extra.'),
       E('elevaciones-laterales-polea','Elevaciones laterales en polea','kg',90,
         W5(1,0,0,0,0),W5('17','—','—','—','—'),W5('3','—','—','—','—'),W5('2,5','—','—','—','—'),
@@ -53,35 +54,35 @@
       E('curl-biceps','Curl bíceps en banco inclinado','kg manc.',90,
         W5(2,2,2,2,1),W5('10','11','12','12','8'),W5('3','2-3','2','1-2','4'),W5('12','12','12','12','12')),
       E('extension-triceps-polea','Extensión de tríceps en polea','kg',90,
-        W5(2,2,2,2,1),W5('9','10','11','11','8'),W5('3','2-3','2','1-2','4'),W5('22,5','22,5','22,5','22,5','22,5'))
+        W5(2,2,2,2,1),W5('9','10','12-13','11','8'),W5('3','2-3','2','1-2','4'),W5('22,5','22,5','22,5','22,5','22,5'))
     ]},
 
     {id:'dia-2',name:'Lower A',emphasis:'Pierna · dominante de rodilla + core · conservador para carrera/pádel',exercises:[
       E('sentadilla-trasera','Sentadilla trasera','kg/lado',120,
-        W5(3,3,3,2,2),W5('6','7','8','6','5'),W5('3','2-3','2','3','4'),W5('22,5','22,5','22,5','22,5','22,5')),
+        W5(3,3,2,2,2),W5('6','7','6','6','5'),W5('3','2-3','3-4','3','4'),W5('22,5','22,5','25','22,5','22,5')),
       E('prensa-inclinada','Prensa inclinada','kg/lado',120,
-        W5(3,3,3,2,1),W5('8','9','10','8','8'),W5('3','2-3','2','3','4'),W5('30','30','30','30','25-30')),
+        W5(3,3,2,2,1),W5('8','9','8','8','8'),W5('3','2-3','3-4','3','4'),W5('30','30','30','30','25-30')),
       E('extension-cuadriceps','Extensión de cuádriceps','kg',90,
-        W5(3,3,3,2,0),W5('12','13','14-15','12','—'),W5('3','2-3','2','3','—'),W5('25','25','25','25','—'),
+        W5(3,3,2,2,0),W5('12','13','12','12','—'),W5('3','2-3','3-4','3','—'),W5('25','25','25','25','—'),
         {'4':'Semana 4: objetivo 1-2 series; la segunda serie es opcional dentro del rango pautado.','5':'OMITIR en taper.'}),
       E('curl-femoral-tumbado','Curl femoral tumbado','kg',90,
-        W5(3,3,3,2,0),W5('8','9','10','8','—'),W5('3','2-3','2','3','—'),W5('20','20','20','20','—'),
-        {'4':'Semana 4: objetivo 1-2 series; la segunda serie es opcional dentro del rango pautado.','5':'OMITIR en taper.'}),
+        W5(3,3,2,2,0),W5('8','9','8','8','—'),W5('3','2-3','4','3','—'),W5('20','20','20','20','—'),
+        {'3':'1-2 series: priorizar 1 serie si persiste carga en femorales; la segunda es opcional.','4':'Semana 4: objetivo 1-2 series; la segunda serie es opcional dentro del rango pautado.','5':'OMITIR en taper.'}),
       E('gemelos-sentado','Gemelos sentado','kg',90,
-        W5(3,3,3,2,0),W5('12','13','15','12','—'),W5('3','2-3','2','3','—'),W5('37,5','37,5','37,5','37,5','—'),
-        {'4':'Semana 4: objetivo 1-2 series; la segunda serie es opcional dentro del rango pautado.','5':'OMITIR en taper.'}),
+        W5(3,3,0,2,0),W5('12','13','—','12','—'),W5('3','2-3','—','3','—'),W5('37,5','37,5','—','37,5','—'),
+        {'3':'OMITIR por molestias recientes de gemelos.','4':'Semana 4: objetivo 1-2 series; la segunda serie es opcional dentro del rango pautado.','5':'OMITIR en taper.'}),
       E('plancha','Plancha abdominal','',60,
-        W5(2,2,2,1,1),W5('45-60 s','45-60 s','45-60 s','45 s','30-45 s'),W5('técnico','técnico','técnico','técnico','técnico'),W5('Sin carga','Sin carga','Sin carga','Sin carga','Sin carga')),
+        W5(2,2,1,1,1),W5('45-60 s','45-60 s','45 s','45 s','30-45 s'),W5('técnico','técnico','técnico','técnico','técnico'),W5('Sin carga','Sin carga','Sin carga','Sin carga','Sin carga')),
       E('pallof-press','Pallof Press','kg',60,
-        W5(2,2,2,1,1),W5('12-15/lado','12-15/lado','12-15/lado','12/lado','10/lado'),W5('técnico','técnico','técnico','técnico','técnico'),W5('10','10','10','10','10'))
+        W5(2,2,1,1,1),W5('12-15/lado','12-15/lado','12/lado','12/lado','10/lado'),W5('técnico','técnico','técnico','técnico','técnico'),W5('10','10','10','10','10'))
     ]},
 
     {id:'dia-3',name:'Upper B',emphasis:'Espalda, hombro y pecho · dominadas asistidas a mayor rango de repeticiones · 50-60 min',exercises:[
       E('dominadas','Dominadas asistidas','kg ayuda',120,
-        W5(4,4,4,4,2),W5('4','8-10','9-10','10','6-8'),W5('3','2-3','2','1-2','4'),W5('Peso corporal','Asistencia necesaria','Asistencia necesaria','Asistencia necesaria','Asistencia necesaria'),
-        {'2':'Usar la asistencia necesaria para mantener técnica limpia y que todas las series queden dentro de 8-10 repeticiones.','3':'Usar la asistencia necesaria para mantener técnica limpia y que todas las series queden dentro de 9-10 repeticiones.','4':'Usar la asistencia necesaria para mantener técnica limpia. No alcanzar fallo.','5':'Taper: asistencia suficiente para mantener RIR 4.'}),
+        W5(4,4,4,4,2),W5('4','8-10','8-9','10','6-8'),W5('3','2-3','2','1-2','4'),W5('Peso corporal','Asistencia necesaria','14','Asistencia necesaria','Asistencia necesaria'),
+        {'2':'Usar la asistencia necesaria para mantener técnica limpia y que todas las series queden dentro de 8-10 repeticiones.','3':'14 kg de asistencia como referencia. Ajustar asistencia para completar 4x8-9 con técnica limpia y RIR 2; más asistencia = menor carga efectiva.','4':'Usar la asistencia necesaria para mantener técnica limpia. No alcanzar fallo.','5':'Taper: asistencia suficiente para mantener RIR 4.'}),
       E('press-militar','Press militar','kg/lado + barra',120,
-        W5(4,4,4,4,2),W5('6','6-7','7','7','4'),W5('3','2-3','2','1','4'),W5('6,25','6,25','6,25','6,25','6,25'),
+        W5(4,4,4,4,2),W5('6','6-7','6-7','7','4'),W5('3','2-3','2','1','4'),W5('6,25','6,25','6,25','6,25','6,25'),
         {'4':'Semana 4: última serie puede llegar a RIR 1; no alcanzar fallo.'}),
       E('remo-polea-baja','Remo en polea baja','kg',120,
         W5(2,3,3,3,1),W5('9','10','11','11','6-8'),W5('3','2-3','2','1-2','4'),W5('40','40','40','40','40')),
@@ -98,25 +99,25 @@
 
     {id:'dia-4',name:'Lower B',emphasis:'Pierna · cadena posterior + core · conservador para carrera/pádel',exercises:[
       E('peso-muerto-rumano-dia4','Peso muerto rumano','kg/lado',120,
-        W5(3,3,3,2,0),W5('7','7-8','8','6','—'),W5('3','2-3','2','3','—'),W5('16,25','16,25','16,25','16,25','—'),
+        W5(3,3,0,2,0),W5('7','7-8','—','6','—'),W5('3','2-3','2','3','—'),W5('16,25','16,25','16,25','16,25','—'),
         {'5':'OMITIR en taper.'}),
       E('sentadilla-bulgara','Sentadilla búlgara','kg/lado',120,
-        W5(2,3,3,2,0),W5('8','10','11','8','—'),W5('3','2-3','2','3','—'),W5('7,5','7,5','7,5','7,5','—'),
+        W5(2,3,0,2,0),W5('8','10','—','8','—'),W5('3','2-3','2','3','—'),W5('7,5','7,5','7,5','7,5','—'),
         {'4':'Semana 4: objetivo 1-2 series; la segunda serie es opcional dentro del rango pautado.','5':'OMITIR en taper.'}),
       E('hip-thrust','Hip Thrust','kg',120,
-        W5(3,3,3,2,0),W5('8','9','10','8','—'),W5('3','2-3','2','3','—'),W5('25','25','25','25','—'),
+        W5(3,3,0,2,0),W5('8','9','—','8','—'),W5('3','2-3','2','3','—'),W5('25','25','25','25','—'),
         {'4':'Semana 4: objetivo 1-2 series; la segunda serie es opcional dentro del rango pautado.','5':'OMITIR en taper.'}),
       E('curl-femoral-sentado','Curl femoral sentado','kg',90,
-        W5(3,3,3,2,0),W5('10','11','12','10','—'),W5('3','2-3','2','3','—'),W5('32,5','32,5','32,5','32,5','—'),
+        W5(3,3,0,2,0),W5('10','11','—','10','—'),W5('3','2-3','2','3','—'),W5('32,5','32,5','32,5','32,5','—'),
         {'4':'Semana 4: objetivo 1-2 series; la segunda serie es opcional dentro del rango pautado.','5':'OMITIR en taper.'}),
       E('gemelos-prensa','Gemelos en prensa / de pie','kg/lado',90,
-        W5(2,2,2,2,0),W5('12','13','15','12','—'),W5('3','2-3','2','3','—'),W5('35','35','35','35','—'),
+        W5(2,2,0,2,0),W5('12','13','—','12','—'),W5('3','2-3','2','3','—'),W5('35','35','35','35','—'),
         {'4':'OMITIR si hay fatiga de carrera o pádel.','5':'OMITIR en taper.'}),
       E('elevaciones-piernas','Elevaciones de piernas colgando','peso corporal',60,
-        W5(2,2,2,1,0),W5('15','15','15','12','—'),W5('técnico','técnico','técnico','técnico','—'),W5('Peso corporal','Peso corporal','Peso corporal','Peso corporal','—'),
+        W5(2,2,0,1,0),W5('15','15','—','12','—'),W5('técnico','técnico','técnico','técnico','—'),W5('Peso corporal','Peso corporal','Peso corporal','Peso corporal','—'),
         {'5':'OMITIR en taper.'}),
       E('abd-wheel','Ab Wheel','peso corporal',60,
-        W5(2,2,2,1,0),W5('10-12','10-12','10-12','8-10','—'),W5('técnico','técnico','técnico','técnico','—'),W5('Peso corporal','Peso corporal','Peso corporal','Peso corporal','—'),
+        W5(2,2,0,1,0),W5('10-12','10-12','—','8-10','—'),W5('técnico','técnico','técnico','técnico','—'),W5('Peso corporal','Peso corporal','Peso corporal','Peso corporal','—'),
         {'5':'OMITIR en taper.'})
     ]},
 
@@ -151,13 +152,13 @@
     weeklyRir:{
       '1':'Upper 3 · Lower 3',
       '2':'Upper 2-3 · Lower 2-3',
-      '3':'Upper 2 · Lower 2',
+      '3':'Upper 2 · Lower 3-4',
       '4':'Upper 1-2 · Lower 3',
       '5':'RIR 4 · taper'
     },
     exerciseRir:{},
     revision:REVISION,
-    progressionRule:'Desde Semana 2, diferenciar Especialización respecto a Upper B: Especialización concentra dominadas libres, deltoides lateral/posterior, brazos y core; Upper B utiliza dominadas asistidas a mayor rango de repeticiones y trabajo de espalda, hombro y pecho. Pájaros Peck Deck no se duplica en Upper B. Si hay pádel el miércoles, sustituye Especialización y no se recupera otro día. Semana 5: eliminar Especialización por taper. Mantener el bloque de carrera C1/C2/C3 sin cambios.',
+    progressionRule:'Desde Semana 2, diferenciar Especialización respecto a Upper B. Semana 3 (23-29/11): Upper RIR 2; Lower A reducido RIR 3-4; Lower B omitido; C2 suave miércoles; C1 jueves condicionado a recuperación; C3 hasta 17 km alrededor de 5:30/km solo si cómodo. No añadir sesiones para compensar entrenamientos omitidos. Semanas 1, 2, 4 y 5 mantienen su planificación previa.',
     deloadGuidelines:'Semana 4: pico de esfuerzo Upper sin fallo + reducción progresiva de Lower. Accesorios de Upper/Especialización pueden llegar a RIR 1 sin fallo muscular. Semana 5: taper completo y Especialización eliminada. No progresar Lower si interfiere con carrera o pádel.'
   };
   MASTER.forEach(r=>r.exercises.forEach(e=>{PLAN.exerciseRir[e.key]=clone(e.weeklyRir);}));
@@ -172,8 +173,9 @@
       ['Vie 20/11','C1 + Upper B'],['Sáb 21/11','Descanso'],['Dom 22/11','C3 · 14 km']
     ],
     '3':[
-      ['Lun 23/11','Upper A + C2'],['Mar 24/11','Lower A'],['Mié 25/11','Especialización · si hay pádel, el pádel la sustituye'],['Jue 26/11','Lower B'],
-      ['Vie 27/11','C1 + Upper B'],['Sáb 28/11','Descanso'],['Dom 29/11','C3 · 17 km · tirada pico']
+      ['Lun 23/11','Upper A · RIR 2'],['Mar 24/11','Lower A REDUCIDO · RIR 3-4'],['Mié 25/11','Especialización · RIR 2 + C2 suave'],
+      ['Jue 26/11','C1 · intervalos a 4:50/km · condicionado a recuperación'],['Vie 27/11','Upper B · RIR 2'],
+      ['Sáb 28/11','Descanso'],['Dom 29/11','C3 · máximo 17 km · ~5:30/km si cómodo · Lower B OMITIDO']
     ],
     '4':[
       ['Lun 30/11','Upper A + C2'],['Mar 01/12','Lower A reducido'],['Mié 02/12','Especialización · si hay pádel, el pádel la sustituye'],['Jue 03/12','Lower B reducido'],
@@ -197,9 +199,9 @@
       C3:{session:'C3',type:'Tirada larga específica',visual:'cardio-c3',icon:'endurance',training:'14 km · km 1-3 a 5:25-5:30/km · km 4-11 a 5:15-5:20/km · km 12-14 mantener 5:15-5:20/km o acelerar ligeramente si RPE ≤5-6',duration:'14 km',objective:'RPE controlado · consolidar ritmo específico.',notes:'La tirada larga del domingo es prioritaria.',preferredDay:'Domingo 22/11'}
     },
     3:{
-      C1:{session:'C1',type:'Calidad / rendimiento',visual:'cardio-c1',icon:'speed',training:`15' + 3 × 2 km a 4:55-5:05/km (rec. 2'30" trote suave) + 10'`,duration:'Por bloques',objective:'RPE ~7.',notes:'No recuperar sesiones perdidas. Ajustar según reglas de pádel.',preferredDay:'Viernes 27/11'},
-      C2:{session:'C2',type:'Base aeróbica',visual:'cardio-c2',icon:'endurance',training:`50-55' · ritmo orientativo 6:15-6:40/km`,duration:'50-55 min',objective:'Z2 + RPE 4.',notes:'El ritmo es orientativo; manda la FC.',preferredDay:'Lunes 23/11'},
-      C3:{session:'C3',type:'Tirada larga específica · pico',visual:'cardio-c3',icon:'endurance',training:'17 km · km 1-3 a 5:25-5:30/km · km 4-14 a 5:15-5:20/km · km 15-17 a 5:10-5:15/km solo si sensaciones muy buenas',duration:'17 km',objective:'RPE inicio 4 · central 4-5 · final máx. 6. Consolidar ~5:15/km como referencia específica central.',notes:'Pico de volumen del bloque.',preferredDay:'Domingo 29/11'}
+      C1:{session:'C1',type:'Calidad / rendimiento',visual:'cardio-c1',icon:'speed',training:`15' suave + movilidad dinámica + 3 × 5' a 4:50/km (rec. 2' trote suave) + 10' suave`,duration:'Aprox. 44 min + movilidad',objective:'RPE 7 · sin sprint ni acabar exhausto.',notes:'Condicionado a recuperación. Si no puedes sostener 4:50/km con técnica correcta y RPE ~7, aflojar o recortar. NO realizar si hay molestias de gemelos/femorales o fatiga residual importante.',preferredDay:'Jueves 26/11'},
+      C2:{session:'C2',type:'Base aeróbica suave',visual:'cardio-c2',icon:'endurance',training:`40-45' · ritmo solo orientativo 6:30-7:00/km`,duration:'40-45 min',objective:'Z2 por frecuencia cardiaca · RPE 3-4. La FC manda sobre el ritmo.',notes:'Puede hacerse separado de Especialización. Si gemelos o femorales siguen cargados: reducir a 25-30 min o cancelar.',preferredDay:'Miércoles 25/11'},
+      C3:{session:'C3',type:'Tirada larga específica · máximo 17 km',visual:'cardio-c3',icon:'endurance',training:'Máximo 17 km · km 1-3 a 5:40-5:45/km · km 4-10 a 5:30-5:35/km si cómodo · km 11-14 ~5:30/km sin forzar · km 15-17 ~5:30/km solo si estable, sin dolor y con buenas sensaciones',duration:'Hasta 17 km',objective:'RPE 4-5 la mayor parte · no buscar final rápido. 5:30/km es orientativo, no obligatorio.',notes:'Punto de decisión km 10-14: continuar a 17 km solo si vas cómodo, sin molestias y con esfuerzo estable. Si hay fatiga creciente, pulso anormal o necesitas forzar, terminar ~14-15 km o antes. Si hay dolor localizado o cambia la pisada, interrumpir. Llevar agua y practicar hidratación/ingesta de hidratos según tolerancia.',preferredDay:'Domingo 29/11'}
     },
     4:{
       C1:{session:'C1',type:'Calidad / rendimiento',visual:'cardio-c1',icon:'speed',training:`15' + 3 × 6' a 4:55-5:05/km (rec. 2') + 10'`,duration:'Aprox. 47 min',objective:'RPE 6-7.',notes:'Semana de pico Upper y descarga progresiva Lower. Ajustar según pádel.',preferredDay:'Viernes 04/12'},
@@ -506,7 +508,7 @@
     const active=activeDate();
     const week=active?weekNow():1;
     const schedule=SCHEDULE[String(week)]||SCHEDULE['1'];
-    const weekLabel=week===1?'RIR 3':week===2?'RIR 2-3':week===3?'RIR 2':week===4?'Pico Upper · Lower reducido':'Taper + media maratón';
+    const weekLabel=week===1?'RIR 3':week===2?'RIR 2-3':week===3?'Upper RIR 2 · Lower A reducido RIR 3-4 · sin Lower B':week===4?'Pico Upper · Lower reducido':'Taper + media maratón';
     c.innerHTML=`
       <div class="eyebrow" style="color:#2563eb">${active?`Mesociclo 4 · Semana ${week} activa`:'Próximo bloque · cargado'}</div>
       <h3 style="margin:5px 0 7px">Mesociclo 4 · Media maratón</h3>
