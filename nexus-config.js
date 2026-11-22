@@ -5,8 +5,8 @@ window.NEXUS_CLOUD = {
 };
 
 (() => {
-  const VERSION='v2.95';
-  const STAMP='22/11/2026 20:08:00';
+  const VERSION='v2.96';
+  const STAMP='22/11/2026 20:18:00';
   const VERSION_TEXT=`Training - ${VERSION} (${STAMP})`;
 
   function setVersion(){
@@ -31,7 +31,7 @@ window.NEXUS_CLOUD = {
     try{
       if(typeof renderAll==='function') renderAll();
       else if(typeof renderHome==='function') renderHome();
-    }catch(e){console.warn('Nexus v2.95 final render:',e)}
+    }catch(e){console.warn('Nexus v2.96 final render:',e)}
     setTimeout(()=>{
       try{
         if(typeof renderHome==='function') renderHome();
