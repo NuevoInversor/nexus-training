@@ -5,8 +5,9 @@ window.NEXUS_CLOUD = {
 };
 
 (() => {
-  const VERSION='v2.96';
-  const STAMP='22/11/2026 20:18:00';
+  if(document.documentElement.dataset.nexusModule==='nutrition') return;
+  const VERSION='v2.97';
+  const STAMP='24/11/2026 22:28:00';
   const VERSION_TEXT=`Training - ${VERSION} (${STAMP})`;
 
   function setVersion(){
@@ -27,7 +28,17 @@ window.NEXUS_CLOUD = {
     document.head.appendChild(s);
   }
 
+  function addNutritionEntry(){
+    const panel=document.querySelector('#profileGate .profile-panel');
+    if(!panel || panel.querySelector('#nutritionEntry')) return;
+    const a=document.createElement('a');
+    a.id='nutritionEntry'; a.href='nutrition.html?v=2.97'; a.className='profile-choice';
+    a.style.cssText='margin-top:20px;text-decoration:none;background:#123b32;border-color:#357665;color:#d1fae5';
+    a.innerHTML='<span class="row"><span class="profile-avatar" aria-hidden="true">🍴</span><span><span class="profile-choice-name">Nutrición</span><br><span style="font-size:12px;color:#a7f3d0">Menú semanal y recetario</span></span></span><span class="profile-arrow" aria-hidden="true">›</span>';
+    panel.appendChild(a);
+  }
   function finalRender(){
+    addNutritionEntry();
     try{
       if(typeof renderAll==='function') renderAll();
       else if(typeof renderHome==='function') renderHome();

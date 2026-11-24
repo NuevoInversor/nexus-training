@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="es" data-nexus-module="nutrition">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0f172a"><title>NEXUS Nutrición v2.97</title>
+<style>
+*{box-sizing:border-box}body{margin:0;background:#0f172a;color:#f1f5f9;font:15px system-ui,sans-serif}main{max-width:720px;margin:auto;padding:18px 14px 70px}header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}h1,h2,h3,p{margin:0}h1{font-size:24px}h2{font-size:19px}h3{font-size:16px}small,.muted{color:#a8b5c7}a{color:#a7f3d0}button,input,select,textarea{font:inherit}button,a,input,textarea,select{touch-action:manipulation}button{cursor:pointer;border:1px solid #475569;border-radius:12px;padding:10px 12px;background:#273548;color:#f1f5f9;min-height:42px}button:disabled{opacity:.5;cursor:wait}button.primary{background:#16634c;border-color:#34a77d}button[aria-pressed=true]{background:#164e3d;color:#a7f3d0;border-color:#34a77d}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #6ee7b7;outline-offset:2px}nav{display:flex;gap:7px;overflow-x:auto;margin:14px 0}nav button{flex:1;white-space:nowrap}.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.between{justify-content:space-between}.card{background:#172338;border:1px solid #334155;border-radius:17px;padding:14px;margin-bottom:12px}.meal{padding:12px;margin-top:10px;border-radius:13px;background:#243247;border:1px solid #40516a}.meal.confirmed{background:#153b30;border-color:#347c60;color:#a7f3d0}.meal.modified{background:#422f19;border-color:#966b2d;color:#fde68a}.meal.cancelled{color:#fda4af}.meal-name{font-weight:700;margin:5px 0 9px;overflow-wrap:anywhere}.notes{white-space:pre-wrap;overflow-wrap:anywhere;border-top:1px solid #475569;padding-top:8px;margin-top:8px;font-size:14px}.day-today{color:#6ee7b7}.green{color:#6ee7b7}.error{background:#481e28;color:#fecdd3;padding:12px;border-radius:12px;margin-bottom:12px}.status{font-size:13px;margin:8px 0 14px;min-height:20px}.empty{padding:14px;border:1px dashed #64748b;border-radius:12px;color:#b7c3d4}.field{display:grid;gap:5px;margin:12px 0}input,textarea,select{width:100%;background:#0f172a;color:#f1f5f9;border:1px solid #64748b;border-radius:10px;padding:11px}textarea{min-height:90px;resize:vertical}dialog{width:min(94vw,520px);max-height:90vh;overflow:auto;background:#172338;color:#f1f5f9;border:1px solid #475569;border-radius:18px;padding:20px}dialog::backdrop{background:#0009}.progress{height:7px;background:#334155;border-radius:20px;overflow:hidden;margin:8px 0 16px}.progress div{height:100%;background:#34d399}.sub{font-size:12px;color:#a8b5c7}.note-action{font-size:13px}.right{margin-left:auto}.rule{white-space:pre-wrap;overflow-wrap:anywhere}.tag{display:inline-block;font-size:12px;color:#a7f3d0;background:#164e3d;border-radius:20px;padding:4px 8px}
+</style></head>
+<body><main>
+<header><div><small>NEXUS · v2.97</small><h1>Nutrición</h1></div><a href="index.html?v=2.97">← Inicio</a></header>
+<p id="status" class="status" role="status">Conectando con NEXUS Cloud…</p>
+<div id="error" class="error" role="alert" hidden></div>
+<div id="auth"></div>
+<nav id="tabs" aria-label="Nutrición" hidden></nav>
+<section id="content" aria-live="polite"></section>
+<dialog id="editor"><form id="form"><div class="row between"><h2 id="editorTitle"></h2><button type="button" id="close">Cerrar</button></div><div id="fields"></div><div id="formError" class="error" hidden></div><button class="primary" id="save" type="submit">Guardar</button></form></dialog>
+</main><script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script><script src="nexus-config.js?v=2.97"></script>
+<script>
+(function(){
+'use strict';
+const $=id=>document.getElementById(id);
+const make=(tag,text,cls)=>{const e=document.createElement(tag);if(text!==undefined)e.textContent=text;if(cls)e.className=cls;return e;};
+const add=(parent,tag,text,cls)=>{const e=make(tag,text,cls);parent.append(e);return e;};
+const btn=(parent,text,fn,cls)=>{const b=add(parent,'button',text,cls);b.type='button';b.onclick=fn;return b;};
+const fmt=d=>new Intl.DateTimeFormat('es-ES',{day:'numeric',month:'short',timeZone:'Europe/Madrid'}).format(new Date(d+'T12:00:00Z'));
+const today=()=>new Intl.DateTimeFormat('sv-SE',{timeZone:'Europe/Madrid',year:'numeric',month:'2-digit',day:'2-digit'}).format(new Date());
+const shift=(s,n)=>{let d=new Date(s+'T12:00:00Z');d.setUTCDate(d.getUTCDate()+n);return d.toISOString().slice(0,10);};
+const monday=s=>shift(s,-((new Date(s+'T12:00:00Z').getUTCDay()+6)%7));
+const labels={lunch:'Comida',dinner:'Cena',both:'Comida o cena'};
+let week=monday(today()), tab='Menú', sb, user, recipes=[],rules=[],menus=[],items=[],notes=[],busy=false,revision=0,saveAction;
+function error(e){$('error').hidden=!e;$('error').textContent=e?('No se ha podido completar la operación: '+(e.message||e)):'';}
+function check(r){if(r.error)throw r.error;return r.data;}
+function table(t){return sb.from('nutrition_'+t);}
+function owned(t){return table(t).select('*').eq('user_id',user.id);}
+function recipe(id){return recipes.find(r=>r.id===id);}
+function planned(m){return m.planned_label||recipe(m.planned_recipe_id)?.name||'Plato';}
+function actual(m){return m.consumed_label||recipe(m.consumed_recipe_id)?.name||planned(m);}
+function menuFor(d){return menus.find(m=>m.start_date<=d&&m.end_date>=d);}
+async function load(){
+ if(!user)return;const rev=++revision;error(null);$('status').textContent='Actualizando…';
+ try{
+ const responses=await Promise.all([owned('recipes').order('name'),owned('rules').order('name'),owned('menus').order('start_date',{ascending:false}),owned('menu_items').gte('meal_date',week).lte('meal_date',shift(week,6)),owned('feedback').order('created_at',{ascending:false})]);
+ if(rev!==revision)return;
+ [recipes,rules,menus,items,notes]=responses.map(check);
+ $('status').textContent='✓ NEXUS Cloud · Menú compartido';
+ render();
+ }catch(e){if(rev===revision){error(e);$('status').textContent='Sin conexión confirmada';}}
+}
+async function write(fn){
+ if(busy)throw Error('Hay una operación en curso');
+ busy=true;error(null);
+ try{await fn();await load();}catch(e){error(e);throw e;}finally{busy=false;}
+}
+function run(fn){return async e=>{const b=e?.currentTarget;if(b)b.disabled=true;try{await write(fn);}catch(_){}finally{if(b)b.disabled=false;}};}
+async function getMenu(d){
+ let m=menuFor(d);if(m)return m;
+ const start=monday(d),end=shift(start,6);
+ // A concurrent device may create the same week first.
+ const result=await table('menus').upsert({user_id:user.id,start_date:start,end_date:end,title:'Semana '+fmt(start),status:'published'},{onConflict:'user_id,start_date',ignoreDuplicates:true}).select();
+ check(result);
+ const existing=check(await owned('menus').eq('start_date',start).single());
+ return existing;
+}
+function editor(title,fields,action){
+ $('editorTitle').textContent=title;$('fields').replaceChildren();$('formError').hidden=true;saveAction=action;
+ fields.forEach(f=>{
+ const l=add($('fields'),'label',undefined,'field');add(l,'span',f.label);
+ let x;
+ if(f.options){x=add(l,'select');f.options.forEach(o=>{const opt=add(x,'option',o[1]);opt.value=o[0];});}
+ else{x=add(l,f.type==='textarea'?'textarea':'input');if(f.type!=='textarea')x.type=f.type||'text';}
+ x.name=f.name;x.value=f.value??'';x.required=!!f.required;if(f.min!==undefined)x.min=f.min;if(f.max!==undefined)x.max=f.max;if(f.placeholder)x.placeholder=f.placeholder;
+ });
+ $('editor').showModal();
+}
+$('close').onclick=()=>$('editor').close();
+$('form').onsubmit=async e=>{
+ e.preventDefault();if(busy)return;$('save').disabled=true;$('formError').hidden=true;
+ try{const data=Object.fromEntries(new FormData(e.currentTarget));await write(()=>saveAction(data));$('editor').close();}
+ catch(err){$('formError').textContent=err.message||String(err);$('formError').hidden=false;}finally{$('save').disabled=false;}
+};
+function chooseRecipe(d,type,m){
+ const opts=[['','Sin receta (escribir plato)'],...recipes.filter(r=>r.active&&(r.meal_type===type||r.meal_type==='both'||r.id===m?.planned_recipe_id)).map(r=>[r.id,r.name+(r.sessions>1?' · '+r.sessions+' sesiones':'')])];
+ editor(m?'Editar planificación':'Planificar '+labels[type].toLowerCase(),[
+ {name:'recipe',label:'Receta',options:opts,value:m?.planned_recipe_id||''},{name:'label',label:'Plato o acompañamiento (opcional con receta)',value:m?.planned_label||''}
+ ],async v=>{
+ if(!v.recipe&&!v.label.trim())throw Error('Selecciona una receta o escribe el plato.');
+ if(m&&m.status!=='pending')throw Error('Deshaz primero la confirmación para editar la planificación.');
+ const row={planned_recipe_id:v.recipe||null,planned_label:v.label.trim()||null};
+ if(m)check(await table('menu_items').update(row).eq('user_id',user.id).eq('id',m.id).eq('status','pending').select().single());
+ else{const menu=await getMenu(d);check(await table('menu_items').insert({...row,user_id:user.id,menu_id:menu.id,meal_date:d,meal_type:type}).select().single());}
+ });
+}
+function setMeal(m,status,other={}){
+ return async()=>check(await table('menu_items').update({status,confirmed_at:status==='pending'?null:new Date().toISOString(),consumed_recipe_id:status==='confirmed'?m.planned_recipe_id:null,consumed_label:status==='confirmed'?m.planned_label:null,...other}).eq('user_id',user.id).eq('id',m.id).select().single());
+}
+function changeMeal(m){
+ editor('¿Qué habéis comido?',[
+ {name:'recipe',label:'Receta consumida',options:[['','Otro plato'],...recipes.filter(r=>r.active).map(r=>[r.id,r.name])],value:m.consumed_recipe_id||''},
+ {name:'label',label:'Plato o acompañamiento',value:m.consumed_label||''}
+ ],async v=>{if(!v.recipe&&!v.label.trim())throw Error('Indica el plato consumido.');await setMeal(m,'modified',{consumed_recipe_id:v.recipe||null,consumed_label:v.label.trim()||null})();});
+}
+function editNote({m,n,scope='meal'}){
+ editor(n?'Editar nota':'Añadir nota',[{name:'note',label:'Observaciones para próximos menús',type:'textarea',required:true,value:n?.note||'',placeholder:'¿Qué cambiaríamos la próxima vez?'}],async v=>{
+ const note=v.note.trim();if(!note)throw Error('Escribe una observación.');
+ if(n){check(await table('feedback').update({note,reviewed:false,reviewed_at:null,resolution:null}).eq('user_id',user.id).eq('id',n.id).select().single());return;}
+ const menu=m?{id:m.menu_id}:await getMenu(week);
+ check(await table('feedback').insert({user_id:user.id,menu_id:menu.id,menu_item_id:m?.id||null,recipe_id:m?(m.consumed_recipe_id||m.planned_recipe_id):null,scope,week_start:scope==='week'?week:null,note}).select().single());
+ });
+}
+function showNotes(p,list,m){
+ list.forEach(n=>{const x=add(p,'div',undefined,'notes');add(x,'p',n.note);const row=add(x,'div',undefined,'row');add(row,'small',n.reviewed?'Revisada':'Pendiente de revisión');btn(row,'Editar',()=>editNote({m,n}),'note-action right');});
+}
+function showMeal(parent,d,type){
+ const m=items.find(x=>x.meal_date===d&&x.meal_type===type),box=add(parent,'div',undefined,'meal '+(m?.status||''));
+ const top=add(box,'div',undefined,'row between');add(top,'small',labels[type]);
+ if(!m){add(box,'p','Sin planificar','meal-name');btn(box,'＋ Añadir plato',()=>chooseRecipe(d,type));return;}
+ const state={pending:'Pendiente',confirmed:'✓ Confirmada',modified:'↻ Modificada',cancelled:'× Cancelada'};
+ add(top,'small',state[m.status]);add(box,'p',m.status==='modified'?actual(m):planned(m),'meal-name');
+ if(m.status==='modified')add(box,'small','Previsto: '+planned(m));
+ const r=recipe(m.planned_recipe_id);if(r?.sessions>1)add(box,'span',r.sessions+' sesiones · batch cooking','tag');
+ const actions=add(box,'div',undefined,'row');
+ if(m.status==='pending'){
+ btn(actions,'✓ Confirmar',run(setMeal(m,'confirmed')),'primary');
+ btn(actions,'Editar',()=>chooseRecipe(d,type,m));
+ btn(actions,'Sustituir',()=>changeMeal(m));
+ btn(actions,'Cancelar',run(setMeal(m,'cancelled')));
+ }else{btn(actions,'Deshacer',run(setMeal(m,'pending')));if(m.status==='modified')btn(actions,'Editar consumo',()=>changeMeal(m));}
+ btn(actions,'＋ Nota',()=>editNote({m}));
+ showNotes(box,notes.filter(n=>n.menu_item_id===m.id),m);
+}
+function renderWeek(p){
+ const row=add(p,'div',undefined,'row between');
+ btn(row,'‹',()=>{week=shift(week,-7);load();});
+ add(row,'h2',fmt(week)+' – '+fmt(shift(week,6)));
+ btn(row,'›',()=>{week=shift(week,7);load();});
+ btn(p,'Semana actual',()=>{week=monday(today());load();});
+ const count=items.filter(x=>x.status==='confirmed').length;
+ add(p,'p',count+' de '+items.length+' platos planificados confirmados','status');
+ const prog=add(p,'div',undefined,'progress');add(prog,'div').style.width=(items.length?100*count/items.length:0)+'%';
+ for(let i=0;i<5;i++){
+ const d=shift(week,i),card=add(p,'article',undefined,'card');
+ const name=new Intl.DateTimeFormat('es-ES',{weekday:'long',day:'numeric',month:'long',timeZone:'Europe/Madrid'}).format(new Date(d+'T12:00:00Z'));
+ add(card,'h3',name+(d===today()?' · Hoy':''),d===today()?'day-today':'');showMeal(card,d,'lunch');showMeal(card,d,'dinner');
+ }
+ const box=add(p,'article',undefined,'card');add(box,'h3','Observaciones semanales');btn(box,'＋ Añadir nota semanal',()=>editNote({scope:'week'}));showNotes(box,notes.filter(n=>n.scope==='week'&&n.week_start===week));
+}
+function recipeEditor(r){
+ editor(r?'Editar receta':'Nueva receta',[
+ {name:'name',label:'Nombre',required:true,value:r?.name},
+ {name:'meal_type',label:'Tipo',options:Object.entries(labels),value:r?.meal_type||'both'},
+ {name:'category',label:'Categoría',value:r?.category},{name:'protein',label:'Proteína principal',value:r?.protein},{name:'carbohydrate',label:'Hidrato principal',value:r?.carbohydrate},
+ {name:'sessions',label:'Sesiones de consumo (más de 1 = batch cooking)',type:'number',min:1,max:30,required:true,value:r?.sessions||1},{name:'portions',label:'Raciones totales',type:'number',min:1,max:100,value:r?.portions},
+ {name:'method',label:'Método de elaboración',value:r?.method},{name:'recipe_url',label:'Enlace a receta',type:'url',value:r?.recipe_url},{name:'notes',label:'Observaciones',type:'textarea',value:r?.notes}
+ ],async v=>{if(!v.name.trim())throw Error('Indica un nombre.');const payload={name:v.name.trim(),meal_type:v.meal_type,category:v.category.trim()||null,protein:v.protein.trim()||null,carbohydrate:v.carbohydrate.trim()||null,sessions:Number(v.sessions),portions:v.portions?Number(v.portions):null,method:v.method.trim()||null,recipe_url:v.recipe_url.trim()||null,notes:v.notes.trim()||null};if(payload.recipe_url&&!/^https?:\/\//i.test(payload.recipe_url))throw Error('Usa una URL http o https.');if(r)check(await table('recipes').update(payload).eq('user_id',user.id).eq('id',r.id).select().single());else check(await table('recipes').insert({...payload,user_id:user.id}).select().single());});
+}
+function renderRecipes(p){
+ const top=add(p,'div',undefined,'row between');add(top,'h2','Recetario ('+recipes.length+')');btn(top,'＋ Receta',()=>recipeEditor(),'primary');
+ const q=add(p,'input');q.placeholder='Buscar receta…';q.setAttribute('aria-label','Buscar receta');
+ const list=add(p,'div');function draw(){list.replaceChildren();recipes.filter(r=>r.name.toLocaleLowerCase('es').includes(q.value.toLocaleLowerCase('es'))).forEach(r=>{
+ const c=add(list,'article',undefined,'card');add(c,'h3',r.name);add(c,'p',labels[r.meal_type]+(r.category?' · '+r.category:''),'muted');add(c,'p',r.sessions+' '+(r.sessions===1?'sesión':'sesiones')+(r.portions?' · '+r.portions+' raciones':''),r.sessions>1?'green':'muted');
+ if(r.notes)add(c,'p',r.notes,'notes');if(r.recipe_url&&/^https?:\/\//i.test(r.recipe_url)){const a=add(c,'a','Ver receta');a.href=r.recipe_url;a.target='_blank';a.rel='noopener noreferrer';}btn(c,'Editar',()=>recipeEditor(r));});}q.oninput=draw;draw();
+}
+function renderRules(p){add(p,'h2','Reglas de planificación');rules.forEach(r=>{const c=add(p,'article',undefined,'card');add(c,'h3',r.name);add(c,'p',r.description,'rule');add(c,'small',r.active?'Activa':'Inactiva');});}
+function renderHistory(p){
+ add(p,'h2','Histórico y observaciones');if(!menus.length)add(p,'p','Todavía no hay menús guardados.','empty');
+ menus.forEach(m=>{const c=add(p,'article',undefined,'card');add(c,'h3',m.title||'Menú');add(c,'p',fmt(m.start_date)+' – '+fmt(m.end_date),'muted');btn(c,'Abrir semana',()=>{week=monday(m.start_date);tab='Menú';load();});});
+ add(p,'h2','Notas pendientes');const pending=notes.filter(n=>!n.reviewed);if(!pending.length)add(p,'p','No hay notas pendientes.','empty');
+ pending.forEach(n=>{const c=add(p,'article',undefined,'card');add(c,'small',fmt(n.created_at.slice(0,10))+' · '+({meal:'Comida/cena',week:'Semana',month:'Mes'}[n.scope]));add(c,'p',n.note,'notes');btn(c,'Editar',()=>editNote({n}));btn(c,'Revisar',()=>editor('Revisar observación',[{name:'resolution',label:'Decisión tomada',type:'textarea',required:true}],async v=>{if(!v.resolution.trim())throw Error('Escribe la decisión.');check(await table('feedback').update({reviewed:true,reviewed_at:new Date().toISOString(),resolution:v.resolution.trim()}).eq('user_id',user.id).eq('id',n.id).select().single());}));});
+}
+function render(){
+ const nav=$('tabs');nav.hidden=false;nav.replaceChildren();['Menú','Recetas','Reglas','Histórico'].forEach(t=>{const b=btn(nav,t,()=>{tab=t;render();});b.setAttribute('aria-pressed',String(tab===t));});
+ const p=$('content');p.replaceChildren();({Menú:renderWeek,Recetas:renderRecipes,Reglas:renderRules,Histórico:renderHistory}[tab])(p);
+}
+async function init(){
+ try{
+ if(!window.supabase||!window.NEXUS_CLOUD)throw Error('Configuración de NEXUS Cloud no disponible');
+ sb=window.supabase.createClient(window.NEXUS_CLOUD.url,window.NEXUS_CLOUD.publishableKey,{auth:{persistSession:true,autoRefreshToken:true,detectSessionInUrl:true}});
+ const session=check(await sb.auth.getSession());user=session.session?.user;
+ if(!user){
+ $('status').textContent='Inicia sesión en NEXUS Cloud para acceder al menú compartido.';
+ btn($('auth'),'Continuar con GitHub',async()=>{try{check(await sb.auth.signInWithOAuth({provider:'github',options:{redirectTo:new URL('index.html',location.href).href}}));}catch(e){error(e);}},'primary');
+ add($('auth'),'p','Después de iniciar sesión, vuelve a pulsar Nutrición.','muted');return;
+ }
+ sb.auth.onAuthStateChange((event)=>{if(event==='SIGNED_OUT'){location.replace('index.html?v=2.97');}});
+ await load();
+ }catch(e){error(e);$('status').textContent='No se ha podido conectar.';}
+}
+init();
+})();
+</script></body></html>
