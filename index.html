@@ -4,7 +4,7 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#0f172a">
-<title>Nexus Training v2.98</title>
+<title>Nexus Training v2.99</title>
 <style>
 :root{--bg:#f6f7fb;--card:#fff;--ink:#111827;--muted:#64748b;--line:#e5e7eb;--brand:#111827;--good:#15803d;--radius:20px;--shadow:0 10px 30px rgba(15,23,42,.07)}
 *{box-sizing:border-box} body{margin:0;font-family:Inter,ui-sans-serif,system-ui,-apple-system,"Segoe UI",sans-serif;background:var(--bg);color:var(--ink);padding-bottom:92px}
@@ -302,10 +302,34 @@ select{
   .copy-prev-inline{margin-left:50px}
 }
 </style>
+<style id="nexusProfileStyles299">
+      #profileGate{overflow-y:auto;align-items:safe center;padding:24px 22px;background:radial-gradient(ellipse at 12% 0%,rgba(37,99,235,.23),transparent 50%),radial-gradient(ellipse at 100% 100%,rgba(14,116,144,.13),transparent 55%),linear-gradient(145deg,#080f21,#111d35 70%,#0e192c)}
+      #profileGate .profile-panel{max-width:480px}
+      #profileGate .profile-brand-lockup{display:flex;margin:0 auto 30px;width:min(100%,330px);height:clamp(86px,25vw,112px);padding:0;overflow:hidden;border-radius:19px;box-shadow:0 8px 30px rgba(37,99,235,.18);background:#f1f2f4;position:relative}
+      #profileGate .profile-brand-lockup img{width:92%;max-width:none;height:auto;flex:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+      #profileGate .profile-panel h1{font-size:clamp(25px,6.9vw,34px);letter-spacing:-.035em;line-height:1.16;margin-bottom:10px}
+      #profileGate .profile-panel > p{font-size:15px;line-height:1.5;color:#b8c5d9;margin-bottom:23px}
+      #profileGate .profile-list{gap:12px}
+      #profileGate .profile-choice{min-height:76px;border:1px solid rgba(130,174,238,.24);background:linear-gradient(125deg,rgba(44,68,110,.57),rgba(26,42,72,.68));box-shadow:0 5px 16px rgba(0,0,0,.16);border-radius:18px;padding:15px 17px;transition:border-color .15s,transform .15s}
+      #profileGate .profile-choice:focus-visible{outline:2px solid #93c5fd;outline-offset:3px}
+      #profileGate .profile-choice .profile-avatar{background:linear-gradient(135deg,#245caa,#1b3157);border:1px solid rgba(147,197,253,.25);width:46px;height:46px;color:#eff6ff}
+      #profileGate .profile-choice-name{font-size:18px;letter-spacing:-.02em}
+      #profileGate .profile-arrow{color:#a9c4e6}
+      #profileGate .nutrition-divider{display:block;width:100%;height:1px;border:0;margin:23px 0 19px;background:linear-gradient(90deg,transparent,rgba(170,190,220,.42) 12%,rgba(170,190,220,.42) 88%,transparent)}
+      #profileGate #nutritionEntry{margin:0;text-decoration:none;background:linear-gradient(125deg,#124338,#102f35);border-color:#317b67;color:#e0fff3}
+      #profileGate #nutritionEntry .profile-avatar{background:linear-gradient(135deg,#1c7056,#16483f);border-color:#378d75;color:#d1fae5}
+      #profileGate #nutritionEntry .profile-arrow{color:#86efbf}
+      @media(max-height:650px){#profileGate .profile-brand-lockup{margin-bottom:18px}#profileGate .profile-panel > p{margin-bottom:15px}#profileGate .profile-choice{min-height:66px;padding:10px 15px}#profileGate .nutrition-divider{margin:15px 0}}
+    
+#profileGate .profile-panel::after{content:"NEXUS · v2.99";display:block;text-align:center;margin-top:16px;color:#94a3b8;font-size:11px;letter-spacing:.08em}
+#profileGate #nutritionEntry{position:relative}
+#profileGate #nutritionEntry:not(.nutrition-divider + #nutritionEntry){margin-top:38px}
+#profileGate #nutritionEntry:not(.nutrition-divider + #nutritionEntry)::before{content:"";position:absolute;left:0;right:0;top:-20px;height:1px;background:rgba(170,190,220,.42)}
+</style>
 </head>
 <body>
 <div class="app">
-<header><div><div class="brand">NEXUS</div><div class="version">Training - v2.98 (24/11/2026 22:36:00)</div></div><span class="pill" id="todayPill"></span></header>
+<header><div><div class="brand">NEXUS</div><div class="version">Training - v2.99 (24/11/2026 22:39:00)</div></div><span class="pill" id="todayPill"></span></header>
 <main>
 <section id="homeView" class="view active">
   <div class="hero"><div class="eyebrow">Plan Nexus</div><h1 id="weekHero">Semana 3</h1><p id="cycleHero">Mesociclo actual</p></div>
@@ -1807,7 +1831,7 @@ function savePlan(){
 init();
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="nexus-config.js?v=2.98"></script>
+<script src="nexus-config-v299.js"></script>
 
 </body>
 </html>
