@@ -89,9 +89,6 @@
       };
     }
 
-    const v=document.querySelector('header .version');
-    if(v) v.textContent=`Training - ${VERSION} (${STAMP})`;
-    document.title=`Nexus Training ${VERSION}`;
   }
 
   function boot(){

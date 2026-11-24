@@ -142,26 +142,11 @@
     }
   }
 
-  function enforceVersion(){
-    const el=document.querySelector('.version');
-    if(el && el.textContent!==VERSION_TEXT) el.textContent=VERSION_TEXT;
-    if(document.title!==`Nexus Training ${VERSION}`) document.title=`Nexus Training ${VERSION}`;
-  }
-
-  function installVersionLock(){
-    enforceVersion();
-    const el=document.querySelector('.version');
-    if(!el || el.__nexusVersionLockV264) return;
-    el.__nexusVersionLockV264=true;
-    const obs=new MutationObserver(()=>enforceVersion());
-    obs.observe(el,{childList:true,characterData:true,subtree:true});
-  }
 
   function install(){
     patchRender();
     patchMarkExerciseComplete();
     refreshIfRepaired();
-    installVersionLock();
   }
 
   function resumeNow(){

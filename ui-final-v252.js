@@ -12,12 +12,6 @@
     document.head.appendChild(s);
   }
 
-  function fixVersion(){
-    const el=document.querySelector('header .version,.version');
-    if(el && el.textContent!==VERSION_TEXT) el.textContent=VERSION_TEXT;
-    const title=`Nexus Training ${VERSION}`;
-    if(document.title!==title) document.title=title;
-  }
 
   function fixPilatesDom(){
     ensureStyle();
@@ -64,7 +58,6 @@
   }
 
   function apply(){
-    fixVersion();
     patchFunctions();
     fixPilatesDom();
   }
