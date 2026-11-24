@@ -6,8 +6,8 @@ window.NEXUS_CLOUD = {
 
 (() => {
   if(document.documentElement.dataset.nexusModule==='nutrition') return;
-  const VERSION='v2.97';
-  const STAMP='24/11/2026 22:28:00';
+  const VERSION='v2.98';
+  const STAMP='24/11/2026 22:36:00';
   const VERSION_TEXT=`Training - ${VERSION} (${STAMP})`;
 
   function setVersion(){
@@ -28,21 +28,49 @@ window.NEXUS_CLOUD = {
     document.head.appendChild(s);
   }
 
+  function polishProfileGate(){
+    if(document.getElementById('nexusProfilePolishV298')) return;
+    const style=document.createElement('style');
+    style.id='nexusProfilePolishV298';
+    style.textContent=`
+      #profileGate{overflow-y:auto;align-items:safe center;padding:24px 22px;background:radial-gradient(ellipse at 12% 0%,rgba(37,99,235,.23),transparent 50%),radial-gradient(ellipse at 100% 100%,rgba(14,116,144,.13),transparent 55%),linear-gradient(145deg,#080f21,#111d35 70%,#0e192c)}
+      #profileGate .profile-panel{max-width:480px}
+      #profileGate .profile-brand-lockup{display:flex;margin:0 auto 30px;width:min(100%,330px);height:clamp(86px,25vw,112px);padding:0;overflow:hidden;border-radius:19px;box-shadow:0 8px 30px rgba(37,99,235,.18);background:#f1f2f4;position:relative}
+      #profileGate .profile-brand-lockup img{width:92%;max-width:none;height:auto;flex:none;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%)}
+      #profileGate .profile-panel h1{font-size:clamp(25px,6.9vw,34px);letter-spacing:-.035em;line-height:1.16;margin-bottom:10px}
+      #profileGate .profile-panel > p{font-size:15px;line-height:1.5;color:#b8c5d9;margin-bottom:23px}
+      #profileGate .profile-list{gap:12px}
+      #profileGate .profile-choice{min-height:76px;border:1px solid rgba(130,174,238,.24);background:linear-gradient(125deg,rgba(44,68,110,.57),rgba(26,42,72,.68));box-shadow:0 5px 16px rgba(0,0,0,.16);border-radius:18px;padding:15px 17px;transition:border-color .15s,transform .15s}
+      #profileGate .profile-choice:focus-visible{outline:2px solid #93c5fd;outline-offset:3px}
+      #profileGate .profile-choice .profile-avatar{background:linear-gradient(135deg,#245caa,#1b3157);border:1px solid rgba(147,197,253,.25);width:46px;height:46px;color:#eff6ff}
+      #profileGate .profile-choice-name{font-size:18px;letter-spacing:-.02em}
+      #profileGate .profile-arrow{color:#a9c4e6}
+      #profileGate .nutrition-divider{display:block;width:100%;height:1px;border:0;margin:23px 0 19px;background:linear-gradient(90deg,transparent,rgba(170,190,220,.42) 12%,rgba(170,190,220,.42) 88%,transparent)}
+      #profileGate #nutritionEntry{margin:0;text-decoration:none;background:linear-gradient(125deg,#124338,#102f35);border-color:#317b67;color:#e0fff3}
+      #profileGate #nutritionEntry .profile-avatar{background:linear-gradient(135deg,#1c7056,#16483f);border-color:#378d75;color:#d1fae5}
+      #profileGate #nutritionEntry .profile-arrow{color:#86efbf}
+      @media(max-height:650px){#profileGate .profile-brand-lockup{margin-bottom:18px}#profileGate .profile-panel > p{margin-bottom:15px}#profileGate .profile-choice{min-height:66px;padding:10px 15px}#profileGate .nutrition-divider{margin:15px 0}}
+    `;
+    document.head.appendChild(style);
+  }
   function addNutritionEntry(){
+    polishProfileGate();
     const panel=document.querySelector('#profileGate .profile-panel');
     if(!panel || panel.querySelector('#nutritionEntry')) return;
     const a=document.createElement('a');
     a.id='nutritionEntry'; a.href='nutrition.html?v=2.97'; a.className='profile-choice';
-    a.style.cssText='margin-top:20px;text-decoration:none;background:#123b32;border-color:#357665;color:#d1fae5';
+    
     a.innerHTML='<span class="row"><span class="profile-avatar" aria-hidden="true">🍴</span><span><span class="profile-choice-name">Nutrición</span><br><span style="font-size:12px;color:#a7f3d0">Menú semanal y recetario</span></span></span><span class="profile-arrow" aria-hidden="true">›</span>';
-    panel.appendChild(a);
+    const divider=document.createElement('hr');
+    divider.className='nutrition-divider';
+    panel.append(divider,a);
   }
   function finalRender(){
     addNutritionEntry();
     try{
       if(typeof renderAll==='function') renderAll();
       else if(typeof renderHome==='function') renderHome();
-    }catch(e){console.warn('Nexus v2.96 final render:',e)}
+    }catch(e){console.warn('Nexus v2.98 final render:',e)}
     setTimeout(()=>{
       try{
         if(typeof renderHome==='function') renderHome();
