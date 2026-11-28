@@ -2,12 +2,12 @@
 <html lang="es" data-nexus-module="nutrition">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0f172a"><title>NEXUS Nutrición v3.01</title>
+<meta name="theme-color" content="#0f172a"><title>NEXUS Nutrición v3.02</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#0f172a;color:#f1f5f9;font:15px system-ui,sans-serif}main{max-width:720px;margin:auto;padding:18px 14px 70px}header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}h1,h2,h3,p{margin:0}h1{font-size:24px}h2{font-size:19px}h3{font-size:16px}small,.muted{color:#a8b5c7}a{color:#a7f3d0}button,input,select,textarea{font:inherit}button,a,input,textarea,select{touch-action:manipulation}button{cursor:pointer;border:1px solid #475569;border-radius:12px;padding:10px 12px;background:#273548;color:#f1f5f9;min-height:42px}button:disabled{opacity:.5;cursor:wait}button.primary{background:#16634c;border-color:#34a77d}button[aria-pressed=true]{background:#164e3d;color:#a7f3d0;border-color:#34a77d}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #6ee7b7;outline-offset:2px}nav{display:flex;gap:7px;overflow-x:auto;margin:14px 0}nav button{flex:1;white-space:nowrap}.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.between{justify-content:space-between}.card{background:#172338;border:1px solid #334155;border-radius:17px;padding:14px;margin-bottom:12px}.meal{padding:12px;margin-top:10px;border-radius:13px;background:#243247;border:1px solid #40516a}.meal.confirmed{background:#153b30;border-color:#347c60;color:#a7f3d0}.meal.modified{background:#422f19;border-color:#966b2d;color:#fde68a}.meal.cancelled{color:#fda4af}.meal-name{font-weight:700;margin:5px 0 9px;overflow-wrap:anywhere}.notes{white-space:pre-wrap;overflow-wrap:anywhere;border-top:1px solid #475569;padding-top:8px;margin-top:8px;font-size:14px}.day-today{color:#6ee7b7}.green{color:#6ee7b7}.error{background:#481e28;color:#fecdd3;padding:12px;border-radius:12px;margin-bottom:12px}.status{font-size:13px;margin:8px 0 14px;min-height:20px}.empty{padding:14px;border:1px dashed #64748b;border-radius:12px;color:#b7c3d4}.field{display:grid;gap:5px;margin:12px 0}input,textarea,select{width:100%;background:#0f172a;color:#f1f5f9;border:1px solid #64748b;border-radius:10px;padding:11px}textarea{min-height:90px;resize:vertical}dialog{width:min(94vw,520px);max-height:90vh;overflow:auto;background:#172338;color:#f1f5f9;border:1px solid #475569;border-radius:18px;padding:20px}dialog::backdrop{background:#0009}.progress{height:7px;background:#334155;border-radius:20px;overflow:hidden;margin:8px 0 16px}.progress div{height:100%;background:#34d399}.sub{font-size:12px;color:#a8b5c7}.note-action{font-size:13px}.right{margin-left:auto}.rule{white-space:pre-wrap;overflow-wrap:anywhere}.tag{display:inline-block;font-size:12px;color:#a7f3d0;background:#164e3d;border-radius:20px;padding:4px 8px}
 </style></head>
 <body><main>
-<header><div><small>NEXUS · v3.01</small><h1>Nutrición</h1></div><a href="index.html?v=3.01">← Inicio</a></header>
+<header><div><small>NEXUS · v3.02</small><h1>Nutrición</h1></div><a href="index.html?v=3.02">← Inicio</a></header>
 <p id="status" class="status" role="status">Conectando con NEXUS Cloud…</p>
 <div id="error" class="error" role="alert" hidden></div>
 <div id="auth"></div>
@@ -78,34 +78,57 @@ $('form').onsubmit=async e=>{
  try{const data=Object.fromEntries(new FormData(e.currentTarget));await write(()=>saveAction(data));$('editor').close();}
  catch(err){$('formError').textContent=err.message||String(err);$('formError').hidden=false;}finally{$('save').disabled=false;}
 };
-function mealFields(type,id,sideIds){
- const eligible=r=>r.active&&(r.meal_type===type||r.meal_type==='both');
- const mains=recipes.filter(r=>eligible(r)&&r.dish_role==='Principal');
- const sides=recipes.filter(r=>eligible(r)&&r.dish_role==='Acompañante');
- const options=[['','Sin acompañamiento'],...sides.map(r=>[r.id,r.name])];
- return [{name:'recipe',label:'Principal',options:[['','Seleccionar principal'],...mains.map(r=>[r.id,r.name])],value:id||'',required:true},...Array.from({length:Math.max(3,sideIds.length)},(_,i)=>({name:'side'+i,label:'Acompañamiento '+(i+1),options,value:sideIds[i]||''}))];
+function isSoup(r){return !!r&&/^Sopa\b/i.test(r.name);}
+function isProteinOnly(r){return !!r&&!!r.protein&&!r.carbohydrate;}
+function mealFields(type,id,sideIds,free=false){
+ const mains=recipes.filter(r=>r.active&&r.dish_role==='Principal');
+ const main=recipe(id);
+ const sides=recipes.filter(r=>r.active&&(r.dish_role==='Acompañante'||(isSoup(main)&&isProteinOnly(r)&&r.id!==id)));
+ const options=[['','Sin acompañamiento'],...sides.map(r=>[r.id,r.name+(r.dish_role==='Principal'?' · proteína':'')])];
+ return [{name:'recipe',label:'Principal',options:[['','Seleccionar principal'],...(type==='dinner'?[['__date__','Noche de cita (libre)']]:[]),...mains.map(r=>[r.id,r.name])],value:free?'__date__':id||'',required:true},...Array.from({length:Math.max(3,sideIds.length)},(_,i)=>({name:'side'+i,label:'Acompañamiento '+(i+1),options,value:sideIds[i]||''}))];
 }
-function mealValues(v){
+function wireMealFields(){
+ const main=$('fields').querySelector('[name="recipe"]');
+ if(!main)return;
+ function refresh(){
+ const r=recipe(main.value),free=main.value==='__date__';
+ const opts=recipes.filter(x=>x.active&&(x.dish_role==='Acompañante'||(isSoup(r)&&isProteinOnly(x)&&x.id!==r.id)));
+ $('fields').querySelectorAll('select[name^="side"]').forEach(el=>{
+ const prev=el.value;el.replaceChildren();const blank=add(el,'option','Sin acompañamiento');blank.value='';
+ opts.forEach(x=>{const o=add(el,'option',x.name+(x.dish_role==='Principal'?' · proteína':''));o.value=x.id;});
+ el.value=opts.some(x=>x.id===prev)&&!free?prev:'';el.disabled=free;
+ });
+ }
+ main.addEventListener('change',refresh);refresh();
+}
+function mealValues(v,type){
+ if(v.recipe==='__date__'&&type==='dinner')return [];
  const main=recipe(v.recipe),sides=[...new Set(Object.entries(v).filter(([k,x])=>/^side\d+$/.test(k)&&x).map(([k,x])=>x))];
- if(!main||main.dish_role!=='Principal')throw Error('Selecciona un plato principal del recetario.');
+ if(!main?.active||main.dish_role!=='Principal')throw Error('Selecciona un plato principal del recetario.');
  if(main.requires_accompaniment&&!sides.length)throw Error('Este principal necesita acompañamiento.');
- if(sides.some(id=>recipe(id)?.dish_role!=='Acompañante'))throw Error('Selecciona acompañamientos del recetario.');
+ if(sides.some(id=>{const r=recipe(id);return !r?.active||!(r.dish_role==='Acompañante'||(isSoup(main)&&isProteinOnly(r)&&r.id!==main.id));}))throw Error('Selecciona acompañamientos del recetario.');
+ if(type==='lunch'&&isSoup(main)&&!sides.some(id=>isProteinOnly(recipe(id))))throw Error('La sopa a mediodía necesita un acompañamiento proteico sin hidrato principal.');
  return sides;
 }
 function chooseRecipe(d,type,m){
- editor(m?'Editar planificación':'Planificar '+labels[type].toLowerCase(),mealFields(type,m?.planned_recipe_id,m?.planned_accompaniment_ids||[]),async v=>{
- const sides=mealValues(v);
+ editor(m?'Editar planificación':'Planificar '+labels[type].toLowerCase(),mealFields(type,m?.planned_recipe_id,m?.planned_accompaniment_ids||[],m?.planned_label==='Noche de cita'),async v=>{
+ const sides=mealValues(v,type);
  if(m&&m.status!=='pending')throw Error('Deshaz primero la confirmación para editar la planificación.');
- const row={planned_recipe_id:v.recipe,planned_label:null,planned_accompaniment_ids:sides};
- if(m){if(m.planned_recipe_id!==v.recipe){row.batch_id=null;row.batch_action=null;}check(await table('menu_items').update(row).eq('user_id',user.id).eq('id',m.id).eq('status','pending').select().single());}
+ const free=v.recipe==='__date__';
+ const row={planned_recipe_id:free?null:v.recipe,planned_label:free?'Noche de cita':null,planned_accompaniment_ids:sides};
+ if(m){if(m.planned_recipe_id!==row.planned_recipe_id){row.batch_id=null;row.batch_action=null;}check(await table('menu_items').update(row).eq('user_id',user.id).eq('id',m.id).eq('status','pending').select().single());}
  else{const menu=await getMenu(d);check(await table('menu_items').insert({...row,user_id:user.id,menu_id:menu.id,meal_date:d,meal_type:type}).select().single());}
- });
+ });wireMealFields();
 }
 function setMeal(m,status,other={}){
  return async()=>check(await table('menu_items').update({status,confirmed_at:status==='pending'?null:new Date().toISOString(),consumed_recipe_id:status==='confirmed'?m.planned_recipe_id:null,consumed_label:status==='confirmed'?m.planned_label:null,consumed_accompaniment_ids:status==='confirmed'?(m.planned_accompaniment_ids||[]):[],...other}).eq('user_id',user.id).eq('id',m.id).select().single());
 }
 function changeMeal(m){
- editor('¿Qué habéis comido?',mealFields(m.meal_type,m.consumed_recipe_id||m.planned_recipe_id,m.status==='modified'?(m.consumed_accompaniment_ids||[]):(m.planned_accompaniment_ids||[])),async v=>{const sides=mealValues(v);await setMeal(m,'modified',{consumed_recipe_id:v.recipe,consumed_label:null,consumed_accompaniment_ids:sides})();});
+ const modified=m.status==='modified';
+ editor('¿Qué habéis comido?',mealFields(m.meal_type,modified?m.consumed_recipe_id:m.planned_recipe_id,modified?(m.consumed_accompaniment_ids||[]):(m.planned_accompaniment_ids||[]),(modified?m.consumed_label:m.planned_label)==='Noche de cita'),async v=>{
+ const sides=mealValues(v,m.meal_type),free=v.recipe==='__date__';
+ await setMeal(m,'modified',{consumed_recipe_id:free?null:v.recipe,consumed_label:free?'Noche de cita':null,consumed_accompaniment_ids:sides})();
+ });wireMealFields();
 }
 function editNote({m,n,scope='meal'}){
  editor(n?'Editar nota':'Añadir nota',[{name:'note',label:'Observaciones para próximos menús',type:'textarea',required:true,value:n?.note||'',placeholder:'¿Qué cambiaríamos la próxima vez?'}],async v=>{
@@ -212,7 +235,7 @@ async function init(){
  btn($('auth'),'Continuar con GitHub',async()=>{try{check(await sb.auth.signInWithOAuth({provider:'github',options:{redirectTo:new URL('index.html',location.href).href}}));}catch(e){error(e);}},'primary');
  add($('auth'),'p','Después de iniciar sesión, vuelve a pulsar Nutrición.','muted');return;
  }
- sb.auth.onAuthStateChange((event)=>{if(event==='SIGNED_OUT'){location.replace('index.html?v=3.01');}});
+ sb.auth.onAuthStateChange((event)=>{if(event==='SIGNED_OUT'){location.replace('index.html?v=3.02');}});
  await load();
  }catch(e){error(e);$('status').textContent='No se ha podido conectar.';}
 }
