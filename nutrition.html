@@ -2,13 +2,13 @@
 <html lang="es" data-nexus-module="nutrition">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0f172a"><title>NEXUS Nutrición v3.04</title>
+<meta name="theme-color" content="#0f172a"><title>NEXUS Nutrición v3.05</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#0f172a;color:#f1f5f9;font:15px system-ui,sans-serif}main{max-width:720px;margin:auto;padding:18px 14px 70px}header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}h1,h2,h3,p{margin:0}h1{font-size:24px}h2{font-size:19px}h3{font-size:16px}small,.muted{color:#a8b5c7}a{color:#a7f3d0}button,input,select,textarea{font:inherit}button,a,input,textarea,select{touch-action:manipulation}button{cursor:pointer;border:1px solid #475569;border-radius:12px;padding:10px 12px;background:#273548;color:#f1f5f9;min-height:42px}button:disabled{opacity:.5;cursor:wait}button.primary{background:#16634c;border-color:#34a77d}button[aria-pressed=true]{background:#164e3d;color:#a7f3d0;border-color:#34a77d}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #6ee7b7;outline-offset:2px}nav{display:flex;gap:7px;overflow-x:auto;margin:14px 0}nav button{flex:1;white-space:nowrap}.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.between{justify-content:space-between}.card{background:#172338;border:1px solid #334155;border-radius:17px;padding:14px;margin-bottom:12px}.meal{padding:12px;margin-top:10px;border-radius:13px;background:#243247;border:1px solid #40516a}.meal.confirmed{background:#153b30;border-color:#347c60;color:#a7f3d0}.meal.modified{background:#422f19;border-color:#966b2d;color:#fde68a}.meal.cancelled{color:#fda4af}.meal-name{font-weight:700;margin:5px 0 9px;overflow-wrap:anywhere}.notes{white-space:pre-wrap;overflow-wrap:anywhere;border-top:1px solid #475569;padding-top:8px;margin-top:8px;font-size:14px}.day-today{color:#6ee7b7}.green{color:#6ee7b7}.error{background:#481e28;color:#fecdd3;padding:12px;border-radius:12px;margin-bottom:12px}.status{font-size:13px;margin:8px 0 14px;min-height:20px}.empty{padding:14px;border:1px dashed #64748b;border-radius:12px;color:#b7c3d4}.field{display:grid;gap:5px;margin:12px 0}input,textarea,select{width:100%;background:#0f172a;color:#f1f5f9;border:1px solid #64748b;border-radius:10px;padding:11px}textarea{min-height:90px;resize:vertical}dialog{width:min(94vw,520px);max-height:90vh;overflow:auto;background:#172338;color:#f1f5f9;border:1px solid #475569;border-radius:18px;padding:20px}dialog::backdrop{background:#0009}.progress{height:7px;background:#334155;border-radius:20px;overflow:hidden;margin:8px 0 16px}.progress div{height:100%;background:#34d399}.sub{font-size:12px;color:#a8b5c7}.note-action{font-size:13px}.right{margin-left:auto}.rule{white-space:pre-wrap;overflow-wrap:anywhere}.tag{display:inline-block;font-size:12px;color:#a7f3d0;background:#164e3d;border-radius:20px;padding:4px 8px}
-.meal-heading{display:flex;align-items:center;gap:4px;justify-content:space-between;margin-bottom:4px;flex-wrap:nowrap}.meal-heading-left{display:flex;align-items:center;gap:5px;flex:none}.meal-heading-left>small{font-weight:750}.meal-event-icon{display:inline-flex;align-items:center;justify-content:center;min-height:36px;width:36px;padding:0;border:1px solid transparent;background:transparent;color:#a8b5c7;border-radius:10px;flex:none}.meal-event-icon svg{width:18px;height:18px;pointer-events:none}.meal-event-icon:hover{background:#344359}.meal-event-icon[aria-pressed=true]{background:#364255;border-color:#64748b;color:#f1f5f9}.meal-event-icon[data-event="__date__"][aria-pressed=true]{color:#f9a8d4}.meal-event-icon[data-event="__away__"][aria-pressed=true]{color:#93c5fd}.meal-heading>small{text-align:right;font-size:11px}
+.meal-heading{display:flex;align-items:center;gap:4px;justify-content:space-between;margin-bottom:4px;flex-wrap:nowrap}.meal-heading-left{display:flex;align-items:center;gap:5px;flex:none}.meal-heading-left>small{font-weight:750}.meal-event-icon{display:inline-flex;align-items:center;justify-content:center;min-height:44px;width:44px;padding:0;border:1px solid transparent;background:transparent;color:#a8b5c7;border-radius:10px;flex:none}.meal-event-icon svg{width:22px;height:22px;pointer-events:none}.meal-event-icon:hover{background:#344359}.meal-event-icon[aria-pressed=true]{background:#364255;border-color:#64748b;color:#f1f5f9}.meal-event-icon[data-event="__date__"][aria-pressed=true]{color:#f9a8d4}.meal-event-icon[data-event="__away__"][aria-pressed=true]{color:#93c5fd}.meal-heading>small{text-align:right;font-size:11px}
 </style></head>
 <body><main>
-<header><div><small>NEXUS · v3.04</small><h1>Nutrición</h1></div><a href="index.html?v=3.04">← Inicio</a></header>
+<header><div><small>NEXUS · v3.05</small><h1>Nutrición</h1></div><a href="index.html?v=3.05">← Inicio</a></header>
 <p id="status" class="status" role="status">Conectando con NEXUS Cloud…</p>
 <div id="error" class="error" role="alert" hidden></div>
 <div id="auth"></div>
@@ -114,24 +114,40 @@ function mealValues(v,type){
  return sides;
 }
 function chooseRecipe(d,type,m){
- editor(m?'Editar planificación':'Planificar '+labels[type].toLowerCase(),mealFields(type,m?.planned_recipe_id,m?.planned_accompaniment_ids||[],eventValue(m?.planned_label)),async v=>{
- const sides=mealValues(v,type);
- if(m&&m.status!=='pending')throw Error('Deshaz primero la confirmación para editar la planificación.');
- const free=eventLabel(v.recipe);
+ const recorded=!!m&&['confirmed','modified'].includes(m.status);
+ const modified=m?.status==='modified';
+ const id=modified?m.consumed_recipe_id:m?.planned_recipe_id;
+ const label=modified?m.consumed_label:m?.planned_label;
+ const sidesBefore=modified?(m.consumed_accompaniment_ids||[]):(m?.planned_accompaniment_ids||[]);
+ const existingNotes=m?notes.filter(n=>n.menu_item_id===m.id):[];
+ const fields=mealFields(type,id,sidesBefore,eventValue(label));
+ existingNotes.forEach((n,i)=>fields.push({name:'existing_note_'+i,label:'Nota '+(i+1)+(n.reviewed?' (revisada)':''),type:'textarea',value:n.note}));
+ fields.push({name:'new_note',label:'Añadir nota (opcional)',type:'textarea',placeholder:'Observaciones para próximos menús'});
+ editor(m?'Editar '+labels[type].toLowerCase():'Planificar '+labels[type].toLowerCase(),fields,async v=>{
+ const sides=mealValues(v,type),free=eventLabel(v.recipe);
  const row={planned_recipe_id:free?null:v.recipe,planned_label:free,planned_accompaniment_ids:sides};
- if(m){if(m.planned_recipe_id!==row.planned_recipe_id){row.batch_id=null;row.batch_action=null;}check(await table('menu_items').update(row).eq('user_id',user.id).eq('id',m.id).eq('status','pending').select().single());}
- else{const menu=await getMenu(d);check(await table('menu_items').insert({...row,user_id:user.id,menu_id:menu.id,meal_date:d,meal_type:type}).select().single());}
+ let saved=m;
+ if(recorded){
+ const same=(id||null)===row.planned_recipe_id&&((eventValue(label)||'')===(eventValue(free)||''))&&[...sidesBefore].sort().join(',')===[...sides].sort().join(',');
+ if(!same)await setMeal(m,'modified',{consumed_recipe_id:row.planned_recipe_id,consumed_label:free,consumed_accompaniment_ids:sides})();
+ }else if(m){
+ if(m.planned_recipe_id!==row.planned_recipe_id){row.batch_id=null;row.batch_action=null;}
+ if(m.status==='cancelled')Object.assign(row,{status:'pending',confirmed_at:null,consumed_recipe_id:null,consumed_label:null,consumed_accompaniment_ids:[]});
+ saved=check(await table('menu_items').update(row).eq('user_id',user.id).eq('id',m.id).eq('status',m.status).select().single());
+ }else{
+ const menu=await getMenu(d);
+ saved=check(await table('menu_items').insert({...row,user_id:user.id,menu_id:menu.id,meal_date:d,meal_type:type}).select().single());
+ }
+ for(let i=0;i<existingNotes.length;i++){
+ const n=existingNotes[i],note=(v['existing_note_'+i]||'').trim();
+ if(note&&note!==n.note)check(await table('feedback').update({note,reviewed:false,reviewed_at:null,resolution:null}).eq('user_id',user.id).eq('id',n.id).select().single());
+ }
+ const note=(v.new_note||'').trim();
+ if(note)check(await table('feedback').insert({user_id:user.id,menu_id:saved.menu_id,menu_item_id:saved.id,recipe_id:row.planned_recipe_id,scope:'meal',week_start:null,note}).select().single());
  });wireMealFields();
 }
 function setMeal(m,status,other={}){
  return async()=>check(await table('menu_items').update({status,confirmed_at:status==='pending'?null:new Date().toISOString(),consumed_recipe_id:status==='confirmed'?m.planned_recipe_id:null,consumed_label:status==='confirmed'?m.planned_label:null,consumed_accompaniment_ids:status==='confirmed'?(m.planned_accompaniment_ids||[]):[],...other}).eq('user_id',user.id).eq('id',m.id).select().single());
-}
-function changeMeal(m){
- const modified=m.status==='modified';
- editor('¿Qué habéis comido?',mealFields(m.meal_type,modified?m.consumed_recipe_id:m.planned_recipe_id,modified?(m.consumed_accompaniment_ids||[]):(m.planned_accompaniment_ids||[]),eventValue(modified?m.consumed_label:m.planned_label)),async v=>{
- const sides=mealValues(v,m.meal_type),free=eventLabel(v.recipe);
- await setMeal(m,'modified',{consumed_recipe_id:free?null:v.recipe,consumed_label:free,consumed_accompaniment_ids:sides})();
- });wireMealFields();
 }
 function editNote({m,n,scope='meal'}){
  editor(n?'Editar nota':'Añadir nota',[{name:'note',label:'Observaciones para próximos menús',type:'textarea',required:true,value:n?.note||'',placeholder:'¿Qué cambiaríamos la próxima vez?'}],async v=>{
@@ -179,15 +195,12 @@ function showMeal(parent,d,type){
  if(m.status==='modified')add(box,'small','Previsto: '+[planned(m),...(m.planned_accompaniment_ids||[]).map(id=>recipe(id)?.name||'Receta no disponible')].join(' · '));
  const r=recipe(m.planned_recipe_id);if(!isEvent&&m.batch_action)add(box,'span',m.batch_action==='prepare'?'Batch cooking · preparar':'Batch cooking · segunda toma','tag');else if(!isEvent&&r?.sessions>1)add(box,'span',r.sessions+' raciones','tag');
  const actions=add(box,'div',undefined,'row');
- if(m.status==='pending'){
- btn(actions,isEvent?'✓ Registrar':'✓ Confirmar',run(setMeal(m,'confirmed')),'primary');
- 
+ if(m.status==='pending')btn(actions,isEvent?'✓ Registrar':'✓ Confirmar',run(setMeal(m,'confirmed')),'primary');
+ else btn(actions,'Deshacer',run(setMeal(m,'pending')));
  btn(actions,'Editar',()=>chooseRecipe(d,type,m));
- btn(actions,'Sustituir',()=>changeMeal(m));
- btn(actions,'Cancelar',run(setMeal(m,'cancelled')));
- }else{btn(actions,'Deshacer',run(setMeal(m,'pending')));if(m.status==='modified')btn(actions,'Editar consumo',()=>changeMeal(m));}
- btn(actions,'＋ Nota',()=>editNote({m}));
- showNotes(box,notes.filter(n=>n.menu_item_id===m.id),m);
+ const mealNotes=notes.filter(n=>n.menu_item_id===m.id);
+ if(mealNotes.length){const summary=add(box,'small','Notas: '+mealNotes.length,'muted');summary.style.display='block';summary.style.marginTop='8px';}
+
 }
 function renderWeek(p){
  const row=add(p,'div',undefined,'row between');
@@ -264,7 +277,7 @@ async function init(){
  btn($('auth'),'Continuar con GitHub',async()=>{try{check(await sb.auth.signInWithOAuth({provider:'github',options:{redirectTo:new URL('index.html',location.href).href}}));}catch(e){error(e);}},'primary');
  add($('auth'),'p','Después de iniciar sesión, vuelve a pulsar Nutrición.','muted');return;
  }
- sb.auth.onAuthStateChange((event)=>{if(event==='SIGNED_OUT'){location.replace('index.html?v=3.04');}});
+ sb.auth.onAuthStateChange((event)=>{if(event==='SIGNED_OUT'){location.replace('index.html?v=3.05');}});
  await load();
  }catch(e){error(e);$('status').textContent='No se ha podido conectar.';}
 }
