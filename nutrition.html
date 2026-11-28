@@ -2,13 +2,13 @@
 <html lang="es" data-nexus-module="nutrition">
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<meta name="theme-color" content="#0f172a"><title>NEXUS Nutrición v3.06</title>
+<meta name="theme-color" content="#0f172a"><title>NEXUS Nutrición v3.07</title>
 <style>
 *{box-sizing:border-box}body{margin:0;background:#0f172a;color:#f1f5f9;font:15px system-ui,sans-serif}main{max-width:720px;margin:auto;padding:18px 14px 70px}header{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-bottom:20px}h1,h2,h3,p{margin:0}h1{font-size:24px}h2{font-size:19px}h3{font-size:16px}small,.muted{color:#a8b5c7}a{color:#a7f3d0}button,input,select,textarea{font:inherit}button,a,input,textarea,select{touch-action:manipulation}button{cursor:pointer;border:1px solid #475569;border-radius:12px;padding:10px 12px;background:#273548;color:#f1f5f9;min-height:42px}button:disabled{opacity:.5;cursor:wait}button.primary{background:#16634c;border-color:#34a77d}button[aria-pressed=true]{background:#164e3d;color:#a7f3d0;border-color:#34a77d}button:focus-visible,a:focus-visible,input:focus-visible,textarea:focus-visible,select:focus-visible{outline:2px solid #6ee7b7;outline-offset:2px}nav{display:flex;gap:7px;overflow-x:auto;margin:14px 0}nav button{flex:1;white-space:nowrap}.row{display:flex;align-items:center;gap:8px;flex-wrap:wrap}.between{justify-content:space-between}.card{background:#172338;border:1px solid #334155;border-radius:17px;padding:14px;margin-bottom:12px}.meal{padding:12px;margin-top:10px;border-radius:13px;background:#243247;border:1px solid #40516a}.meal.confirmed{background:#153b30;border-color:#347c60;color:#a7f3d0}.meal.modified{background:#422f19;border-color:#966b2d;color:#fde68a}.meal.cancelled{color:#fda4af}.meal-name{font-weight:700;margin:5px 0 9px;overflow-wrap:anywhere}.notes{white-space:pre-wrap;overflow-wrap:anywhere;border-top:1px solid #475569;padding-top:8px;margin-top:8px;font-size:14px}.day-today{color:#6ee7b7}.green{color:#6ee7b7}.error{background:#481e28;color:#fecdd3;padding:12px;border-radius:12px;margin-bottom:12px}.status{font-size:13px;margin:8px 0 14px;min-height:20px}.empty{padding:14px;border:1px dashed #64748b;border-radius:12px;color:#b7c3d4}.field{display:grid;gap:5px;margin:12px 0}input,textarea,select{width:100%;background:#0f172a;color:#f1f5f9;border:1px solid #64748b;border-radius:10px;padding:11px}textarea{min-height:90px;resize:vertical}dialog{width:min(94vw,520px);max-height:90vh;overflow:auto;background:#172338;color:#f1f5f9;border:1px solid #475569;border-radius:18px;padding:20px}dialog::backdrop{background:#0009}.progress{height:7px;background:#334155;border-radius:20px;overflow:hidden;margin:8px 0 16px}.progress div{height:100%;background:#34d399}.sub{font-size:12px;color:#a8b5c7}.note-action{font-size:13px}.right{margin-left:auto}.rule{white-space:pre-wrap;overflow-wrap:anywhere}.tag{display:inline-block;font-size:12px;color:#a7f3d0;background:#164e3d;border-radius:20px;padding:4px 8px}
 .meal-heading{display:flex;align-items:center;gap:4px;justify-content:space-between;margin-bottom:4px;flex-wrap:nowrap}.meal-heading-left{display:flex;align-items:center;gap:5px;flex:none}.meal-heading-left>small{font-weight:750}.meal-event-icon{display:inline-flex;align-items:center;justify-content:center;min-height:44px;width:44px;padding:0;border:1px solid transparent;background:transparent;color:#a8b5c7;border-radius:10px;flex:none}.meal-event-icon svg{width:22px;height:22px;pointer-events:none}.meal-event-icon:hover{background:#344359}.meal-event-icon[aria-pressed=true]{background:#364255;border-color:#64748b;color:#f1f5f9}.meal-event-icon[data-event="__date__"][aria-pressed=true]{color:#f9a8d4}.meal-event-icon[data-event="__away__"][aria-pressed=true]{color:#93c5fd}.meal-heading>small{text-align:right;font-size:11px}
 </style></head>
 <body><main>
-<header><div><small>NEXUS · v3.06</small><h1>Nutrición</h1></div><a href="index.html?v=3.06">← Inicio</a></header>
+<header><div><small>NEXUS · v3.07</small><h1>Nutrición</h1></div><a href="index.html?v=3.07">← Inicio</a></header>
 <p id="status" class="status" role="status">Conectando con NEXUS Cloud…</p>
 <div id="error" class="error" role="alert" hidden></div>
 <div id="auth"></div>
@@ -173,7 +173,16 @@ async function registerMealEvent(d,type,m,event){
  if(m){
  let row;
  if(event==='__date__'){
- row={...reset,planned_recipe_id:null,planned_label:date?'Sin planificar':'Cita',planned_accompaniment_ids:[],batch_id:null,batch_action:null};
+ if(!date){
+ const existing=items.find(x=>x.id!==m.id&&eventValue(x.planned_label)==='__date__');
+ if(existing)throw Error('Ya hay una cita activa esta semana ('+fmt(existing.meal_date)+' · '+labels[existing.meal_type]+'). Desmarca primero su corazón.');
+ }
+ if(date){
+ const original=m.date_original_plan;
+ row={...reset,planned_recipe_id:original?.planned_recipe_id||null,planned_label:original?.planned_label||(!original?.planned_recipe_id?'Sin planificar':null),planned_accompaniment_ids:original?.planned_accompaniment_ids||[],batch_id:original?.batch_id||null,batch_action:original?.batch_action||null,date_original_plan:null};
+ }else{
+ row={...reset,planned_recipe_id:null,planned_label:'Cita',planned_accompaniment_ids:[],batch_id:null,batch_action:null,date_original_plan:{planned_recipe_id:m.planned_recipe_id,planned_label:m.planned_label,planned_accompaniment_ids:m.planned_accompaniment_ids||[],batch_id:m.batch_id,batch_action:m.batch_action}};
+ }
  }else if(away){
  row={...reset};if(eventValue(m.planned_label)==='__away__')row.planned_label='Sin planificar';
  }else{
@@ -181,6 +190,7 @@ async function registerMealEvent(d,type,m,event){
  }
  check(await table('menu_items').update(row).eq('user_id',user.id).eq('id',m.id).select().single());
  }else{
+ if(event==='__date__'){const existing=items.find(x=>eventValue(x.planned_label)==='__date__');if(existing)throw Error('Ya hay una cita activa esta semana ('+fmt(existing.meal_date)+' · '+labels[existing.meal_type]+'). Desmarca primero su corazón.');}
  const menu=await getMenu(d),row={user_id:user.id,menu_id:menu.id,meal_date:d,meal_type:type,planned_label:event==='__date__'?'Cita':'Sin planificar'};
  if(event==='__away__')Object.assign(row,{status:'modified',confirmed_at:new Date().toISOString(),consumed_label:'Fuera de casa'});
  check(await table('menu_items').insert(row).select().single());
@@ -193,7 +203,7 @@ function showMeal(parent,d,type){
  const neutral=away||(date&&!recorded);
  const box=add(parent,'div',undefined,'meal '+(neutral?'':m?.status||''));
  const top=add(box,'div',undefined,'meal-heading'),left=add(top,'div',undefined,'meal-heading-left');add(left,'small',labels[type]);
- mealEventButton(left,'__date__',date&&!away,run(()=>registerMealEvent(d,type,m,'__date__')));
+ mealEventButton(left,'__date__',date,run(()=>registerMealEvent(d,type,m,'__date__')));
  mealEventButton(left,'__away__',away,run(()=>registerMealEvent(d,type,m,'__away__')));
  if(!m){add(top,'small','Pendiente');add(box,'small','Principal');add(box,'p','—','meal-name');add(box,'small','Acompañamientos');add(box,'p','—','meal-name');btn(box,'Editar',()=>chooseRecipe(d,type));return;}
  const state={pending:'Pendiente',confirmed:'✓ Confirmada',modified:'↻ Modificada',cancelled:'× Cancelada'};
@@ -292,7 +302,7 @@ async function init(){
  btn($('auth'),'Continuar con GitHub',async()=>{try{check(await sb.auth.signInWithOAuth({provider:'github',options:{redirectTo:new URL('index.html',location.href).href}}));}catch(e){error(e);}},'primary');
  add($('auth'),'p','Después de iniciar sesión, vuelve a pulsar Nutrición.','muted');return;
  }
- sb.auth.onAuthStateChange((event)=>{if(event==='SIGNED_OUT'){location.replace('index.html?v=3.06');}});
+ sb.auth.onAuthStateChange((event)=>{if(event==='SIGNED_OUT'){location.replace('index.html?v=3.07');}});
  await load();
  }catch(e){error(e);$('status').textContent='No se ha podido conectar.';}
 }
